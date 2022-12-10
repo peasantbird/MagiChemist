@@ -133,8 +133,8 @@ public class TilemapGenerator : MonoBehaviour
     }
 
     void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
-    // Offset should be half of screenX and screenY
-    // Location of player starts at x, y: 0, 0
+    // offsetY should be -screenY
+    // Location of player starts at x, y: 0, 0 by default unless changed
     {
         int ArraySize = screenX*screenY;
         Vector3Int[] positions = new Vector3Int[ArraySize];
