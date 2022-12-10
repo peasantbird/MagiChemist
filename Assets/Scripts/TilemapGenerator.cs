@@ -11,9 +11,13 @@ public class TilemapGenerator : MonoBehaviour
     public int mapSizeX;
     public int mapSizeY;
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY);
+        currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
+    }
+
+    private void Start(){
+        RenderTerrain(50,50,0,0,0,-50); // Mapsize 50x50, offset Y axis -50
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension) 
@@ -126,6 +130,36 @@ public class TilemapGenerator : MonoBehaviour
             }    
         }    
         return numberedMap;  
+    }
+
+    void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
+    // Offset should be half of screenX and screenY
+    // Location of player starts at x, y: 0, 0
+    {
+        int ArraySize = screenX*screenY;
+        Vector3Int[] positions = new Vector3Int[ArraySize];
+        TileBase[] tileArray = new TileBase[ArraySize];
+        TileBase[] tileArrayLandscape = new TileBase[ArraySize];
+        int index = 0;
+            for (int x = 0; x < screenX; ++x) 
+            {
+                for (int y = 0; y < screenY; ++y) 
+                {
+                    int tileX =  x + playerX;
+                    int tileY =  y + playerY;
+                    positions[index] = new Vector3Int(offsetX + tileX, offsetY + tileY, 0);
+                    int tileType = currentMap[tileX, tileY];
+                    if (tileType == 0) 
+                    {
+                        tileArray[index] = floorPalette[0];
+                    } else if (tileType == 1)
+                    {
+                        tileArray[index] = floorPalette[1];
+                    }
+                    ++index;
+                }
+            }
+        worldTerrain.SetTiles(positions, tileArray);
     }
 
 }
