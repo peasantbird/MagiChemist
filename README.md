@@ -2,3 +2,5 @@
 Magic as Science!
 
 hi
+
+hi x2
