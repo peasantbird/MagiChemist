@@ -1,3 +1,4 @@
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +15,13 @@ public class TilemapGenerator : MonoBehaviour
     private void Awake()
     {
         currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
+        Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
+        transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
 
     private void Start(){
         RenderTerrain(50,50,0,0,0,-50); // Mapsize 50x50, offset Y axis -50
+        //DebugConsoleMap(); // Prints the map in the console
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension) 
@@ -141,25 +145,83 @@ public class TilemapGenerator : MonoBehaviour
         TileBase[] tileArray = new TileBase[ArraySize];
         TileBase[] tileArrayLandscape = new TileBase[ArraySize];
         int index = 0;
-            for (int x = 0; x < screenX; ++x) 
+            for (int y = 0; y < screenY; ++y) 
             {
-                for (int y = 0; y < screenY; ++y) 
+                for (int x = 0; x < screenX; ++x) 
                 {
                     int tileX =  x + playerX;
                     int tileY =  y + playerY;
                     positions[index] = new Vector3Int(offsetX + tileX, offsetY + tileY, 0);
-                    int tileType = currentMap[tileX, tileY];
+                    int tileType = currentMap[tileY, tileX];
                     if (tileType == 0) 
                     {
-                        tileArray[index] = floorPalette[0];
+                        tileArray[index] = floorPalette[0]; // Floor
                     } else if (tileType == 1)
                     {
-                        tileArray[index] = floorPalette[1];
+                        int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
+                        if (adjacentFloors > 0)
+                        {
+                            tileArray[index] = floorPalette[1]; // Wall
+                        }
                     }
                     ++index;
                 }
             }
         worldTerrain.SetTiles(positions, tileArray);
+    }
+
+    Vector2Int getRandomFloorPos()
+    {
+        Vector2Int floorPos = Vector2Int.zero;
+        for (int i = 0; i < 500; ++i)
+        {
+            int xPos = Random.Range(1, mapSizeX - 2);
+            int yPos = Random.Range(1, mapSizeY - 2);
+            if (currentMap[yPos, xPos] == 0) 
+            {
+                floorPos = new Vector2Int(xPos, yPos); // if Floor
+                break;
+            }
+        }
+        return floorPos;
+    }
+
+    public int checkAdjacentTilesForFloors(int y, int x)
+    {
+        int numberOfFloors = 0;
+        int[,] directionsToCheck = new int[8,2] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
+        for (int i = 0; i < directionsToCheck.GetLength(0); ++i)
+        {
+            int checkX = x + directionsToCheck[i, 1];
+            int checkY = y + directionsToCheck[i, 0];
+            // Check that tile to be checked is within the bounds
+            if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
+            {
+                if (currentMap[checkY, checkX] == 0)
+                {
+                    ++numberOfFloors;
+                }  
+            }
+        }
+        //Debug.Log(numberOfFloors.ToString() + x.ToString() + ", " + y.ToString());
+        return numberOfFloors; // If number of floors are zero, we do not instantiate that wall.
+    }
+
+    private void DebugConsoleMap()
+    {
+        StringBuilder sb = new StringBuilder();
+        int xDimension = currentMap.GetLength(1);
+        int yDimension = currentMap.GetLength(0);
+        for(int y = 0; y < yDimension; y++)
+        {
+            for(int x = 0; x < xDimension; x++)
+            {
+                sb.Append(currentMap[y,x]);
+                sb.Append(' ');				   
+            }
+            sb.AppendLine();
+        }
+        Debug.Log(sb.ToString());
     }
 
 }
