@@ -800,4 +800,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 914706024}
   tileMapGenerator: {fileID: 914706026}
-  speed: 10
+  speed: 7
