@@ -3,3 +3,8 @@ Magic as Science!
 
 Game by Nicholas Foo, Bertrand Wong, Tianchu Li, Nicole Lim
 <br>Music by DavidKBD
+
+hi
+
+hi x2
+
