@@ -20,8 +20,8 @@ public class TilemapGenerator : MonoBehaviour
     }
 
     private void Start(){
-        RenderTerrain(50,50,0,0,0,-50); // Mapsize 50x50, offset Y axis -50
-        //DebugConsoleMap(); // Prints the map in the console
+        RenderTerrain(50,50,0,0,0,0); // Mapsize 50x50, offset Y axis 0
+        DebugConsoleMap(); // Prints the map in the console
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension) 
@@ -151,7 +151,7 @@ public class TilemapGenerator : MonoBehaviour
                 {
                     int tileX =  x + playerX;
                     int tileY =  y + playerY;
-                    positions[index] = new Vector3Int(offsetX + tileX, offsetY + tileY, 0);
+                    positions[index] = new Vector3Int(offsetX + tileX, -tileY, 0); // TESTING
                     int tileType = currentMap[tileY, tileX];
                     if (tileType == 0) 
                     {
