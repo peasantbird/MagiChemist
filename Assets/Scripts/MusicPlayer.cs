@@ -5,15 +5,15 @@ public class MusicPlayer : MonoBehaviour
     public AudioSource BGM;
     public AudioClip[] musicArray;
 
-    AudioClip RandomTrack()
+    private AudioClip RandomTrack()
     {
         return musicArray[Random.Range(0, musicArray.Length)];
     }
-    void Start()
+    private void Start()
     {
         BGM.PlayOneShot(RandomTrack());
     }
-    void Update()
+    private void Update()
     {
         if (BGM.isPlaying == false) 
         {
