@@ -137,7 +137,7 @@ public class TilemapGenerator : MonoBehaviour
         return numberedMap;  
     }
 
-    void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
+    private void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
     // offsetY should be -screenY
     // Location of player starts at x, y: 0, 0 by default unless changed
     {
@@ -260,7 +260,7 @@ public class TilemapGenerator : MonoBehaviour
         return numberOfFloors; // If number of floors are zero, we do not instantiate that wall.
     }
 
-     public int[] checkAdjacentFloorsPosition(int y, int x)
+    public int[] checkAdjacentFloorsPosition(int y, int x)
     {
         int[] mapVisualisation = new int[9] {1, 1, 1, 1, 1, 1, 1, 1, 1};
         int[,] directionsToCheck = new int[9,2] {
@@ -306,6 +306,12 @@ public class TilemapGenerator : MonoBehaviour
             sb.AppendLine();
         }
         Debug.Log(sb.ToString());
+    }
+
+    public int checkTileAtCoordinates(int x, int y)
+    {
+        int tileAtCoordinates = currentMap[y, x];
+        return tileAtCoordinates;
     }
 
 }
