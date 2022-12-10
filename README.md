@@ -1,4 +1,5 @@
 # Game-Jam-Unity
 Magic as Science!
 
-hi
+Game by Nicholas Foo, Bertrand Wong, Tianchu Li, Nicole Lim
+Music by DavidKBD
