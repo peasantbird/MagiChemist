@@ -8,6 +8,7 @@ public class TilemapGenerator : MonoBehaviour
 {
     public Tilemap worldTerrain;
     public TileBase[] floorPalette;
+    public List<Enemy> enemies;
     public int[,]currentMap;
     public int mapSizeX;
     public int mapSizeY;
@@ -17,6 +18,10 @@ public class TilemapGenerator : MonoBehaviour
         currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
+
+        foreach (Enemy e in enemies) {//enermy walk test
+            Instantiate(e, new Vector3(playerPos.x, -playerPos.y, 0), Quaternion.identity);
+        }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
 

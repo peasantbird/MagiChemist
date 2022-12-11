@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public TilemapGenerator tileMapGenerator;
     private Vector2Int targetPos;
     public float speed;
+    public List<Item> inventory;
     private void Awake()
     {
         player = GameObject.Find("Player");
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        var moving = (Vector2)transform.position != targetPos;
+        bool moving = (Vector2)transform.position != targetPos;
 
         if (moving)
         {
