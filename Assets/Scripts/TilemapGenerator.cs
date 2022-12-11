@@ -18,6 +18,7 @@ public class TilemapGenerator : MonoBehaviour
     private void Awake()
     {
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
+        currentMap = roomGenerator(21, 10, 50, 50);
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
 
         foreach (Enemy e in enemies) {//enermy walk test
