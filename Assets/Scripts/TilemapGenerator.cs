@@ -8,6 +8,7 @@ public class TilemapGenerator : MonoBehaviour
 {
     public Tilemap worldTerrain;
     public TileBase[] floorPalette;
+    public List<Enemy> enemies;
     public int[,]currentMap;
     public int mapSizeX;
     public int mapSizeY;
@@ -15,7 +16,12 @@ public class TilemapGenerator : MonoBehaviour
     private void Awake()
     {
         currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
+        //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
+
+        foreach (Enemy e in enemies) {//enermy walk test
+            Instantiate(e, new Vector3(playerPos.x, -playerPos.y, 0), Quaternion.identity);
+        }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
 
@@ -136,7 +142,7 @@ public class TilemapGenerator : MonoBehaviour
         return numberedMap;  
     }
 
-    void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
+    private void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY) 
     // offsetY should be -screenY
     // Location of player starts at x, y: 0, 0 by default unless changed
     {
@@ -158,10 +164,62 @@ public class TilemapGenerator : MonoBehaviour
                         tileArray[index] = floorPalette[0]; // Floor
                     } else if (tileType == 1)
                     {
-                        int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
-                        if (adjacentFloors > 0)
+                        //int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
+                        int[] adjacentFloors = checkAdjacentFloorsPosition(tileY, tileX); // Check clockwise from top left
+                        // 0 top left, 
+                        // 1 top mid
+                        // 2 top right
+                        // 3 mid left
+                        // 4 mid mid, center tile (current tile)
+                        // 5 mid right
+                        // 6 bottom left
+                        // 7 bottom mid
+                        // 8 bottom right
+                        if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
                         {
-                            tileArray[index] = floorPalette[1]; // Wall
+                            tileArray[index] = floorPalette[1]; // Single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[2]; // Top and bottom floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[3]; // Left and right floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[4]; // Right, top and bottom floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[5]; // Left, top and bottom floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[6]; // Left, top and right floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[7]; // Left, bottom and floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[8]; // right, up floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[9]; // left, up floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[10]; // right, down floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[11]; // left, down floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[12]; // right floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[13]; // left floor, single wall
+                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        {
+                            tileArray[index] = floorPalette[14]; // up floor, single wall
+                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        {
+                            tileArray[index] = floorPalette[15]; // bottom floor, single wall
                         }
                     }
                     ++index;
@@ -207,6 +265,37 @@ public class TilemapGenerator : MonoBehaviour
         return numberOfFloors; // If number of floors are zero, we do not instantiate that wall.
     }
 
+    public int[] checkAdjacentFloorsPosition(int y, int x)
+    {
+        int[] mapVisualisation = new int[9] {1, 1, 1, 1, 1, 1, 1, 1, 1};
+        int[,] directionsToCheck = new int[9,2] {
+            {-1, -1},// top left, ROW,COLUMN: Y,X
+            {-1, 0},// top mid
+            {-1, 1},// top right
+            {0, -1},// mid left
+            {0, 0},// mid mid, center tile (current tile)
+            {0, 1},// mid right
+            {1, -1},// bottom left
+            {1, 0},// bottom mid
+            {1, 1},// bottom right
+            };
+        for (int i = 0; i < directionsToCheck.GetLength(0); ++i)
+        {
+            int checkX = x + directionsToCheck[i, 1];
+            int checkY = y + directionsToCheck[i, 0];
+            // Check that tile to be checked is within the bounds
+            if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
+            {
+                if (currentMap[checkY, checkX] == 0)
+                {
+                    mapVisualisation[i] = 0;
+                }  
+            }
+        }
+        //Debug.Log(numberOfFloors.ToString() + x.ToString() + ", " + y.ToString());
+        return mapVisualisation; // If number of floors are zero, we do not instantiate that wall.
+    }
+
     private void DebugConsoleMap()
     {
         StringBuilder sb = new StringBuilder();
@@ -222,6 +311,12 @@ public class TilemapGenerator : MonoBehaviour
             sb.AppendLine();
         }
         Debug.Log(sb.ToString());
+    }
+
+    public int checkTileAtCoordinates(int x, int y)
+    {
+        int tileAtCoordinates = currentMap[y, x];
+        return tileAtCoordinates;
     }
 
 }
