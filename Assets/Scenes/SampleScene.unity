@@ -671,11 +671,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 322ea8360eb2f4a8ab718253cfb96686, type: 2}
   - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
   - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
+  - {fileID: 11400000, guid: 32cf59a319d824761ba848c1abfde26e, type: 2}
   enemies:
   - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}
   mapSizeX: 50
   mapSizeY: 50
 --- !u!82 &914706027

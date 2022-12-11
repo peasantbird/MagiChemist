@@ -59,6 +59,7 @@ public class Enemy : MonoBehaviour
     private void ChasePlayer()
     {
         //Debug.Log("Enemy has spotted player and is giving chase.");
+        //If time use a refined algorithm
     }
 
     private void SimpleChasePlayer()
@@ -139,6 +140,16 @@ public class Enemy : MonoBehaviour
     {
         int destinationTile = tileMapGenerator.checkTileAtCoordinates(xDestination, -yDestination);
         return destinationTile == 0;
+    }
+
+    private bool CheckMapLimit(int xDestination, int yDestination)
+    {
+        if (xDestination < 0|| xDestination > tileMapGenerator.mapSizeX - 1 || yDestination > 0|| yDestination < -(tileMapGenerator.mapSizeY - 1) )
+        {
+            return false;
+        } else {
+            return true;
+        }
     }
     private void RandomMovePos()
     {
@@ -294,5 +305,138 @@ public class Enemy : MonoBehaviour
         return true;
     }
 
+    private void ChaseThroughWalls()
+    {   
+        Vector3 playerPos = player.transform.position;
+        float currentX = transform.position.x;
+        float currentY = transform.position.y;
 
+        int xMovement = 0;
+        int yMovement = 0;
+        int loseInterestChance = (int)Random.Range(1, 11);
+        
+        if (loseInterestChance < 8)
+        {
+            if (playerPos.x < currentX)
+            { //player is at the left
+                xMovement = -1;
+            }
+            else if (playerPos.x > currentX)
+            { //player is at the right
+                xMovement = 1;
+            }
+
+
+            if (playerPos.y < currentY)
+            { //player is at the bottom
+                yMovement = -1;
+            }
+            else if (playerPos.y > currentY)
+            { //player is at the top
+                yMovement = 1;
+            }
+
+
+            if (xMovement != 0 && yMovement != 0)
+            { //prevent diagonal movement
+                int randomNum = Random.Range(0, 1);
+                if (randomNum == 0)
+                {
+                    xMovement = 0;
+                }
+                else
+                {
+                yMovement = 0;
+                }
+            }
+
+            Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
+            if (CheckMapLimit(destination.x, destination.y))
+            {
+                targetPos += new Vector2Int(xMovement, yMovement);
+            }
+            else 
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else 
+        {
+            RandomMoveThroughWallsPos();
+        }
+    }
+
+    public void MoveEnemyThroughWalls()
+    {
+        bool moving = (Vector2)transform.position != targetPos;
+        bool keyPressed = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D);
+
+        if (moving)
+        {
+            MoveTowardsTargetPos();
+        }
+        else if (keyPressed)
+        {
+            if (PlayerIsAround())
+            {
+                ChaseThroughWalls();
+            } else 
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+    }
+
+    private void RandomMoveThroughWallsPos()
+    {
+
+        int random = Random.Range(0, 4);
+
+        if (random == 0)
+        {
+            Vector2Int destination = targetPos + Vector2Int.up;
+            if (CheckMapLimit(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.up;
+            } else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 1)
+        {
+            Vector2Int destination = targetPos + Vector2Int.left;
+            if (CheckMapLimit(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.left;
+            } else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 2)
+        {
+            Vector2Int destination = targetPos + Vector2Int.down;
+            if (CheckMapLimit(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.down;
+            } else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 3)
+        {
+            Vector2Int destination = targetPos + Vector2Int.right;
+            if (CheckMapLimit(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.right;
+            } else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+
+
+    }
 }

@@ -20,10 +20,13 @@ public class TilemapGenerator : MonoBehaviour
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
 
         foreach (Enemy e in enemies) {//enermy walk test
-            Vector2Int enemyPos = getRandomFloorPos();
+            for (int i = 0; i < 5; i++) // Ten of each enemy type
+            {
+                Vector2Int enemyPos = getRandomFloorPos();
 
-            Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
-            temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
+                Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
+                temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
+            }
         }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
