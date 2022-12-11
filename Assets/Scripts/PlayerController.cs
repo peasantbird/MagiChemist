@@ -9,11 +9,12 @@ public class PlayerController : MonoBehaviour
     public TilemapGenerator tileMapGenerator;
     private Vector2Int targetPos;
     public float speed;
-    public List<Item> inventory;
+    private Inventory inventory;
     private void Awake()
     {
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
+        inventory = new Inventory();
     }
     // Start is called before the first frame update
     void Start()
