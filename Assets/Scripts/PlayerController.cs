@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public List<Item> inventory;
     private void Awake()
     {
+        Application.targetFrameRate = 60; // Restrict frame rate for better WebGL performance
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
         nextMove = Time.time;

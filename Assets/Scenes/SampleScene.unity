@@ -167,7 +167,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: a253edadd93ce41919f601348debcf89, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -672,10 +672,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
   - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
   enemies:
-  - {fileID: 6015035342426684381, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: 6015035342426684381, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: 6015035342426684381, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: 6015035342426684381, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
   mapSizeX: 50
   mapSizeY: 50
 --- !u!82 &914706027

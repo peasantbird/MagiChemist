@@ -30,7 +30,7 @@ public class TilemapGenerator : MonoBehaviour
 
     private void Start(){
         RenderTerrain(50,50,0,0,0,0); // Mapsize 50x50, offset Y axis 0
-        DebugConsoleMap(); // Prints the map in the console
+        //DebugConsoleMap(); // Prints the map in the console
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension) 
