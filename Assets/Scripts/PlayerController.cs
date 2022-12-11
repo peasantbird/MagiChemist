@@ -11,12 +11,15 @@ public class PlayerController : MonoBehaviour
     public float moveRate;
     private float nextMove;
     public float speed;
-    public List<Item> inventory;
+    [SerializeField] private UI_Inventory uiInventory;
+    private Inventory inventory;
     private void Awake()
     {
         Application.targetFrameRate = 60; // Restrict frame rate for better WebGL performance
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
+        inventory = new Inventory();
+        uiInventory.SetInventory(inventory);
         nextMove = Time.time;
     }
     // Start is called before the first frame update

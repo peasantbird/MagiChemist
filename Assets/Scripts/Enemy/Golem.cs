@@ -22,6 +22,4 @@ public class Golem : Enemy
         //play golem voice
     }
 
-    
-
 }
