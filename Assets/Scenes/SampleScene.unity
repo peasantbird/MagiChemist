@@ -671,8 +671,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 322ea8360eb2f4a8ab718253cfb96686, type: 2}
   - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
   - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
-  - {fileID: 11400000, guid: 32cf59a319d824761ba848c1abfde26e, type: 2}
-  animatedWater: {fileID: 7539092407454211714, guid: 7508343889f0e4017ae30962f64c575f, type: 3}
+  - {fileID: 11400000, guid: c30c729ac679542c8992ab7586aad5ac, type: 2}
+  - {fileID: 11400000, guid: a7c5c2d38ed954f529c64fcc96fe5b29, type: 2}
+  - {fileID: 11400000, guid: e1089a8aca4fb4465972ca235e78baa3, type: 2}
+  - {fileID: 11400000, guid: 021db6fd786204305969b6b31be0f9c7, type: 2}
+  - {fileID: 11400000, guid: 2d3175b9b332049cfb0244eae2f92cf2, type: 2}
+  - {fileID: 11400000, guid: ea7c88a0ad1a24c07a452c9902eeadc7, type: 2}
+  - {fileID: 11400000, guid: 5f729e95640584fe6ada2bee6d251ad2, type: 2}
+  - {fileID: 11400000, guid: fba5c0e0bf6414b9aa0c6bae04ff0916, type: 2}
+  landscapeFeature:
+  - {fileID: 7539092407454211714, guid: 7508343889f0e4017ae30962f64c575f, type: 3}
+  - {fileID: 4104820790912926506, guid: 1bc0e044facda4b19acc23ee3c1bc67b, type: 3}
+  - {fileID: 2923076005172053895, guid: 0bc5535d0baab421e81b597186d787db, type: 3}
+  - {fileID: 8321031059895668747, guid: 67f63a8631ea14c209bd0a82432492ad, type: 3}
+  - {fileID: 875644568678093607, guid: a9d1d71c96e174fe19a07cabb3750cea, type: 3}
   enemies:
   - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
   - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}

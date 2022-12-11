@@ -8,14 +8,16 @@ public class TilemapGenerator : MonoBehaviour
 {
     public Tilemap worldTerrain;
     public TileBase[] floorPalette;
-    public GameObject animatedWater;
+    public GameObject[] landscapeFeature;
     public List<Enemy> enemies;
     public int[,]currentMap;
     public int mapSizeX;
     public int mapSizeY;
+    private int newNoise;
     // Start is called before the first frame update
     private void Awake()
     {
+        newNoise = Random.Range(0,1000000);
         currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
@@ -141,11 +143,17 @@ public class TilemapGenerator : MonoBehaviour
             {
                 if (numberedMap[y, x] == 0)
                 {
-                    float scale = 0.05f;
-                    float tileHeight = Mathf.PerlinNoise(x*scale, y*scale);
-                    if (tileHeight < 0.4)
+                    float scale = 0.0525f;
+                    float tileHeight = Mathf.PerlinNoise((x+newNoise)*scale, (y+newNoise)*scale);
+                    if (tileHeight < 0.32567)
                     {
                         numberedMap[y, x] = 2;
+                    } else if (tileHeight > 0.67025)
+                    {
+                        numberedMap[y, x] = 4;
+                    } else if (tileHeight < 0.6 && tileHeight > 0.5)
+                    {
+                        numberedMap[y, x] = 3;
                     }
                 }
             }
@@ -188,7 +196,21 @@ public class TilemapGenerator : MonoBehaviour
                         tileArray[index] = floorPalette[0]; // Floor
                     } else if (tileType == 2)
                     {
-                        Instantiate(animatedWater, new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
+                        Instantiate(landscapeFeature[0], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
+                    } else if (tileType == 3)
+                    {
+                        int grassTileType = Random.Range(16, 20);
+                        tileArray[index] = floorPalette[grassTileType]; // Grass
+                        int plantSpawnChance = Random.Range(1, 10);
+                        if (plantSpawnChance > 8)
+                        {
+                            int randomPlantType = Random.Range(1, 5);
+                            Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Random Plant
+                        }
+                    } else if (tileType == 4)
+                    {
+                        int sandTileType = Random.Range(20, 24);
+                        tileArray[index] = floorPalette[sandTileType]; // Sand
                     } else if (tileType == 1)
                     {
                         //int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
@@ -320,7 +342,7 @@ public class TilemapGenerator : MonoBehaviour
             // Check that tile to be checked is within the bounds
             if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
             {
-                if (currentMap[checkY, checkX] == 0 || currentMap[checkY, checkX] == 2)
+                if (currentMap[checkY, checkX] != 1)
                 {
                     mapVisualisation[i] = 0;
                 }  
@@ -350,7 +372,7 @@ public class TilemapGenerator : MonoBehaviour
     public int checkTileAtCoordinates(int x, int y)
     {
         int tileAtCoordinates = currentMap[y, x];
-        if (tileAtCoordinates == 0 || tileAtCoordinates == 2)
+        if (tileAtCoordinates != 1)
         {
             return 0;
         }
