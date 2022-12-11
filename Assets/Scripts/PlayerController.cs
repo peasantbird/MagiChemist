@@ -11,12 +11,16 @@ public class PlayerController : MonoBehaviour
     public float moveRate;
     private float nextMove;
     public float speed;
-    public List<Item> inventory;
+    private Inventory inventory;
     private void Awake()
     {
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
+<<<<<<< HEAD
+        inventory = new Inventory();
+=======
         nextMove = Time.time;
+>>>>>>> 955284051ff98e745cbc4cd6cf3df2da8f9b7d91
     }
     // Start is called before the first frame update
     void Start()
