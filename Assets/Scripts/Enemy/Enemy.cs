@@ -39,14 +39,15 @@ public class Enemy : MonoBehaviour
         {
             MoveTowardsTargetPos();
         }
-        else if (PlayerIsAround() && keyPressed)
-        {
-            SimpleChasePlayer();
-
-        }
         else if (keyPressed)
         {
-            RandomMovePos();
+            if (PlayerIsAround())
+            {
+                SimpleChasePlayer();
+            } else 
+            {
+                RandomMovePos();
+            }
         }
     }
 
@@ -214,12 +215,83 @@ public class Enemy : MonoBehaviour
         Vector2Int enemyPos = new Vector2Int ((int)transform.position.x, (int)transform.position.y);
         //todo: write an algorithm to check the player is within a certain distance
         //get magnitude (distance) between playerPos and enemyPos
-        if ((enemyPos-playerPos).magnitude < 7)
+        if ((enemyPos-playerPos).magnitude < 8)
         {
-            return true;
+            if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
+            {
+                return true;
+            } else 
+            {
+                return false;
+            }
         } else {
             return false;
         }
+    }
+
+    public bool CanEnemySeePlayer()
+    {
+        Vector2Int playerPos = new Vector2Int ((int)player.transform.position.x, (int)player.transform.position.y);
+        Vector2Int enemyPos = new Vector2Int ((int)transform.position.x, (int)transform.position.y);
+        Vector2Int differencePos = playerPos-enemyPos;
+        int distanceBetween = (int)((enemyPos-playerPos).magnitude);
+        Vector2Int checkUp = enemyPos + Vector2Int.up*distanceBetween;
+        Vector2Int checkDown = enemyPos + Vector2Int.down*distanceBetween;
+        Vector2Int checkLeft = enemyPos + Vector2Int.left*distanceBetween;
+        Vector2Int checkRight = enemyPos + Vector2Int.right*distanceBetween;
+        if (playerPos == checkUp)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                Vector2Int checkUp2 = enemyPos + Vector2Int.up*i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkUp2.x, -checkUp2.y)==1) 
+                {
+                    return false;
+                } else if (i == 8)
+                {
+                    return true;
+                }
+            }
+        } else if (playerPos == checkDown)
+        {
+            for (int i = 1; i < 8; i++)
+                {
+                    Vector2Int checkDown2 = enemyPos + Vector2Int.up*i;
+                    if (tileMapGenerator.checkTileAtCoordinates(checkDown2.x, -checkDown2.y)==1)
+                    {
+                        return false;
+                    } else if (i == 8)
+                    {
+                        return true;
+                    }
+                }
+        } else if (playerPos == checkRight) {
+            for (int i = 1; i < 8; i++)
+                {
+                    Vector2Int checkRight2 = enemyPos + Vector2Int.right*i;
+                    if (tileMapGenerator.checkTileAtCoordinates(checkRight2.x, -checkRight2.y)==1)
+                    {
+                        return false;
+                    } else if (i == 8)
+                    {
+                        return true;
+                    }
+                }
+        } else if (playerPos == checkLeft)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                Vector2Int checkLeft2 = enemyPos + Vector2Int.left*i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkLeft2.x, -checkLeft2.y)==1)
+                {
+                    return false;
+                } else if (i == 8)
+                {
+                    return true;
+                }
+            }
+        } 
+        return true;
     }
 
 
