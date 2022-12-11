@@ -8,21 +8,33 @@ public class TilemapGenerator : MonoBehaviour
 {
     public Tilemap worldTerrain;
     public TileBase[] floorPalette;
+    public GameObject[] landscapeFeature;
+    public List<Enemy> enemies;
     public int[,]currentMap;
     public int mapSizeX;
     public int mapSizeY;
+    private int newNoise;
     // Start is called before the first frame update
     private void Awake()
     {
-        currentMap = roomGenerator(21, 10, mapSizeX, mapSizeY); // Placeholder random generation
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
+
+        foreach (Enemy e in enemies) {//enermy walk test
+            for (int i = 0; i < 5; i++) // Ten of each enemy type
+            {
+                Vector2Int enemyPos = getRandomFloorPos();
+
+                Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
+                temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
+            }
+        }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
 
     private void Start(){
         RenderTerrain(50,50,0,0,0,0); // Mapsize 50x50, offset Y axis 0
-        DebugConsoleMap(); // Prints the map in the console
+        //DebugConsoleMap(); // Prints the map in the console
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension) 
@@ -37,13 +49,14 @@ public class TilemapGenerator : MonoBehaviour
             int roomY = Random.Range(1, xDimension - 1); 
             int randomSizeX = Random.Range(1, maxSize);
             int randomSizeY = Random.Range(1, maxSize);
+            //int floodChance = Random.Range(1, 5);
             for (int y = roomY; y < roomY + randomSizeY; ++y)
             {
                 for (int x = roomX; x < roomX + randomSizeX; ++x)
                 {
                     if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1) // Check cell isn't out of bounds
                     {
-                        numberedMap[y, x] = 0; // Carve a floor
+                        numberedMap[y, x] = 0; // Carve floor
                     }
                 }
             }
@@ -121,6 +134,28 @@ public class TilemapGenerator : MonoBehaviour
                 }
             }
         }
+        // Set Water if floor below certain height
+        for (int y = 0; y < yDimension - 1; ++y) // This for loop could be streamlined by removing it and shifting interior code to earlier
+        {
+            for (int x = 0; x < xDimension - 1; ++x)
+            {
+                if (numberedMap[y, x] == 0)
+                {
+                    float scale = 0.0525f;
+                    float tileHeight = Mathf.PerlinNoise((x+newNoise)*scale, (y+newNoise)*scale);
+                    if (tileHeight < 0.32567)
+                    {
+                        numberedMap[y, x] = 2;
+                    } else if (tileHeight > 0.67025)
+                    {
+                        numberedMap[y, x] = 4;
+                    } else if (tileHeight < 0.6 && tileHeight > 0.5)
+                    {
+                        numberedMap[y, x] = 3;
+                    }
+                }
+            }
+        }
         return numberedMap;
     }
 
@@ -157,6 +192,23 @@ public class TilemapGenerator : MonoBehaviour
                     if (tileType == 0) 
                     {
                         tileArray[index] = floorPalette[0]; // Floor
+                    } else if (tileType == 2)
+                    {
+                        Instantiate(landscapeFeature[0], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
+                    } else if (tileType == 3)
+                    {
+                        int grassTileType = Random.Range(16, 20);
+                        tileArray[index] = floorPalette[grassTileType]; // Grass
+                        int plantSpawnChance = Random.Range(1, 10);
+                        if (plantSpawnChance > 8)
+                        {
+                            int randomPlantType = Random.Range(1, 5);
+                            Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Random Plant
+                        }
+                    } else if (tileType == 4)
+                    {
+                        int sandTileType = Random.Range(20, 24);
+                        tileArray[index] = floorPalette[sandTileType]; // Sand
                     } else if (tileType == 1)
                     {
                         //int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
@@ -173,46 +225,46 @@ public class TilemapGenerator : MonoBehaviour
                         if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
                         {
                             tileArray[index] = floorPalette[1]; // Single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[2]; // Top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[3]; // Left and right floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[4]; // Right, top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[5]; // Left, top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[6]; // Left, top and right floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[7]; // Left, bottom and floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[8]; // right, up floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5]!= 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[9]; // left, up floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[10]; // right, down floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[11]; // left, down floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[12]; // right floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[13]; // left floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[14]; // up floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[15]; // bottom floor, single wall
                         }
@@ -226,16 +278,23 @@ public class TilemapGenerator : MonoBehaviour
     Vector2Int getRandomFloorPos()
     {
         Vector2Int floorPos = Vector2Int.zero;
-        for (int i = 0; i < 500; ++i)
-        {
-            int xPos = Random.Range(1, mapSizeX - 2);
-            int yPos = Random.Range(1, mapSizeY - 2);
-            if (currentMap[yPos, xPos] == 0) 
-            {
-                floorPos = new Vector2Int(xPos, yPos); // if Floor
-                break;
-            }
+        int xPos = 0;
+        int yPos = 0;
+        while (currentMap[yPos, xPos]!=0) {
+            xPos = Random.Range(1, mapSizeX - 2);
+            yPos = Random.Range(1, mapSizeY - 2);
         }
+        floorPos = new Vector2Int(xPos, yPos);
+        //for (int i = 0; i < 500; ++i)
+        //{
+        //    int xPos = Random.Range(1, mapSizeX - 2);
+        //    int yPos = Random.Range(1, mapSizeY - 2);
+        //    if (currentMap[yPos, xPos] == 0) 
+        //    {
+        //        floorPos = new Vector2Int(xPos, yPos); // if Floor
+        //        break;
+        //    }
+        //}
         return floorPos;
     }
 
@@ -281,7 +340,7 @@ public class TilemapGenerator : MonoBehaviour
             // Check that tile to be checked is within the bounds
             if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
             {
-                if (currentMap[checkY, checkX] == 0)
+                if (currentMap[checkY, checkX] != 1)
                 {
                     mapVisualisation[i] = 0;
                 }  
@@ -311,6 +370,10 @@ public class TilemapGenerator : MonoBehaviour
     public int checkTileAtCoordinates(int x, int y)
     {
         int tileAtCoordinates = currentMap[y, x];
+        if (tileAtCoordinates != 1)
+        {
+            return 0;
+        }
         return tileAtCoordinates;
     }
 
