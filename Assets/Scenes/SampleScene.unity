@@ -475,22 +475,22 @@ Tilemap:
   m_TileMatrixArray:
   - m_RefCount: 0
     m_Data:
-      e00: 1
+      e00: 0
       e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
+      e02: -1.1020282e-38
+      e03: -1.1020282e-38
+      e10: 7.8e-44
+      e11: 0
+      e12: 6.2e-43
+      e13: 6.2e-43
+      e20: -0.000000004974389
+      e21: 1e-45
+      e22: 8.824924e-29
+      e23: 4.761267e-10
+      e30: 4.5904e-41
       e31: 0
-      e32: 0
-      e33: 1
+      e32: 6.21e-43
+      e33: 6.24e-43
   m_TileColorArray:
   - m_RefCount: 0
     m_Data: {r: 0.82256275, g: 0.55817467, b: 0.6127701, a: 1}
@@ -519,7 +519,7 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {r: 0.7476498, g: 0.43619668, b: 0.5267009, a: 1}
   - m_RefCount: 0
-    m_Data: {r: 0.8195414, g: 0.39077026, b: 0.4091476, a: 1}
+    m_Data: {r: 2.9595e-41, g: 2.9595e-41, b: 2.9595e-41, a: 2.9595e-41}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -663,13 +663,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 812a80541ff0d4554a53700738f701ea, type: 2}
   - {fileID: 11400000, guid: 9df8d4d8ef9184c2ea9b2d4088d7ca53, type: 2}
   - {fileID: 11400000, guid: 056c0d7ede0db4bf58d2dfb4d5aa78e1, type: 2}
-  - {fileID: 11400000, guid: ffeb266d556c049cba79f4dd7974e351, type: 2}
-  - {fileID: 11400000, guid: 6567a616df7094d6c8dccc3031d3d527, type: 2}
+  - {fileID: 11400000, guid: a2d339abc80c44d95994fc65ccb8186a, type: 2}
+  - {fileID: 11400000, guid: e5d58f992889b4f17a41a27e16240d3f, type: 2}
   - {fileID: 11400000, guid: ecf7c06050ec14877ad6713f95cac17b, type: 2}
   - {fileID: 11400000, guid: de476538c3a2042eeb06dd2d1e8b40fe, type: 2}
   - {fileID: 11400000, guid: b609dc467c938474f861df6d3127571f, type: 2}
   - {fileID: 11400000, guid: b85299c65336e41bab172b1f9c50ec13, type: 2}
-  - {fileID: 11400000, guid: f8d9e38b50a5e447ba98add42eadd284, type: 2}
+  - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
   - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
   mapSizeX: 50
   mapSizeY: 50
@@ -795,7 +795,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 914706024}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f3249216a7bc45b4ae63469f8d5c47c, type: 3}
+  m_Script: {fileID: 11500000, guid: 15526501891232942a98009252bce961, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 914706024}
