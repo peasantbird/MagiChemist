@@ -14,7 +14,7 @@ public class TilemapGenerator : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
+        currentMap = roomGenerator(21, 10, mapSizeX, mapSizeY); // Placeholder random generation
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
