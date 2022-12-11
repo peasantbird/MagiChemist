@@ -8,12 +8,15 @@ public class PlayerController : MonoBehaviour
     private int[,] currentMap;
     public TilemapGenerator tileMapGenerator;
     private Vector2Int targetPos;
+    public float moveRate;
+    private float nextMove;
     public float speed;
     public List<Item> inventory;
     private void Awake()
     {
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
+        nextMove = Time.time;
     }
     // Start is called before the first frame update
     void Start()
@@ -22,8 +25,9 @@ public class PlayerController : MonoBehaviour
         transform.position = (Vector2)targetPos;
     }
 
-    void FixedUpdate()
+    void Update()
     {
+
         bool moving = (Vector2)transform.position != targetPos;
 
         if (moving)
@@ -43,8 +47,10 @@ public class PlayerController : MonoBehaviour
 
     private void NewTargetPos()
     {
-        if (Input.GetKey(KeyCode.W))
+
+        if (Input.GetKeyDown(KeyCode.W) && Time.time >= nextMove)
         {
+            nextMove = Time.time + moveRate;
             Vector2Int destination = targetPos + Vector2Int.up;
             int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
             if (destinationTile == 0)
@@ -52,8 +58,9 @@ public class PlayerController : MonoBehaviour
                 targetPos += Vector2Int.up;
             }
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.A) && Time.time >= nextMove)
         {
+            nextMove = Time.time + moveRate;
             Vector2Int destination = targetPos + Vector2Int.left;
             int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
             if (destinationTile == 0)
@@ -61,8 +68,9 @@ public class PlayerController : MonoBehaviour
                 targetPos += Vector2Int.left;
             }
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S) && Time.time >= nextMove)
         {
+            nextMove = Time.time + moveRate;
             Vector2Int destination = targetPos + Vector2Int.down;
             int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
             if (destinationTile == 0)
@@ -70,8 +78,9 @@ public class PlayerController : MonoBehaviour
                 targetPos += Vector2Int.down;
             }
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKeyDown(KeyCode.D) && Time.time >= nextMove)
         {
+            nextMove = Time.time + moveRate;
             Vector2Int destination = targetPos + Vector2Int.right;
             int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
             if (destinationTile == 0)
@@ -79,5 +88,6 @@ public class PlayerController : MonoBehaviour
                 targetPos += Vector2Int.right;
             }
         }
+
     }
 }

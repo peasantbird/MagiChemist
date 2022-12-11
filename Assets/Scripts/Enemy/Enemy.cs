@@ -21,7 +21,8 @@ public class Enemy : MonoBehaviour
     protected GameObject player;
 
 
-    public void InitEnemy() {
+    public void InitEnemy()
+    {
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
         targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
@@ -32,15 +33,16 @@ public class Enemy : MonoBehaviour
     public void MoveEnemy()
     {
         bool moving = (Vector2)transform.position != targetPos;
-        bool keyPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
-        
+        bool keyPressed = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D);
+
         if (moving)
         {
             MoveTowardsTargetPos();
         }
-        else if (PlayerIsAround() && keyPressed) {
+        else if (PlayerIsAround() && keyPressed)
+        {
             ChasePlayer();
-        
+
         }
         else if (keyPressed)
         {
@@ -53,7 +55,8 @@ public class Enemy : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
     }
 
-    private void ChasePlayer() {
+    private void ChasePlayer()
+    {
         Vector3 playerPos = player.transform.position;
         float currentX = transform.position.x;
         float currentY = transform.position.y;
@@ -74,32 +77,34 @@ public class Enemy : MonoBehaviour
                 xMovement = 1;
             }
         }
-        
+
 
         if (playerPos.y < currentY)
         { //player is at the bottom
-            if (Movable(targetPos.x, targetPos.y-1))
+            if (Movable(targetPos.x, targetPos.y - 1))
             {
                 yMovement = -1;
             }
         }
         else if (playerPos.y > currentY)
         { //player is at the top
-            
-            if (Movable(targetPos.x, targetPos.y+1))
+
+            if (Movable(targetPos.x, targetPos.y + 1))
             {
                 yMovement = 1;
             }
         }
-       
 
-        if (xMovement != 0 && yMovement != 0) { //prevent diagonal movement
+
+        if (xMovement != 0 && yMovement != 0)
+        { //prevent diagonal movement
             int randomNum = Random.Range(0, 1);
             if (randomNum == 0)
             {
                 xMovement = 0;
             }
-            else {
+            else
+            {
                 yMovement = 0;
             }
         }
@@ -112,80 +117,87 @@ public class Enemy : MonoBehaviour
         else {
             RandomMovePos();
         }
-      
+
+
 
     }
 
-    private bool Movable(int xDestination, int yDestination) {
+    private bool Movable(int xDestination, int yDestination)
+    {
         int destinationTile = tileMapGenerator.checkTileAtCoordinates(xDestination, -yDestination);
         return destinationTile == 0;
     }
     private void RandomMovePos()
     {
-        int random = Random.Range(0, 3);
-        
-            if (random == 0)
+        int random = Random.Range(0, 4);
+
+        if (random == 0)
+        {
+            Vector2Int destination = targetPos + Vector2Int.up;
+            if (Movable(destination.x, destination.y))
             {
-                Vector2Int destination = targetPos + Vector2Int.up;
-                if (Movable(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.up;
-                }
-                else {
-                    RandomMovePos();
-                }
+                targetPos += Vector2Int.up;
             }
-            else if (random == 1)
+            else {
+                RandomMovePos();
+            }
+
+        }
+        else if (random == 1)
+        {
+            Vector2Int destination = targetPos + Vector2Int.left;
+            if (Movable(destination.x, destination.y))
             {
-                Vector2Int destination = targetPos + Vector2Int.left;
-                if (Movable(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.left;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
+                targetPos += Vector2Int.left;
             }
-            else if (random == 2)
+            else
             {
-                Vector2Int destination = targetPos + Vector2Int.down;
-                if (Movable(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.down;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
+                RandomMovePos();
             }
-            else if (random == 3)
+
+        }
+        else if (random == 2)
+        {
+            Vector2Int destination = targetPos + Vector2Int.down;
+            if (Movable(destination.x, destination.y))
             {
-                Vector2Int destination = targetPos + Vector2Int.right;
-                if (Movable(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.right;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
+                targetPos += Vector2Int.down;
             }
-        
+            else {
+                RandomMovePos();
+            }
+
+        }
+        else if (random == 3)
+        {
+            Vector2Int destination = targetPos + Vector2Int.right;
+            if (Movable(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.right;
+            }
+            else {
+
+                RandomMovePos();
+            }
+
+        }
+
 
     }
 
 
-    public virtual void PlayVoice() { 
-     //virtual method
+    public virtual void PlayVoice()
+    {
+        //virtual method
     }
 
-    public bool PlayerIsAround() {
+    public bool PlayerIsAround()
+    {
         //to check if player is around a certain distance
-
+        Vector3 playerPos = player.transform.position;
         //todo: write an algorithm to check the player is within a certain distance
         return false;
     }
 
-    
+
 }
