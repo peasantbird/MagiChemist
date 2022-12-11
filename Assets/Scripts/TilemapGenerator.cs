@@ -17,8 +17,6 @@ public class TilemapGenerator : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        newNoise = Random.Range(0,1000000);
-        currentMap = roomGenerator(40, 10, mapSizeX, mapSizeY); // Placeholder random generation
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
 
