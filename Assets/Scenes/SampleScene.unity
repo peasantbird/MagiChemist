@@ -805,5 +805,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 914706024}
   tileMapGenerator: {fileID: 914706026}
+  moveRate: 0
   speed: 10
   inventory: []
