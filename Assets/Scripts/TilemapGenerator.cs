@@ -49,20 +49,14 @@ public class TilemapGenerator : MonoBehaviour
             int roomY = Random.Range(1, xDimension - 1); 
             int randomSizeX = Random.Range(1, maxSize);
             int randomSizeY = Random.Range(1, maxSize);
-            int floodChance = Random.Range(1, 5);
+            //int floodChance = Random.Range(1, 5);
             for (int y = roomY; y < roomY + randomSizeY; ++y)
             {
                 for (int x = roomX; x < roomX + randomSizeX; ++x)
                 {
                     if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1) // Check cell isn't out of bounds
                     {
-                        if (floodChance == 4)
-                        {
-                            numberedMap[y, x] = 2; // Carve water
-                        } else 
-                        {
-                            numberedMap[y, x] = 0; // Carve floor
-                        }
+                        numberedMap[y, x] = 0; // Carve floor
                     }
                 }
             }
@@ -137,6 +131,22 @@ public class TilemapGenerator : MonoBehaviour
                         {
                         numberedMap[j, k] = 0; // Carve a floor
                         }
+                }
+            }
+        }
+        // Set Water if floor below certain height
+        for (int y = 0; y < yDimension - 1; ++y) // This for loop could be streamlined by removing it and shifting interior code to earlier
+        {
+            for (int x = 0; x < xDimension - 1; ++x)
+            {
+                if (numberedMap[y, x] == 0)
+                {
+                    float scale = 0.05f;
+                    float tileHeight = Mathf.PerlinNoise(x*scale, y*scale);
+                    if (tileHeight < 0.4)
+                    {
+                        numberedMap[y, x] = 2;
+                    }
                 }
             }
         }
