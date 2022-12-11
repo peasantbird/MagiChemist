@@ -20,68 +20,18 @@ public class Enemy : MonoBehaviour
 
     public void InitEnemy() {
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
+        targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        transform.position = (Vector2)targetPos;
     }
 
-    public void MoveEnemy() {
-        bool moving = (Vector2)transform.position != targetPos;
-
-        if (moving)
-        {
-            MoveTowardsTargetPos();
-        }
-        else
-        {
-            NewTargetPos();
-        }
+    public virtual void MoveEnemy() {
+       //virtual method
     }
 
-    private void MoveTowardsTargetPos()
-    {
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-    }
+  
 
-    private void NewTargetPos()
-    {
-        int random = Random.Range(0, 3);
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)) {
-            if (random==0)
-            {
-                Vector2Int destination = targetPos + Vector2Int.up;
-                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-                if (destinationTile == 0)
-                {
-                    targetPos += Vector2Int.up;
-                }
-            }
-            else if (random==1)
-            {
-                Vector2Int destination = targetPos + Vector2Int.left;
-                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-                if (destinationTile == 0)
-                {
-                    targetPos += Vector2Int.left;
-                }
-            }
-            else if (random==2)
-            {
-                Vector2Int destination = targetPos + Vector2Int.down;
-                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-                if (destinationTile == 0)
-                {
-                    targetPos += Vector2Int.down;
-                }
-            }
-            else if (random==3)
-            {
-                Vector2Int destination = targetPos + Vector2Int.right;
-                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-                if (destinationTile == 0)
-                {
-                    targetPos += Vector2Int.right;
-                }
-            }
-        }
-
+    public virtual void PlayVoice() { 
+     //virtual method
     }
 
     
