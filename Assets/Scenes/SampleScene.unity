@@ -671,6 +671,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 322ea8360eb2f4a8ab718253cfb96686, type: 2}
   - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
   - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
+  enemies:
+  - {fileID: 6015035342426684381, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
   mapSizeX: 50
   mapSizeY: 50
 --- !u!82 &914706027
@@ -801,3 +803,4 @@ MonoBehaviour:
   player: {fileID: 914706024}
   tileMapGenerator: {fileID: 914706026}
   speed: 10
+  inventory: []
