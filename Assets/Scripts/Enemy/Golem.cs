@@ -43,7 +43,7 @@ public class Golem : Enemy
 
     private void RandomMovePos()
     {
-        int random = Random.Range(0, 3);
+        int random = Random.Range(0, 4);
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
             if (random == 0)
