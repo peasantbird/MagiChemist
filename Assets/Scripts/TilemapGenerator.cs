@@ -8,6 +8,7 @@ public class TilemapGenerator : MonoBehaviour
 {
     public Tilemap worldTerrain;
     public TileBase[] floorPalette;
+    public GameObject animatedWater;
     public List<Enemy> enemies;
     public int[,]currentMap;
     public int mapSizeX;
@@ -48,13 +49,20 @@ public class TilemapGenerator : MonoBehaviour
             int roomY = Random.Range(1, xDimension - 1); 
             int randomSizeX = Random.Range(1, maxSize);
             int randomSizeY = Random.Range(1, maxSize);
+            int floodChance = Random.Range(1, 5);
             for (int y = roomY; y < roomY + randomSizeY; ++y)
             {
                 for (int x = roomX; x < roomX + randomSizeX; ++x)
                 {
                     if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1) // Check cell isn't out of bounds
                     {
-                        numberedMap[y, x] = 0; // Carve a floor
+                        if (floodChance == 4)
+                        {
+                            numberedMap[y, x] = 2; // Carve water
+                        } else 
+                        {
+                            numberedMap[y, x] = 0; // Carve floor
+                        }
                     }
                 }
             }
@@ -168,6 +176,9 @@ public class TilemapGenerator : MonoBehaviour
                     if (tileType == 0) 
                     {
                         tileArray[index] = floorPalette[0]; // Floor
+                    } else if (tileType == 2)
+                    {
+                        Instantiate(animatedWater, new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
                     } else if (tileType == 1)
                     {
                         //int adjacentFloors = checkAdjacentTilesForFloors(tileY, tileX);
@@ -184,46 +195,46 @@ public class TilemapGenerator : MonoBehaviour
                         if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
                         {
                             tileArray[index] = floorPalette[1]; // Single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[2]; // Top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[3]; // Left and right floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[4]; // Right, top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[5]; // Left, top and bottom floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[6]; // Left, top and right floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[7]; // Left, bottom and floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[8]; // right, up floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5]!= 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[9]; // left, up floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[10]; // right, down floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[11]; // left, down floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 0 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 1 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[12]; // right floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 0 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 1 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[13]; // left floor, single wall
-                        } else if (adjacentFloors[1] == 0 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 1)
+                        } else if (adjacentFloors[1] != 1 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0)
                         {
                             tileArray[index] = floorPalette[14]; // up floor, single wall
-                        } else if (adjacentFloors[1] == 1 && adjacentFloors[3] == 1 && adjacentFloors[5] == 1 && adjacentFloors[7] == 0)
+                        } else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 1)
                         {
                             tileArray[index] = floorPalette[15]; // bottom floor, single wall
                         }
@@ -299,7 +310,7 @@ public class TilemapGenerator : MonoBehaviour
             // Check that tile to be checked is within the bounds
             if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
             {
-                if (currentMap[checkY, checkX] == 0)
+                if (currentMap[checkY, checkX] == 0 || currentMap[checkY, checkX] == 2)
                 {
                     mapVisualisation[i] = 0;
                 }  
@@ -329,6 +340,10 @@ public class TilemapGenerator : MonoBehaviour
     public int checkTileAtCoordinates(int x, int y)
     {
         int tileAtCoordinates = currentMap[y, x];
+        if (tileAtCoordinates == 0 || tileAtCoordinates == 2)
+        {
+            return 0;
+        }
         return tileAtCoordinates;
     }
 
