@@ -20,7 +20,10 @@ public class TilemapGenerator : MonoBehaviour
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
 
         foreach (Enemy e in enemies) {//enermy walk test
-            Instantiate(e, new Vector3(playerPos.x, -playerPos.y, 0), Quaternion.identity);
+            Vector2Int enemyPos = getRandomFloorPos();
+
+            Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
+            temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
         }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
     }
@@ -231,16 +234,23 @@ public class TilemapGenerator : MonoBehaviour
     Vector2Int getRandomFloorPos()
     {
         Vector2Int floorPos = Vector2Int.zero;
-        for (int i = 0; i < 500; ++i)
-        {
-            int xPos = Random.Range(1, mapSizeX - 2);
-            int yPos = Random.Range(1, mapSizeY - 2);
-            if (currentMap[yPos, xPos] == 0) 
-            {
-                floorPos = new Vector2Int(xPos, yPos); // if Floor
-                break;
-            }
+        int xPos = 0;
+        int yPos = 0;
+        while (currentMap[yPos, xPos]!=0) {
+            xPos = Random.Range(1, mapSizeX - 2);
+            yPos = Random.Range(1, mapSizeY - 2);
         }
+        floorPos = new Vector2Int(xPos, yPos);
+        //for (int i = 0; i < 500; ++i)
+        //{
+        //    int xPos = Random.Range(1, mapSizeX - 2);
+        //    int yPos = Random.Range(1, mapSizeY - 2);
+        //    if (currentMap[yPos, xPos] == 0) 
+        //    {
+        //        floorPos = new Vector2Int(xPos, yPos); // if Floor
+        //        break;
+        //    }
+        //}
         return floorPos;
     }
 
