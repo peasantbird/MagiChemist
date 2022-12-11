@@ -11,9 +11,15 @@ public class Inventory
    {
      itemList = new List<Item>();
      AddItem(new Item {itemType = Item.ItemType.Silicon, amount = 1});
+     AddItem(new Item {itemType = Item.ItemType.Silver, amount = 1});
+     AddItem(new Item {itemType = Item.ItemType.Oxygen, amount = 1});
    }
 
    public void AddItem(Item item) {
      itemList.Add(item);
+   }
+
+   public List<Item> GetItemList() {
+     return itemList;
    }
 }
