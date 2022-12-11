@@ -57,66 +57,66 @@ public class Enemy : MonoBehaviour
 
     private void ChasePlayer()
     {
-        Vector3 playerPos = player.transform.position;
-        float currentX = transform.position.x;
-        float currentY = transform.position.y;
+        //Vector3 playerPos = player.transform.position;
+        //float currentX = transform.position.x;
+        //float currentY = transform.position.y;
 
-        int xMovement = 0;
-        int yMovement = 0;
-        if (playerPos.x < currentX)
-        { //player is at the left
-            if (Movable(targetPos.x - 1, targetPos.y))
-            {
-                xMovement = -1;
-            }
-        }
-        else if (playerPos.x > currentX)
-        { //player is at the right
-            if (Movable(targetPos.x + 1, targetPos.y))
-            {
-                xMovement = 1;
-            }
-        }
-
-
-        if (playerPos.y < currentY)
-        { //player is at the bottom
-            if (Movable(targetPos.x, targetPos.y - 1))
-            {
-                yMovement = -1;
-            }
-        }
-        else if (playerPos.y > currentY)
-        { //player is at the top
-
-            if (Movable(targetPos.x, targetPos.y + 1))
-            {
-                yMovement = 1;
-            }
-        }
+        //int xMovement = 0;
+        //int yMovement = 0;
+        //if (playerPos.x < currentX)
+        //{ //player is at the left
+        //    if (Movable(targetPos.x - 1, targetPos.y))
+        //    {
+        //        xMovement = -1;
+        //    }
+        //}
+        //else if (playerPos.x > currentX)
+        //{ //player is at the right
+        //    if (Movable(targetPos.x + 1, targetPos.y))
+        //    {
+        //        xMovement = 1;
+        //    }
+        //}
 
 
-        if (xMovement != 0 && yMovement != 0)
-        { //prevent diagonal movement
-            int randomNum = Random.Range(0, 1);
-            if (randomNum == 0)
-            {
-                xMovement = 0;
-            }
-            else
-            {
-                yMovement = 0;
-            }
-        }
+        //if (playerPos.y < currentY)
+        //{ //player is at the bottom
+        //    if (Movable(targetPos.x, targetPos.y - 1))
+        //    {
+        //        yMovement = -1;
+        //    }
+        //}
+        //else if (playerPos.y > currentY)
+        //{ //player is at the top
 
-        Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-        if (Movable(destination.x, destination.y))
-        {
-            targetPos += new Vector2Int(xMovement, yMovement);
-        }
-        else {
-            RandomMovePos();
-        }
+        //    if (Movable(targetPos.x, targetPos.y + 1))
+        //    {
+        //        yMovement = 1;
+        //    }
+        //}
+
+
+        //if (xMovement != 0 && yMovement != 0)
+        //{ //prevent diagonal movement
+        //    int randomNum = Random.Range(0, 1);
+        //    if (randomNum == 0)
+        //    {
+        //        xMovement = 0;
+        //    }
+        //    else
+        //    {
+        //        yMovement = 0;
+        //    }
+        //}
+
+        //Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
+        //if (Movable(destination.x, destination.y))
+        //{
+        //    targetPos += new Vector2Int(xMovement, yMovement);
+        //}
+        //else {
+        //    RandomMovePos();
+        //}
 
 
 
@@ -129,6 +129,7 @@ public class Enemy : MonoBehaviour
     }
     private void RandomMovePos()
     {
+
         int random = Random.Range(0, 4);
 
         if (random == 0)
@@ -138,7 +139,8 @@ public class Enemy : MonoBehaviour
             {
                 targetPos += Vector2Int.up;
             }
-            else {
+            else
+            {
                 RandomMovePos();
             }
 
@@ -163,7 +165,8 @@ public class Enemy : MonoBehaviour
             {
                 targetPos += Vector2Int.down;
             }
-            else {
+            else
+            {
                 RandomMovePos();
             }
 
@@ -175,7 +178,8 @@ public class Enemy : MonoBehaviour
             {
                 targetPos += Vector2Int.right;
             }
-            else {
+            else
+            {
 
                 RandomMovePos();
             }
