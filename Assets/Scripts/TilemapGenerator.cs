@@ -379,4 +379,16 @@ public class TilemapGenerator : MonoBehaviour
         return tileAtCoordinates;
     }
 
+    public bool CheckMapLimit(int xDestination, int yDestination)
+    {
+        if (xDestination < 0 || xDestination > mapSizeX - 1 || yDestination > 0 || yDestination < -(mapSizeY - 1))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
 }

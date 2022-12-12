@@ -265,9 +265,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingLayerID: -22454029
+  m_SortingLayer: 4
+  m_SortingOrder: 0
   m_Sprite: {fileID: -915998232, guid: 8a0e9ea1528fc442485c6ec65a38ba58, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -842,6 +842,7 @@ GameObject:
   - component: {fileID: 914706025}
   - component: {fileID: 914706026}
   - component: {fileID: 914706029}
+  - component: {fileID: 914706030}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1056,10 +1057,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 914706024}
+  spellRangeElement: {fileID: 7773660220898585820, guid: 03610d1a361fba8478e33e89f57c5df0, type: 3}
   tileMapGenerator: {fileID: 914706026}
   moveRate: 0
   speed: 10
+  spellRange: 3
   uiInventory: {fileID: 63714863}
+--- !u!114 &914706030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914706024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dd40f37efc34d548a68290aec7f2855, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &977346982
 GameObject:
   m_ObjectHideFlags: 0
