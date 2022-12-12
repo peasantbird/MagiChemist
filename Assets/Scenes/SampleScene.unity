@@ -929,8 +929,12 @@ MonoBehaviour:
   enemies:
   - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
   - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}
+  - {fileID: 1603553490, guid: 1cbb39df82ff97c4883010d017619990, type: 3}
+  - {fileID: 2026396326818034373, guid: ff8cf370281d67f48854a56e15a226fb, type: 3}
+  - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
   mapSizeX: 50
   mapSizeY: 50
+  spawnNumber: 3
 --- !u!82 &914706027
 AudioSource:
   m_ObjectHideFlags: 0
