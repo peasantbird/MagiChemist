@@ -118,8 +118,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a6ac1ddf12f142ad9d2ec8f27af688d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyIndex: 0
-  hp: 0
+  enemyIndex: 1
+  hp: 2
   drops: 
   enemyType: 2
   speed: 10
+  moveRate: 2
+  enemySight: 8
+  movableDistance: 8
