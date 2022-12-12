@@ -13,6 +13,7 @@ public class TilemapGenerator : MonoBehaviour
     public int[,]currentMap;
     public int mapSizeX;
     public int mapSizeY;
+    public int spawnNumber;
     private int newNoise;
     // Start is called before the first frame update
     private void Awake()
@@ -22,7 +23,7 @@ public class TilemapGenerator : MonoBehaviour
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
 
         foreach (Enemy e in enemies) {//enermy walk test
-            for (int i = 0; i < 5; i++) // Ten of each enemy type
+            for (int i = 0; i <= spawnNumber; i++) // Ten of each enemy type
             {
                 Vector2Int enemyPos = getRandomFloorPos();
 
