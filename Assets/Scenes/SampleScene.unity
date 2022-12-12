@@ -265,9 +265,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingLayerID: -22454029
+  m_SortingLayer: 4
+  m_SortingOrder: 0
   m_Sprite: {fileID: -915998232, guid: 8a0e9ea1528fc442485c6ec65a38ba58, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -842,6 +842,7 @@ GameObject:
   - component: {fileID: 914706025}
   - component: {fileID: 914706026}
   - component: {fileID: 914706029}
+  - component: {fileID: 914706030}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -895,22 +896,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldTerrain: {fileID: 551100744}
   floorPalette:
-  - {fileID: 11400000, guid: 03edc8a27683049a481bee499f8d6023, type: 2}
-  - {fileID: 11400000, guid: c1a4cc6255d8a4fe7a60a66c071fdb9c, type: 2}
-  - {fileID: 11400000, guid: 7fea3c3c735a645e9b7afb21c47436fd, type: 2}
-  - {fileID: 11400000, guid: 8a9ab05e401704767a9f0a0bdea5b2a7, type: 2}
-  - {fileID: 11400000, guid: ec509a99d6709450c92f0e4f22fac96c, type: 2}
-  - {fileID: 11400000, guid: 812a80541ff0d4554a53700738f701ea, type: 2}
-  - {fileID: 11400000, guid: 9df8d4d8ef9184c2ea9b2d4088d7ca53, type: 2}
-  - {fileID: 11400000, guid: 056c0d7ede0db4bf58d2dfb4d5aa78e1, type: 2}
-  - {fileID: 11400000, guid: a2d339abc80c44d95994fc65ccb8186a, type: 2}
-  - {fileID: 11400000, guid: e5d58f992889b4f17a41a27e16240d3f, type: 2}
-  - {fileID: 11400000, guid: fd7166b7d22024aaeb0aa900ac3bba05, type: 2}
-  - {fileID: 11400000, guid: e7d7e1ecb27604331ac2c68aad7cb06b, type: 2}
-  - {fileID: 11400000, guid: b609dc467c938474f861df6d3127571f, type: 2}
-  - {fileID: 11400000, guid: 322ea8360eb2f4a8ab718253cfb96686, type: 2}
-  - {fileID: 11400000, guid: 03f5c517e27b542a792b9bdb94720737, type: 2}
-  - {fileID: 11400000, guid: ecff101ecee8a498a8313c8d971f04e8, type: 2}
+  - {fileID: 11400000, guid: f37d8ff14a0067b4e9ca380899c7e6ce, type: 2}
+  - {fileID: 11400000, guid: 01c32b02ec94fa645b84a937ba94a324, type: 2}
+  - {fileID: 11400000, guid: 05903c1b35165b044a7983a0c73639fa, type: 2}
+  - {fileID: 11400000, guid: 1cb2f1f32a84f674ca1ac3555a2d1f15, type: 2}
+  - {fileID: 11400000, guid: 5bd29a420c549a54aaf0cd7e3bc5cfe5, type: 2}
+  - {fileID: 11400000, guid: fe175f2e16b8b414da30fd37c0dad3f3, type: 2}
+  - {fileID: 11400000, guid: 6df59d7e8805a214ca9707a440d247a2, type: 2}
+  - {fileID: 11400000, guid: ee0139da28ba95445b3e8fefdd7d73c5, type: 2}
+  - {fileID: 11400000, guid: 1efffd04a07b6954fa1a717a8ff4bf67, type: 2}
+  - {fileID: 11400000, guid: 641d4d8e8acb41f4d8be9e1e5d646e21, type: 2}
+  - {fileID: 11400000, guid: 56cec540b3f57704abf523b2bd35b084, type: 2}
+  - {fileID: 11400000, guid: d6ae0519711417b47a52cd575fdebbe3, type: 2}
+  - {fileID: 11400000, guid: 8c40742c4deba4c46960c0f306488868, type: 2}
+  - {fileID: 11400000, guid: e169b7f5fdf6a5b4bba5cb1aa781e116, type: 2}
+  - {fileID: 11400000, guid: 67b41eb79210ae24593788ba95018dd5, type: 2}
+  - {fileID: 11400000, guid: 8740b276af879764aa5ca96365fad930, type: 2}
   - {fileID: 11400000, guid: c30c729ac679542c8992ab7586aad5ac, type: 2}
   - {fileID: 11400000, guid: a7c5c2d38ed954f529c64fcc96fe5b29, type: 2}
   - {fileID: 11400000, guid: e1089a8aca4fb4465972ca235e78baa3, type: 2}
@@ -928,8 +929,12 @@ MonoBehaviour:
   enemies:
   - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
   - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}
+  - {fileID: 1603553490, guid: 1cbb39df82ff97c4883010d017619990, type: 3}
+  - {fileID: 2026396326818034373, guid: ff8cf370281d67f48854a56e15a226fb, type: 3}
+  - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
   mapSizeX: 50
   mapSizeY: 50
+  spawnNumber: 3
 --- !u!82 &914706027
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1056,10 +1061,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 914706024}
+  spellRangeElement: {fileID: 7773660220898585820, guid: 03610d1a361fba8478e33e89f57c5df0, type: 3}
   tileMapGenerator: {fileID: 914706026}
   moveRate: 0
   speed: 10
+  spellRange: 3
   uiInventory: {fileID: 63714863}
+--- !u!114 &914706030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914706024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dd40f37efc34d548a68290aec7f2855, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &977346982
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Enemy : MonoBehaviour
 {
@@ -12,18 +13,24 @@ public class Enemy : MonoBehaviour
     };
     public int enemyIndex;
     public int hp;
+    public int hostility;
     public List<int> drops;
     public Type enemyType = new Type();
     public float speed;
     public float moveRate;
     public int enemySight;
     public float movableDistance;
+    public LayerMask spellRangeLayer;
     protected TilemapGenerator tileMapGenerator;
     protected Vector2Int targetPos;
     protected int[,] currentMap;
     protected GameObject player;
     private Vector3 spawnPosition;
     private float nextMove;
+    private Animator anim;
+    private Vector2Int moveVector;
+
+
 
     public void InitEnemy()
     {
@@ -33,11 +40,93 @@ public class Enemy : MonoBehaviour
         transform.position = (Vector2)targetPos;
         currentMap = tileMapGenerator.currentMap;
         nextMove = Time.time;
+        anim = GetComponent<Animator>();
+    }
+
+    public void UpdateEnemy()
+    {
+        if (hp == 0)
+        {
+            Destroy(this.gameObject);
+            Debug.Log(name + " is dead");
+        }
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0.1f);//to let it be a little bit on top of the surface
+
+
+        //if (transform.position == new Vector3(targetPos.x,targetPos.y,0.1f) && anim.GetBool("IsWalking")) {
+        //    anim.SetBool("IsWalking", false);
+        //    anim.SetBool("Up", false);
+        //    anim.SetBool("Down", false);
+        //    anim.SetBool("Right", false);
+        //    anim.SetBool("Left", false);
+        //}
+
+    }
+
+    private void OnMouseDown()
+    {
+
+        if (DetectCollision(spellRangeLayer))
+        {
+
+            React();
+        }
+
+    }
+
+    private void React()
+    {
+        Debug.Log("Enemy took 1 dmg");
+        hp--;
+
+    }
+
+    private void SetAnimationDir() {
+        
+        if (moveVector == Vector2Int.up)
+        { //move up
+            anim.SetBool("Up", true);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (moveVector == Vector2Int.down)
+        { //move down
+
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", true);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (moveVector == Vector2Int.left)
+        { //move left
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", true);
+        }
+        else if (moveVector == Vector2Int.right)
+        { //move right 
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", true);
+            anim.SetBool("Left", false);
+
+        }
     }
     private void MoveTowardsTargetPos()
     {
+        SetAnimationDir();
         transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
     }
+
+    private bool DetectCollision(LayerMask layer)
+    {
+        bool collider = Physics2D.OverlapBox(transform.position + new Vector3(0.5f, 0.5f, -0.1f), new Vector3(0.5f, 0.5f, 0), 0, layer);
+        return collider;
+    }
+
+
 
     public void MoveEnemy()
     {
@@ -53,11 +142,15 @@ public class Enemy : MonoBehaviour
             if (PlayerIsAround())
             {
                 SimpleChasePlayer();
-            } else if(Time.time>=nextMove)
+              //  SetAnimationDir();
+            }
+            else if (Time.time >= nextMove)
             {
                 nextMove = Time.time + moveRate;
                 RandomMovePos();
+               // SetAnimationDir();
             }
+            
         }
     }
 
@@ -68,7 +161,7 @@ public class Enemy : MonoBehaviour
     }
 
     private void SimpleChasePlayer()
-    {   
+    {
         Vector3 playerPos = player.transform.position;
         float currentX = transform.position.x;
         float currentY = transform.position.y;
@@ -76,7 +169,7 @@ public class Enemy : MonoBehaviour
         int xMovement = 0;
         int yMovement = 0;
         int loseInterestChance = (int)Random.Range(1, 11);
-        
+
         if (loseInterestChance < 9)
         {
             if (playerPos.x < currentX)
@@ -121,88 +214,97 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                yMovement = 0;
+                    yMovement = 0;
                 }
             }
 
-            Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = new Vector2Int(xMovement, yMovement);
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
-                targetPos += new Vector2Int(xMovement, yMovement);
+                targetPos += moveVector;
             }
-            else 
+            else
             {
                 RandomMovePos();
             }
         }
-        else 
+        else
         {
             RandomMovePos();
         }
     }
 
-  
+
     private void RandomMovePos()
     {
 
-       
-       
-            int random = Random.Range(0, 4);
 
-            if (random == 0)
+
+        int random = Random.Range(0, 4);
+
+        if (random == 0)
+        {
+            moveVector = Vector2Int.up;
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
-                Vector2Int destination = targetPos + Vector2Int.up;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.up;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
-
+                targetPos += Vector2Int.up;
+                
             }
-            else if (random == 1)
+            else
             {
-                Vector2Int destination = targetPos + Vector2Int.left;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.left;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
-
+                RandomMovePos();
             }
-            else if (random == 2)
+
+        }
+        else if (random == 1)
+        {
+            moveVector = Vector2Int.left;
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
-                Vector2Int destination = targetPos + Vector2Int.down;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.down;
-                }
-                else
-                {
-                    RandomMovePos();
-                }
-
+                targetPos += Vector2Int.left;
+               
             }
-            else if (random == 3)
+            else
             {
-                Vector2Int destination = targetPos + Vector2Int.right;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
-                {
-                    targetPos += Vector2Int.right;
-                }
-                else
-                {
-
-                    RandomMovePos();
-                }
-
+                RandomMovePos();
             }
-        
+
+        }
+        else if (random == 2)
+        {
+            moveVector = Vector2Int.down;
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.down;
+             
+            }
+            else
+            {
+                RandomMovePos();
+            }
+
+        }
+        else if (random == 3)
+        {
+            moveVector = Vector2Int.right;
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.right;
+               
+            }
+            else
+            {
+
+                RandomMovePos();
+            }
+
+        }
+
 
     }
 
@@ -215,91 +317,102 @@ public class Enemy : MonoBehaviour
     public bool PlayerIsAround()
     {
         //to check if player is around a certain distance
-        Vector2Int playerPos = new Vector2Int ((int)player.transform.position.x, (int)player.transform.position.y);
-        Vector2Int enemyPos = new Vector2Int ((int)transform.position.x, (int)transform.position.y);
+        Vector2Int playerPos = new Vector2Int((int)player.transform.position.x, (int)player.transform.position.y);
+        Vector2Int enemyPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
         //todo: write an algorithm to check the player is within a certain distance
         //get magnitude (distance) between playerPos and enemyPos
-        if ((enemyPos-playerPos).magnitude < enemySight)
+        if ((enemyPos - playerPos).magnitude < enemySight)
         {
             if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
             {
                 return true;
-            } else 
+            }
+            else
             {
                 return false;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
     public bool CanEnemySeePlayer()
     {
-        Vector2Int playerPos = new Vector2Int ((int)player.transform.position.x, (int)player.transform.position.y);
-        Vector2Int enemyPos = new Vector2Int ((int)transform.position.x, (int)transform.position.y);
-        Vector2Int differencePos = playerPos-enemyPos;
-        int distanceBetween = (int)((enemyPos-playerPos).magnitude);
-        Vector2Int checkUp = enemyPos + Vector2Int.up*distanceBetween;
-        Vector2Int checkDown = enemyPos + Vector2Int.down*distanceBetween;
-        Vector2Int checkLeft = enemyPos + Vector2Int.left*distanceBetween;
-        Vector2Int checkRight = enemyPos + Vector2Int.right*distanceBetween;
+        Vector2Int playerPos = new Vector2Int((int)player.transform.position.x, (int)player.transform.position.y);
+        Vector2Int enemyPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
+        Vector2Int differencePos = playerPos - enemyPos;
+        int distanceBetween = (int)((enemyPos - playerPos).magnitude);
+        Vector2Int checkUp = enemyPos + Vector2Int.up * distanceBetween;
+        Vector2Int checkDown = enemyPos + Vector2Int.down * distanceBetween;
+        Vector2Int checkLeft = enemyPos + Vector2Int.left * distanceBetween;
+        Vector2Int checkRight = enemyPos + Vector2Int.right * distanceBetween;
         if (playerPos == checkUp)
         {
             for (int i = 1; i < enemySight; i++)
             {
-                Vector2Int checkUp2 = enemyPos + Vector2Int.up*i;
-                if (tileMapGenerator.checkTileAtCoordinates(checkUp2.x, -checkUp2.y)==1) 
+                Vector2Int checkUp2 = enemyPos + Vector2Int.up * i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkUp2.x, -checkUp2.y) == 1)
                 {
                     return false;
-                } else if (i == enemySight)
+                }
+                else if (i == enemySight)
                 {
                     return true;
                 }
             }
-        } else if (playerPos == checkDown)
-        {
-            for (int i = 1; i < enemySight; i++)
-                {
-                    Vector2Int checkDown2 = enemyPos + Vector2Int.up*i;
-                    if (tileMapGenerator.checkTileAtCoordinates(checkDown2.x, -checkDown2.y)==1)
-                    {
-                        return false;
-                    } else if (i == enemySight)
-                    {
-                        return true;
-                    }
-                }
-        } else if (playerPos == checkRight) {
-            for (int i = 1; i < enemySight; i++)
-                {
-                    Vector2Int checkRight2 = enemyPos + Vector2Int.right*i;
-                    if (tileMapGenerator.checkTileAtCoordinates(checkRight2.x, -checkRight2.y)==1)
-                    {
-                        return false;
-                    } else if (i == enemySight)
-                    {
-                        return true;
-                    }
-                }
-        } else if (playerPos == checkLeft)
+        }
+        else if (playerPos == checkDown)
         {
             for (int i = 1; i < enemySight; i++)
             {
-                Vector2Int checkLeft2 = enemyPos + Vector2Int.left*i;
-                if (tileMapGenerator.checkTileAtCoordinates(checkLeft2.x, -checkLeft2.y)==1)
+                Vector2Int checkDown2 = enemyPos + Vector2Int.up * i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkDown2.x, -checkDown2.y) == 1)
                 {
                     return false;
-                } else if (i == enemySight)
+                }
+                else if (i == enemySight)
                 {
                     return true;
                 }
             }
-        } 
+        }
+        else if (playerPos == checkRight)
+        {
+            for (int i = 1; i < enemySight; i++)
+            {
+                Vector2Int checkRight2 = enemyPos + Vector2Int.right * i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkRight2.x, -checkRight2.y) == 1)
+                {
+                    return false;
+                }
+                else if (i == enemySight)
+                {
+                    return true;
+                }
+            }
+        }
+        else if (playerPos == checkLeft)
+        {
+            for (int i = 1; i < enemySight; i++)
+            {
+                Vector2Int checkLeft2 = enemyPos + Vector2Int.left * i;
+                if (tileMapGenerator.checkTileAtCoordinates(checkLeft2.x, -checkLeft2.y) == 1)
+                {
+                    return false;
+                }
+                else if (i == enemySight)
+                {
+                    return true;
+                }
+            }
+        }
         return true;
     }
 
     private void ChaseThroughWalls()
-    {   
+    {
         Vector3 playerPos = player.transform.position;
         float currentX = transform.position.x;
         float currentY = transform.position.y;
@@ -307,7 +420,7 @@ public class Enemy : MonoBehaviour
         int xMovement = 0;
         int yMovement = 0;
         int loseInterestChance = (int)Random.Range(1, 11);
-        
+
         if (loseInterestChance < 8)
         {
             if (playerPos.x < currentX)
@@ -339,21 +452,21 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                yMovement = 0;
+                    yMovement = 0;
                 }
             }
-
-            Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = new Vector2Int(xMovement, yMovement);
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
-                targetPos += new Vector2Int(xMovement, yMovement);
+                targetPos += moveVector;
             }
-            else 
+            else
             {
                 RandomMoveThroughWallsPos();
             }
         }
-        else 
+        else
         {
             RandomMoveThroughWallsPos();
         }
@@ -373,11 +486,16 @@ public class Enemy : MonoBehaviour
             if (PlayerIsAround())
             {
                 ChaseThroughWalls();
-            } else if(Time.time>=nextMove)
+               // SetAnimationDir();
+            }
+            else if (Time.time >= nextMove)
             {
                 nextMove = Time.time + moveRate;
+
                 RandomMoveThroughWallsPos();
+              //  SetAnimationDir();
             }
+           
         }
     }
 
@@ -388,44 +506,56 @@ public class Enemy : MonoBehaviour
 
         if (random == 0)
         {
-            Vector2Int destination = targetPos + Vector2Int.up;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = Vector2Int.up;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
-            } else
+                
+            }
+            else
             {
                 RandomMoveThroughWallsPos();
             }
         }
         else if (random == 1)
         {
-            Vector2Int destination = targetPos + Vector2Int.left;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = Vector2Int.left;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
-            } else
+            
+            }
+            else
             {
                 RandomMoveThroughWallsPos();
             }
         }
         else if (random == 2)
         {
-            Vector2Int destination = targetPos + Vector2Int.down;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = Vector2Int.down;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
-            } else
+               
+            }
+            else
             {
                 RandomMoveThroughWallsPos();
             }
         }
         else if (random == 3)
         {
-            Vector2Int destination = targetPos + Vector2Int.right;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            moveVector = Vector2Int.right;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
-            } else
+               
+            }
+            else
             {
                 RandomMoveThroughWallsPos();
             }
@@ -434,7 +564,8 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void SetSpawnPosition(Vector3 spawnPosition) {
+    public void SetSpawnPosition(Vector3 spawnPosition)
+    {
         this.spawnPosition = spawnPosition;
     }
 
@@ -445,21 +576,11 @@ public class Enemy : MonoBehaviour
         return destinationTile == 0;
     }
 
-    private bool withinRestrictedDistance(int xDestination, int yDestination)
+    private bool WithinRestrictedDistance(int xDestination, int yDestination)
     {
         bool withinDistance = (spawnPosition - new Vector3(xDestination, yDestination)).magnitude <= movableDistance;
         return withinDistance;
     }
 
-    private bool CheckMapLimit(int xDestination, int yDestination)
-    {
-        if (xDestination < 0 || xDestination > tileMapGenerator.mapSizeX - 1 || yDestination > 0 || yDestination < -(tileMapGenerator.mapSizeY - 1))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+
 }
