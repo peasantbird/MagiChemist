@@ -62,6 +62,7 @@ public class Enemy : MonoBehaviour
     }
 
     private void React() {
+        Debug.Log("Enemy took 1 dmg");
         hp--;
     
     }
@@ -166,7 +167,7 @@ public class Enemy : MonoBehaviour
             }
 
             Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += new Vector2Int(xMovement, yMovement);
             }
@@ -192,7 +193,7 @@ public class Enemy : MonoBehaviour
             if (random == 0)
             {
                 Vector2Int destination = targetPos + Vector2Int.up;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
                 {
                     targetPos += Vector2Int.up;
                 }
@@ -205,7 +206,7 @@ public class Enemy : MonoBehaviour
             else if (random == 1)
             {
                 Vector2Int destination = targetPos + Vector2Int.left;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
                 {
                     targetPos += Vector2Int.left;
                 }
@@ -218,7 +219,7 @@ public class Enemy : MonoBehaviour
             else if (random == 2)
             {
                 Vector2Int destination = targetPos + Vector2Int.down;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
                 {
                     targetPos += Vector2Int.down;
                 }
@@ -231,7 +232,7 @@ public class Enemy : MonoBehaviour
             else if (random == 3)
             {
                 Vector2Int destination = targetPos + Vector2Int.right;
-                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
                 {
                     targetPos += Vector2Int.right;
                 }
@@ -384,7 +385,7 @@ public class Enemy : MonoBehaviour
             }
 
             Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += new Vector2Int(xMovement, yMovement);
             }
@@ -429,7 +430,7 @@ public class Enemy : MonoBehaviour
         if (random == 0)
         {
             Vector2Int destination = targetPos + Vector2Int.up;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
             } else
@@ -440,7 +441,7 @@ public class Enemy : MonoBehaviour
         else if (random == 1)
         {
             Vector2Int destination = targetPos + Vector2Int.left;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
             } else
@@ -451,7 +452,7 @@ public class Enemy : MonoBehaviour
         else if (random == 2)
         {
             Vector2Int destination = targetPos + Vector2Int.down;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
             } else
@@ -462,7 +463,7 @@ public class Enemy : MonoBehaviour
         else if (random == 3)
         {
             Vector2Int destination = targetPos + Vector2Int.right;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
             } else
@@ -485,7 +486,7 @@ public class Enemy : MonoBehaviour
         return destinationTile == 0;
     }
 
-    private bool withinRestrictedDistance(int xDestination, int yDestination)
+    private bool WithinRestrictedDistance(int xDestination, int yDestination)
     {
         bool withinDistance = (spawnPosition - new Vector3(xDestination, yDestination)).magnitude <= movableDistance;
         return withinDistance;
