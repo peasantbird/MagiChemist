@@ -119,7 +119,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 0
-  hp: 0
+  hp: 2
   drops: 00000000
   enemyType: 0
   speed: 10
+  moveRate: 4
+  enemySight: 8
+  movableDistance: 6

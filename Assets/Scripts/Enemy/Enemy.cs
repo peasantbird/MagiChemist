@@ -15,11 +15,15 @@ public class Enemy : MonoBehaviour
     public List<int> drops;
     public Type enemyType = new Type();
     public float speed;
+    public float moveRate;
+    public int enemySight;
+    public float movableDistance;
     protected TilemapGenerator tileMapGenerator;
     protected Vector2Int targetPos;
     protected int[,] currentMap;
     protected GameObject player;
-
+    private Vector3 spawnPosition;
+    private float nextMove;
 
     public void InitEnemy()
     {
@@ -28,6 +32,11 @@ public class Enemy : MonoBehaviour
         targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         transform.position = (Vector2)targetPos;
         currentMap = tileMapGenerator.currentMap;
+        nextMove = Time.time;
+    }
+    private void MoveTowardsTargetPos()
+    {
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
     }
 
     public void MoveEnemy()
@@ -44,16 +53,12 @@ public class Enemy : MonoBehaviour
             if (PlayerIsAround())
             {
                 SimpleChasePlayer();
-            } else 
+            } else if(Time.time>=nextMove)
             {
+                nextMove = Time.time + moveRate;
                 RandomMovePos();
             }
         }
-    }
-
-    private void MoveTowardsTargetPos()
-    {
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
     }
 
     private void ChasePlayer()
@@ -121,7 +126,7 @@ public class Enemy : MonoBehaviour
             }
 
             Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (Movable(destination.x, destination.y))
+            if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += new Vector2Int(xMovement, yMovement);
             }
@@ -136,80 +141,68 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private bool Movable(int xDestination, int yDestination)
-    {
-        int destinationTile = tileMapGenerator.checkTileAtCoordinates(xDestination, -yDestination);
-        return destinationTile == 0;
-    }
-
-    private bool CheckMapLimit(int xDestination, int yDestination)
-    {
-        if (xDestination < 0|| xDestination > tileMapGenerator.mapSizeX - 1 || yDestination > 0|| yDestination < -(tileMapGenerator.mapSizeY - 1) )
-        {
-            return false;
-        } else {
-            return true;
-        }
-    }
+  
     private void RandomMovePos()
     {
 
-        int random = Random.Range(0, 4);
+       
+       
+            int random = Random.Range(0, 4);
 
-        if (random == 0)
-        {
-            Vector2Int destination = targetPos + Vector2Int.up;
-            if (Movable(destination.x, destination.y))
+            if (random == 0)
             {
-                targetPos += Vector2Int.up;
-            }
-            else
-            {
-                RandomMovePos();
-            }
+                Vector2Int destination = targetPos + Vector2Int.up;
+                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                {
+                    targetPos += Vector2Int.up;
+                }
+                else
+                {
+                    RandomMovePos();
+                }
 
-        }
-        else if (random == 1)
-        {
-            Vector2Int destination = targetPos + Vector2Int.left;
-            if (Movable(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.left;
             }
-            else
+            else if (random == 1)
             {
-                RandomMovePos();
-            }
+                Vector2Int destination = targetPos + Vector2Int.left;
+                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                {
+                    targetPos += Vector2Int.left;
+                }
+                else
+                {
+                    RandomMovePos();
+                }
 
-        }
-        else if (random == 2)
-        {
-            Vector2Int destination = targetPos + Vector2Int.down;
-            if (Movable(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.down;
             }
-            else
+            else if (random == 2)
             {
-                RandomMovePos();
-            }
+                Vector2Int destination = targetPos + Vector2Int.down;
+                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                {
+                    targetPos += Vector2Int.down;
+                }
+                else
+                {
+                    RandomMovePos();
+                }
 
-        }
-        else if (random == 3)
-        {
-            Vector2Int destination = targetPos + Vector2Int.right;
-            if (Movable(destination.x, destination.y))
+            }
+            else if (random == 3)
             {
-                targetPos += Vector2Int.right;
+                Vector2Int destination = targetPos + Vector2Int.right;
+                if (Movable(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+                {
+                    targetPos += Vector2Int.right;
+                }
+                else
+                {
+
+                    RandomMovePos();
+                }
+
             }
-            else
-            {
-
-                RandomMovePos();
-            }
-
-        }
-
+        
 
     }
 
@@ -226,7 +219,7 @@ public class Enemy : MonoBehaviour
         Vector2Int enemyPos = new Vector2Int ((int)transform.position.x, (int)transform.position.y);
         //todo: write an algorithm to check the player is within a certain distance
         //get magnitude (distance) between playerPos and enemyPos
-        if ((enemyPos-playerPos).magnitude < 8)
+        if ((enemyPos-playerPos).magnitude < enemySight)
         {
             if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
             {
@@ -252,51 +245,51 @@ public class Enemy : MonoBehaviour
         Vector2Int checkRight = enemyPos + Vector2Int.right*distanceBetween;
         if (playerPos == checkUp)
         {
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i < enemySight; i++)
             {
                 Vector2Int checkUp2 = enemyPos + Vector2Int.up*i;
                 if (tileMapGenerator.checkTileAtCoordinates(checkUp2.x, -checkUp2.y)==1) 
                 {
                     return false;
-                } else if (i == 8)
+                } else if (i == enemySight)
                 {
                     return true;
                 }
             }
         } else if (playerPos == checkDown)
         {
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i < enemySight; i++)
                 {
                     Vector2Int checkDown2 = enemyPos + Vector2Int.up*i;
                     if (tileMapGenerator.checkTileAtCoordinates(checkDown2.x, -checkDown2.y)==1)
                     {
                         return false;
-                    } else if (i == 8)
+                    } else if (i == enemySight)
                     {
                         return true;
                     }
                 }
         } else if (playerPos == checkRight) {
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i < enemySight; i++)
                 {
                     Vector2Int checkRight2 = enemyPos + Vector2Int.right*i;
                     if (tileMapGenerator.checkTileAtCoordinates(checkRight2.x, -checkRight2.y)==1)
                     {
                         return false;
-                    } else if (i == 8)
+                    } else if (i == enemySight)
                     {
                         return true;
                     }
                 }
         } else if (playerPos == checkLeft)
         {
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i < enemySight; i++)
             {
                 Vector2Int checkLeft2 = enemyPos + Vector2Int.left*i;
                 if (tileMapGenerator.checkTileAtCoordinates(checkLeft2.x, -checkLeft2.y)==1)
                 {
                     return false;
-                } else if (i == 8)
+                } else if (i == enemySight)
                 {
                     return true;
                 }
@@ -351,7 +344,7 @@ public class Enemy : MonoBehaviour
             }
 
             Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (CheckMapLimit(destination.x, destination.y))
+            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += new Vector2Int(xMovement, yMovement);
             }
@@ -380,8 +373,9 @@ public class Enemy : MonoBehaviour
             if (PlayerIsAround())
             {
                 ChaseThroughWalls();
-            } else 
+            } else if(Time.time>=nextMove)
             {
+                nextMove = Time.time + moveRate;
                 RandomMoveThroughWallsPos();
             }
         }
@@ -395,7 +389,7 @@ public class Enemy : MonoBehaviour
         if (random == 0)
         {
             Vector2Int destination = targetPos + Vector2Int.up;
-            if (CheckMapLimit(destination.x, destination.y))
+            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
             } else
@@ -406,7 +400,7 @@ public class Enemy : MonoBehaviour
         else if (random == 1)
         {
             Vector2Int destination = targetPos + Vector2Int.left;
-            if (CheckMapLimit(destination.x, destination.y))
+            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
             } else
@@ -417,7 +411,7 @@ public class Enemy : MonoBehaviour
         else if (random == 2)
         {
             Vector2Int destination = targetPos + Vector2Int.down;
-            if (CheckMapLimit(destination.x, destination.y))
+            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
             } else
@@ -428,7 +422,7 @@ public class Enemy : MonoBehaviour
         else if (random == 3)
         {
             Vector2Int destination = targetPos + Vector2Int.right;
-            if (CheckMapLimit(destination.x, destination.y))
+            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
             } else
@@ -438,5 +432,34 @@ public class Enemy : MonoBehaviour
         }
 
 
+    }
+
+    public void SetSpawnPosition(Vector3 spawnPosition) {
+        this.spawnPosition = spawnPosition;
+    }
+
+    private bool Movable(int xDestination, int yDestination)
+    {
+
+        int destinationTile = tileMapGenerator.checkTileAtCoordinates(xDestination, -yDestination);
+        return destinationTile == 0;
+    }
+
+    private bool withinRestrictedDistance(int xDestination, int yDestination)
+    {
+        bool withinDistance = (spawnPosition - new Vector3(xDestination, yDestination)).magnitude <= movableDistance;
+        return withinDistance;
+    }
+
+    private bool CheckMapLimit(int xDestination, int yDestination)
+    {
+        if (xDestination < 0 || xDestination > tileMapGenerator.mapSizeX - 1 || yDestination > 0 || yDestination < -(tileMapGenerator.mapSizeY - 1))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
