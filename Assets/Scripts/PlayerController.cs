@@ -11,17 +11,21 @@ public class PlayerController : MonoBehaviour
     public float moveRate;
     private float nextMove;
     public float speed;
+    [SerializeField] private UI_Inventory uiInventory;
     private Inventory inventory;
     private void Awake()
     {
+        Application.targetFrameRate = 60; // Restrict frame rate for better WebGL performance
         player = GameObject.Find("Player");
         currentMap = tileMapGenerator.currentMap;
         inventory = new Inventory();
+        uiInventory.SetInventory(inventory);
         nextMove = Time.time;
     }
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60; // Since it's turn based, to not be too resource intensive, we should limit FPS in the WEBGL build.
         targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         transform.position = (Vector2)targetPos;
     }
