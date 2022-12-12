@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Enemy : MonoBehaviour
 {
@@ -12,18 +13,21 @@ public class Enemy : MonoBehaviour
     };
     public int enemyIndex;
     public int hp;
+    public int hostility;
     public List<int> drops;
     public Type enemyType = new Type();
     public float speed;
     public float moveRate;
     public int enemySight;
     public float movableDistance;
+    public LayerMask spellRangeLayer;
     protected TilemapGenerator tileMapGenerator;
     protected Vector2Int targetPos;
     protected int[,] currentMap;
     protected GameObject player;
     private Vector3 spawnPosition;
     private float nextMove;
+    
 
     public void InitEnemy()
     {
@@ -34,11 +38,47 @@ public class Enemy : MonoBehaviour
         currentMap = tileMapGenerator.currentMap;
         nextMove = Time.time;
     }
+
+    public void UpdateEnemy() {
+        if (hp == 0) { 
+            Destroy(this.gameObject);
+            Debug.Log(name + " is dead");
+        }
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0.1f);//to let it be a little bit on top of the surface
+
+        
+
+    }
+
+    private void OnMouseDown()
+    {
+
+        if (DetectCollision(spellRangeLayer))
+        {
+
+            React();
+        }
+        
+    }
+
+    private void React() {
+        hp--;
+    
+    }
+
+
     private void MoveTowardsTargetPos()
     {
         transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
     }
 
+    private bool DetectCollision(LayerMask layer) {
+        bool collider = Physics2D.OverlapBox(transform.position+new Vector3(0.5f,0.5f,-0.1f), new Vector3(0.5f, 0.5f, 0), 0, layer);
+        return collider;
+    }
+
+
+    
     public void MoveEnemy()
     {
         bool moving = (Vector2)transform.position != targetPos;
@@ -344,7 +384,7 @@ public class Enemy : MonoBehaviour
             }
 
             Vector2Int destination = targetPos + new Vector2Int(xMovement, yMovement);
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += new Vector2Int(xMovement, yMovement);
             }
@@ -389,7 +429,7 @@ public class Enemy : MonoBehaviour
         if (random == 0)
         {
             Vector2Int destination = targetPos + Vector2Int.up;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
             } else
@@ -400,7 +440,7 @@ public class Enemy : MonoBehaviour
         else if (random == 1)
         {
             Vector2Int destination = targetPos + Vector2Int.left;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
             } else
@@ -411,7 +451,7 @@ public class Enemy : MonoBehaviour
         else if (random == 2)
         {
             Vector2Int destination = targetPos + Vector2Int.down;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
             } else
@@ -422,7 +462,7 @@ public class Enemy : MonoBehaviour
         else if (random == 3)
         {
             Vector2Int destination = targetPos + Vector2Int.right;
-            if (CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && withinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
             } else
@@ -451,15 +491,5 @@ public class Enemy : MonoBehaviour
         return withinDistance;
     }
 
-    private bool CheckMapLimit(int xDestination, int yDestination)
-    {
-        if (xDestination < 0 || xDestination > tileMapGenerator.mapSizeX - 1 || yDestination > 0 || yDestination < -(tileMapGenerator.mapSizeY - 1))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+  
 }
