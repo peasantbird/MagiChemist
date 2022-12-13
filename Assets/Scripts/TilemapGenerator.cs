@@ -384,7 +384,15 @@ public class TilemapGenerator : MonoBehaviour
         if (tileAtCoordinates != 1)
         {
             return 0;
+        } else 
+        {
+            return 1;
         }
+    }
+
+    public int getExactTileValueAtCoordinates(int x, int y)
+    {
+        int tileAtCoordinates = currentMap[y, x];
         return tileAtCoordinates;
     }
 

@@ -20,12 +20,14 @@ public class PlayerController : MonoBehaviour
     private bool rangeSpawned;
     private GameObject spellRangeObject;
 
+    public AudioClip[] soundEffects;
+    public AudioSource SFX;
+
     // For HealthBar
     private Image healthBar;
     public int currentHealth;
     public int maxHealth;
     //
-
 
     private void Awake()
     {
@@ -97,6 +99,7 @@ public class PlayerController : MonoBehaviour
             if (destinationTile == 0)
             {
                 targetPos += Vector2Int.up;
+                playFloorSoundEffect(destination.x, destination.y);
             }
         }
         else if (Input.GetKeyDown(KeyCode.A) && Time.time >= nextMove)
@@ -107,6 +110,7 @@ public class PlayerController : MonoBehaviour
             if (destinationTile == 0)
             {
                 targetPos += Vector2Int.left;
+                playFloorSoundEffect(destination.x, destination.y);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S) && Time.time >= nextMove)
@@ -117,6 +121,7 @@ public class PlayerController : MonoBehaviour
             if (destinationTile == 0)
             {
                 targetPos += Vector2Int.down;
+                playFloorSoundEffect(destination.x, destination.y);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D) && Time.time >= nextMove)
@@ -127,9 +132,28 @@ public class PlayerController : MonoBehaviour
             if (destinationTile == 0)
             {
                 targetPos += Vector2Int.right;
+                playFloorSoundEffect(destination.x, destination.y);
             }
         }
 
+    }
+
+    private void playFloorSoundEffect(int x, int y)
+    {
+        int currentFloor = tileMapGenerator.getExactTileValueAtCoordinates(x, -y);
+        if (currentFloor == 0) // Regular stone dungeon floor
+        {
+            SFX.PlayOneShot(soundEffects[0]); // normal walk
+        } else if (currentFloor == 2) // Water
+        {
+            SFX.PlayOneShot(soundEffects[1]); // water walk
+        } else if (currentFloor == 3) // Grass
+        {
+            SFX.PlayOneShot(soundEffects[2]); // grass walk
+        } else if (currentFloor == 4) // Sand
+        {
+            SFX.PlayOneShot(soundEffects[3], 0.2f); // sand walk
+        }
     }
 
     void SpawnRange()
