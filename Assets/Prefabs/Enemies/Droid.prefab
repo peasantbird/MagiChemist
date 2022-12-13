@@ -125,11 +125,9 @@ MonoBehaviour:
   hostility: 0
   drops: 
   enemyType: 2
-
-  speed: 10
+  speed: 12
   moveRate: 4
-  enemySight: 7
-  
+  enemySight: 8
   vertex: {fileID: 2198923799180241434, guid: 6fc348ec96c44544394a64f0a72c3ed8, type: 3}
   movableDistance: 999
   spellRangeLayer:
