@@ -7,7 +7,7 @@ public class FireSpirit : Enemy
     void Start()
     {
         base.InitEnemy();
-
+        base.enemyMovableTiles = new int[] {0, 3, 4}; // Fire spirit cannot move on water, so 2 is omitted
     }
 
     // Update is called once per frame
