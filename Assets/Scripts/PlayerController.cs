@@ -155,16 +155,20 @@ public class PlayerController : MonoBehaviour
         int currentFloor = tileMapGenerator.getExactTileValueAtCoordinates(x, -y);
         if (currentFloor == 0) // Regular stone dungeon floor
         {
+            speed = 10; // 100% speed on dungeon floor
             SFX.PlayOneShot(soundEffects[0]); // normal walk
         } else if (currentFloor == 2) // Water
         {
+            speed = 5; //Player's movement speed halved in water
             movementInWater();
             SFX.PlayOneShot(soundEffects[1]); // water walk
         } else if (currentFloor == 3) // Grass
         {
+            speed = 9; // 10% slower on grass
             SFX.PlayOneShot(soundEffects[2]); // grass walk
         } else if (currentFloor == 4) // Sand
         {
+            speed = 7; // Player's movement speed is -30% on sand (mostly cosmetic, due to turn-based unless projectiles are live)
             SFX.PlayOneShot(soundEffects[3], 0.2f); // sand walk
         }
     }
