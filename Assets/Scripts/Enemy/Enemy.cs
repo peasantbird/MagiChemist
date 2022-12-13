@@ -1,6 +1,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -45,6 +46,7 @@ public class Enemy : MonoBehaviour
     private Vertex bottomVertex;
     private Vertex[] adjVertexList;
     private int verticesCount;
+    private bool pathFindingComplete;
 
     protected PlayerController playerController;
     private bool collidedWithPlayer = false;
@@ -54,6 +56,7 @@ public class Enemy : MonoBehaviour
 
     public void InitEnemy()
     {
+        enemyMovableTiles = new int[] {0, 2, 3, 4}; // By default, enemy is able to walk on any type of floor. We override this if unable.
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
         playerController = player.GetComponent<PlayerController>();
@@ -65,11 +68,16 @@ public class Enemy : MonoBehaviour
         adjVertexList = new Vertex[4];
         excludeList = new List<Vertex>();
         verticesList = new List<Vertex>();
+
         pathFindingVertices = null;
-        enemyMovableTiles = new int[] {0, 2, 3, 4}; // By default, enemy is able to walk on any type of floor. We override this if unable.
+
+        pathFindingVertices = new GameObject("PathVertices").transform;
+        GenerateVertices();
+        verticesCount = pathFindingVertices.childCount;
+
         //GenerateVertices();
-       // pathFindingVertices = transform.Find("PathVertices");
-       // verticesCount = pathFindingVertices.childCount;
+        // pathFindingVertices = transform.Find("PathVertices");
+        // verticesCount = pathFindingVertices.childCount;
         //pathFindingVertices = new GameObject("PathVertices");
     }
 
@@ -135,8 +143,9 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void SetAnimationDir() {
-        
+    private void SetAnimationDir()
+    {
+
         if (moveVector == Vector2Int.up)
         { //move up
             anim.SetBool("Up", true);
@@ -193,88 +202,129 @@ public class Enemy : MonoBehaviour
         {
             if (PlayerIsAround())
             {
-                SimpleChasePlayer();
-              //  SetAnimationDir();
+                // SimpleChasePlayer();
+                StartCoroutine(ChasePlayer());
+                //  SetAnimationDir();
             }
             else if (Time.time >= nextMove)
             {
                 nextMove = Time.time + moveRate;
                 RandomMovePos();
-               // SetAnimationDir();
+                // SetAnimationDir();
             }
-            
+
         }
     }
 
-    private void ChasePlayer()
+    IEnumerator ChasePlayer()
     {
-        //Debug.Log("Enemy has spotted player and is giving chase.");
-        //If time use a refined algorithm
-        //pathFindingVertices = transform.Find("PathVertices");
-        if (pathFindingVertices == null)
-        {
-            GenerateVertices();
-            //pathFindingVertices = transform.Find("PathVertices");
-            verticesCount = pathFindingVertices.childCount;
-
-        }
-
+        float startTime;
+        float endTime;
+        float elapsedTime =0;
+        float desiredTime = 0.015f;
         distance = new int[verticesCount];
         previous = new Vertex[verticesCount];
         verticesList.Clear();
         excludeList.Clear();
-       // Vertex vertex = null;
-        for (int i = 0; i < verticesCount; i++)
+        // Vertex vertex = null;
+        for (int i = 0; i < verticesCount; i++) //initialize a distance array and previous array
         {
+            //optimization
+            startTime = Time.realtimeSinceStartup;
+
             distance[i] = System.Int32.MaxValue;
             previous[i] = null;
             verticesList.Add(pathFindingVertices.GetChild(i).GetComponent<Vertex>());
+
+            //optimization
+            endTime = Time.realtimeSinceStartup;
+            elapsedTime += endTime - startTime;
+
+            if (elapsedTime >= desiredTime) {
+                elapsedTime = 0;
+                yield return null;
+            }
         }
+
         FindAdjVertices(transform.position);
-        distance[verticesList.IndexOf(startingVertex)] = 0;
-        while (verticesList.Count != excludeList.Count) {
+        distance[verticesList.IndexOf(startingVertex)] = 0; //set the distance to the starting vertex to 0
+
+        while (verticesList.Count != excludeList.Count) //loop through when there is unvisited vertex in the list
+        {
             Vertex closestVertex = verticesList[0];
             int closeIndex = 0;
 
             for (int i = 0; i < verticesList.Count; i++)
             {
+                //optimization
+                startTime = Time.realtimeSinceStartup;
 
-                if (distance[i] < distance[closeIndex] && !excludeList.Contains(verticesList[i]))
+                if (distance[i] < distance[closeIndex] && !excludeList.Contains(verticesList[i]))//get the vertex with the least distance
                 {
                     closeIndex = i;
                     closestVertex = verticesList[i];
                 }
+
+                //optimization
+                endTime = Time.realtimeSinceStartup;
+                elapsedTime += endTime - startTime;
+
+                if (elapsedTime >= desiredTime)
+                {
+                    elapsedTime = 0;
+                    yield return null;
+                }
             }
-            excludeList.Add(verticesList[closeIndex]);
+            excludeList.Add(verticesList[closeIndex]); //add it to the visited list
             FindAdjVertices(verticesList[closeIndex].transform.position);
-            //int topDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, topVertex.transform.position);
-            //int leftDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, leftVertex.transform.position);
-            //int rightDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, rightVertex.transform.position);
-            //int bottomDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, bottomVertex.transform.position);
-            for (int i = 0; i < adjVertexList.Length; i++) {
+
+            for (int i = 0; i < adjVertexList.Length; i++) // loop through each adjacent vertex
+            {
+                //optimization
+                startTime = Time.realtimeSinceStartup;
+
                 int tempDist;
                 int vIndex;
-                if (adjVertexList[i] != null)
+                if (adjVertexList[i] != null) 
                 {
+                    //get the distance to that vertex
                     tempDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, adjVertexList[i].transform.position);
                     vIndex = verticesList.IndexOf(adjVertexList[i]);
-                    if (tempDist < distance[vIndex])
+                    if (tempDist < distance[vIndex]) //if the dist is shorter than the stored dist, change it to that
                     {
                         distance[vIndex] = tempDist;
-                        previous[vIndex] = closestVertex;
+                        previous[vIndex] = closestVertex; 
 
                     }
                 }
+
+                //optimization
+                endTime = Time.realtimeSinceStartup;
+                elapsedTime += endTime - startTime;
+
+                if (elapsedTime >= desiredTime)
+                {
+                    elapsedTime = 0;
+                    yield return null;
+                }
             }
-         
+            
 
         }
 
-       
+
+        //trace the path
         Vertex enemyVertex = null;
         Vertex targetVertex = null;
-        for (int i = 0; i < verticesCount; i++) {
-            if (verticesList[i].transform.position == player.transform.position)
+        for (int i = 0; i < verticesCount; i++)
+        {
+            //debug
+            //verticesList[i].ShowText(distance[i] + "");
+            //optimization
+            startTime = Time.realtimeSinceStartup;
+
+
+            if (verticesList[i].transform.position.x == player.transform.position.x && verticesList[i].transform.position.y == player.transform.position.y)
             {
 
                 targetVertex = verticesList[i];
@@ -283,22 +333,23 @@ public class Enemy : MonoBehaviour
             {
                 enemyVertex = verticesList[i];
             }
+
+
+            //optimization
+            endTime = Time.realtimeSinceStartup;
+            elapsedTime += endTime - startTime;
+
+            if (elapsedTime >= desiredTime)
+            {
+                elapsedTime = 0;
+                yield return null;
+            }
         }
-        //foreach (Vertex v in verticesList) {
-        //   // v.ShowText(distance[verticesList.IndexOf(v)]+"");
-        //    if (v.transform.position == player.transform.position) {
-          
-        //        targetVertex = v;
-        //    }
-        //    if (v.transform.position.x == transform.position.x && v.transform.position.y == transform.position.y) {
-        //        enemyVertex = v;
-        //    }
-        //}
         Vertex nextStep = targetVertex;
         bool canReach = true;
         if (targetVertex != null && enemyVertex != null)
         {
-            
+
             while (targetVertex != enemyVertex)
             {
                 nextStep = targetVertex;
@@ -306,7 +357,8 @@ public class Enemy : MonoBehaviour
                 {
                     targetVertex = previous[verticesList.IndexOf(targetVertex)];
                 }
-                else {
+                else
+                {
                     canReach = false;
                     break;
                 }
@@ -314,8 +366,14 @@ public class Enemy : MonoBehaviour
             }
             //nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
         }
-        if (canReach && nextStep!=null)
+
+
+     
+
+     
+        if (canReach && nextStep != null)
         {
+            //Debug.Log("Corountine Finished");
             targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
         }
         //debug
@@ -324,12 +382,6 @@ public class Enemy : MonoBehaviour
         //rightVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
         //topVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.cyan;
         //bottomVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.black;
-
-
-        //else {
-        //    GetCoord();
-        //}
-
 
 
     }
@@ -342,15 +394,8 @@ public class Enemy : MonoBehaviour
 
     }
 
-    //private void GetCoord() {
-    //    for (int i = 0; i < pathFindingVertices.transform.childCount; i++)
-    //    {
-    //        GameObject vertex = pathFindingVertices.transform.GetChild(i).gameObject;
-    //        vertex.transform.Find("Canvas").transform.Find("Text").GetComponent<TextMeshPro>().text = "(" + vertex.transform.position.x + "," + vertex.transform.position.y + ")";
-    //    }
-    //}
-
-    private void FindAdjVertices(Vector3 pos) {
+    private void FindAdjVertices(Vector3 pos)
+    {
         //adjVertexList.Clear();
         Vertex vertex = null;
         startingVertex = null;
@@ -402,22 +447,21 @@ public class Enemy : MonoBehaviour
         adjVertexList[0] = leftVertex; //0
         adjVertexList[1] = rightVertex; //1
         adjVertexList[2] = topVertex; //2
-        adjVertexList[3] =bottomVertex; //3
+        adjVertexList[3] = bottomVertex; //3
     }
-    private void GenerateVertices() {
+    private void GenerateVertices()
+    {
         pathFindingVertices = new GameObject("PathVertices").transform;
 
-      //  Vector3 playerPos = player.transform.position;
+        //  Vector3 playerPos = player.transform.position;
         Vector3 enemyPos = transform.position;
         for (int y = (int)enemyPos.y - enemySight; y <= (int)enemyPos.y + enemySight; y++)
         {
             for (int x = (int)enemyPos.x - enemySight; x <= (int)enemyPos.x + enemySight; x++)
             {
                 GameObject temp = Instantiate(vertex, new Vector3(x, y), Quaternion.identity);
-                //Transform txt1 = temp.transform.GetChild(0);
-                //Transform txt = temp.transform.GetChild(1);
                 temp.transform.SetParent(pathFindingVertices);
-                
+
             }
         }
         pathFindingVertices.SetParent(transform);
@@ -513,7 +557,7 @@ public class Enemy : MonoBehaviour
             if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
-                
+
             }
             else
             {
@@ -528,7 +572,7 @@ public class Enemy : MonoBehaviour
             if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
-               
+
             }
             else
             {
@@ -543,7 +587,7 @@ public class Enemy : MonoBehaviour
             if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
-             
+
             }
             else
             {
@@ -558,7 +602,7 @@ public class Enemy : MonoBehaviour
             if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
-               
+
             }
             else
             {
@@ -749,16 +793,16 @@ public class Enemy : MonoBehaviour
             if (PlayerIsAround())
             {
                 ChaseThroughWalls();
-               // SetAnimationDir();
+                // SetAnimationDir();
             }
             else if (Time.time >= nextMove)
             {
                 nextMove = Time.time + moveRate;
 
                 RandomMoveThroughWallsPos();
-              //  SetAnimationDir();
+                //  SetAnimationDir();
             }
-           
+
         }
     }
 
@@ -774,7 +818,7 @@ public class Enemy : MonoBehaviour
             if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
-                
+
             }
             else
             {
@@ -788,7 +832,7 @@ public class Enemy : MonoBehaviour
             if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
-            
+
             }
             else
             {
@@ -802,7 +846,7 @@ public class Enemy : MonoBehaviour
             if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
-               
+
             }
             else
             {
@@ -816,7 +860,7 @@ public class Enemy : MonoBehaviour
             if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
-               
+
             }
             else
             {
