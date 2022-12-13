@@ -502,8 +502,6 @@ public class Enemy : MonoBehaviour
     private void RandomMovePos()
     {
 
-
-
         int random = Random.Range(0, 4);
 
         if (random == 0)
