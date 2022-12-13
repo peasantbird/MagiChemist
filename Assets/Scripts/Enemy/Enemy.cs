@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour
         excludeList = new List<Vertex>();
         verticesList = new List<Vertex>();
 
-        pathFindingVertices = null;
+        //pathFindingVertices = null;
 
         pathFindingVertices = new GameObject("PathVertices").transform;
         GenerateVertices();
