@@ -51,8 +51,12 @@ public class Enemy : MonoBehaviour
     protected PlayerController playerController;
     private bool collidedWithPlayer = false;
 
+
+    protected int[] enemyMovableTiles;
+
     public void InitEnemy()
     {
+        enemyMovableTiles = new int[] {0, 2, 3, 4}; // By default, enemy is able to walk on any type of floor. We override this if unable.
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
         playerController = player.GetComponent<PlayerController>();
@@ -65,9 +69,12 @@ public class Enemy : MonoBehaviour
         excludeList = new List<Vertex>();
         verticesList = new List<Vertex>();
 
+        pathFindingVertices = null;
+
         pathFindingVertices = new GameObject("PathVertices").transform;
         GenerateVertices();
         verticesCount = pathFindingVertices.childCount;
+
         //GenerateVertices();
         // pathFindingVertices = transform.Find("PathVertices");
         // verticesCount = pathFindingVertices.childCount;
@@ -474,14 +481,14 @@ public class Enemy : MonoBehaviour
         {
             if (playerPos.x < currentX)
             { //player is at the left
-                if (Movable(targetPos.x - 1, targetPos.y))
+                if (Movable(targetPos.x - 1, targetPos.y, enemyMovableTiles))
                 {
                     xMovement = -1;
                 }
             }
             else if (playerPos.x > currentX)
             { //player is at the right
-                if (Movable(targetPos.x + 1, targetPos.y))
+                if (Movable(targetPos.x + 1, targetPos.y, enemyMovableTiles))
                 {
                     xMovement = 1;
                 }
@@ -490,7 +497,7 @@ public class Enemy : MonoBehaviour
 
             if (playerPos.y < currentY)
             { //player is at the bottom
-                if (Movable(targetPos.x, targetPos.y - 1))
+                if (Movable(targetPos.x, targetPos.y - 1, enemyMovableTiles))
                 {
                     yMovement = -1;
                 }
@@ -498,7 +505,7 @@ public class Enemy : MonoBehaviour
             else if (playerPos.y > currentY)
             { //player is at the top
 
-                if (Movable(targetPos.x, targetPos.y + 1))
+                if (Movable(targetPos.x, targetPos.y + 1, enemyMovableTiles))
                 {
                     yMovement = 1;
                 }
@@ -520,7 +527,7 @@ public class Enemy : MonoBehaviour
 
             moveVector = new Vector2Int(xMovement, yMovement);
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += moveVector;
             }
@@ -547,7 +554,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.up;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.up;
 
@@ -562,7 +569,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.left;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.left;
 
@@ -577,7 +584,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.down;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.down;
 
@@ -592,7 +599,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.right;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += Vector2Int.right;
 
@@ -869,11 +876,19 @@ public class Enemy : MonoBehaviour
         this.spawnPosition = spawnPosition;
     }
 
-    private bool Movable(int xDestination, int yDestination)
+    private bool Movable(int xDestination, int yDestination, int[] movableTiles)
     {
 
         int destinationTile = tileMapGenerator.checkTileAtCoordinates(xDestination, -yDestination);
-        return destinationTile == 0;
+        int tileAtCoordinates = currentMap[-yDestination, xDestination];
+        for (int i = 0; i < movableTiles.Length; ++i)
+        {
+            if (tileAtCoordinates == movableTiles[i])
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private bool WithinRestrictedDistance(int xDestination, int yDestination)

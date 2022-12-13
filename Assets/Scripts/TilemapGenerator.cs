@@ -30,7 +30,6 @@ public class TilemapGenerator : MonoBehaviour
             for (int i = 0; i <= spawnNumber; i++) // Ten of each enemy type
             {
                 Vector2Int enemyPos = getRandomFloorPos();
-
                 Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
                 temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
                 temp.SetSpawnPosition(temp.transform.position);
@@ -298,7 +297,7 @@ public class TilemapGenerator : MonoBehaviour
         Vector2Int floorPos = Vector2Int.zero;
         int xPos = 0;
         int yPos = 0;
-        while (currentMap[yPos, xPos]!=0) {
+        while (currentMap[yPos, xPos]!= 0) {
             xPos = Random.Range(1, mapSizeX - 2);
             yPos = Random.Range(1, mapSizeY - 2);
         }

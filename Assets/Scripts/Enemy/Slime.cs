@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireSpirit : Enemy
+public class Slime : Enemy
 {
+   // Start is called before the first frame update
     void Start()
     {
         base.InitEnemy();
-        base.enemyMovableTiles = new int[] {0, 3, 4}; // Fire spirit cannot move on water, so 2 is omitted
+        base.enemyMovableTiles = new int[] {0, 2, 4}; // Slimes cannot move on sand, so 3 is omitted
+
     }
 
     // Update is called once per frame
@@ -19,6 +21,6 @@ public class FireSpirit : Enemy
 
     public override void PlayVoice()
     {
-        //play fire voice
+        //play slime voice
     }
 }
