@@ -48,8 +48,8 @@ public class TilemapGenerator : MonoBehaviour
         for (int i = 0; i < rooms; ++i)
         {
         // Spawn at random location within map, set to 0 (empty space)
-            int roomX = Random.Range(1, yDimension - 1); // Ensure floors don't generate at edges   
-            int roomY = Random.Range(1, xDimension - 1); 
+            int roomX = Random.Range(1, xDimension - 1); // Ensure floors don't generate at edges   
+            int roomY = Random.Range(1, yDimension - 1); 
             int randomSizeX = Random.Range(1, maxSize);
             int randomSizeY = Random.Range(1, maxSize);
             //int floodChance = Random.Range(1, 5);
