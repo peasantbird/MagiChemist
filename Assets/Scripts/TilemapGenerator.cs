@@ -200,6 +200,13 @@ public class TilemapGenerator : MonoBehaviour
                     if (tileType == 0) 
                     {
                         tileArray[index] = floorPalette[0]; // Floor
+                        int oreSpawnChance = Random.Range(1, 30);
+                        if (oreSpawnChance > 28)
+                        {
+                            int randomOreType = Random.Range(5, 8);
+                            GameObject temp =Instantiate(landscapeFeature[randomOreType], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Random Plant
+                            temp.transform.parent = terrainElementContainer.transform;
+                        }
                     } else if (tileType == 2)
                     {
                         GameObject temp = Instantiate(landscapeFeature[0], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water

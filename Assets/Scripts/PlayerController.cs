@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     public int maxHealth;
     //
 
+    public Vector2Int nextDirection;
+
     private void Awake()
     {
         Application.targetFrameRate = 60; // Restrict frame rate for better WebGL performance
@@ -41,6 +43,8 @@ public class PlayerController : MonoBehaviour
         healthBar = GameObject.Find("HealthBar").GetComponent<Image>();
         maxHealth = 5;
         currentHealth = maxHealth;
+
+        nextDirection = Vector2Int.zero;
     }
     // Start is called before the first frame update
     void Start()
@@ -89,56 +93,64 @@ public class PlayerController : MonoBehaviour
     }
 
     private void NewTargetPos()
-    {
-
-        if (Input.GetKeyDown(KeyCode.W) && Time.time >= nextMove)
+    {   if (nextDirection == Vector2Int.zero) // If player is not prevented from moving
         {
-            nextMove = Time.time + moveRate;
-            Vector2Int destination = targetPos + Vector2Int.up;
-            int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-            if (destinationTile == 0)
+            if (Input.GetKeyDown(KeyCode.W) && Time.time >= nextMove)
             {
-                targetPos += Vector2Int.up;
-                playFloorSoundEffect(destination.x, destination.y);
+                nextMove = Time.time + moveRate;
+                Vector2Int destination = targetPos + Vector2Int.up;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0)
+                {
+                    targetPos += Vector2Int.up;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.A) && Time.time >= nextMove)
-        {
-            nextMove = Time.time + moveRate;
-            Vector2Int destination = targetPos + Vector2Int.left;
-            int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-            if (destinationTile == 0)
+            else if (Input.GetKeyDown(KeyCode.A) && Time.time >= nextMove)
             {
-                targetPos += Vector2Int.left;
-                playFloorSoundEffect(destination.x, destination.y);
+                nextMove = Time.time + moveRate;
+                Vector2Int destination = targetPos + Vector2Int.left;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0)
+                {
+                    targetPos += Vector2Int.left;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.S) && Time.time >= nextMove)
-        {
-            nextMove = Time.time + moveRate;
-            Vector2Int destination = targetPos + Vector2Int.down;
-            int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-            if (destinationTile == 0)
+            else if (Input.GetKeyDown(KeyCode.S) && Time.time >= nextMove)
             {
-                targetPos += Vector2Int.down;
-                playFloorSoundEffect(destination.x, destination.y);
+                nextMove = Time.time + moveRate;
+                Vector2Int destination = targetPos + Vector2Int.down;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0)
+                {
+                    targetPos += Vector2Int.down;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.D) && Time.time >= nextMove)
-        {
-            nextMove = Time.time + moveRate;
-            Vector2Int destination = targetPos + Vector2Int.right;
-            int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-            if (destinationTile == 0)
+            else if (Input.GetKeyDown(KeyCode.D) && Time.time >= nextMove)
             {
-                targetPos += Vector2Int.right;
-                playFloorSoundEffect(destination.x, destination.y);
+                nextMove = Time.time + moveRate;
+                Vector2Int destination = targetPos + Vector2Int.right;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0)
+                {
+                    targetPos += Vector2Int.right;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
             }
+        } else if (nextDirection != Vector2Int.zero) { // When player is in water, water moves them again
+            nextMove = Time.time + moveRate;
+            targetPos = nextDirection;
+            floorBehaviourAndSound(nextDirection.x, nextDirection.y);
+            nextDirection = Vector2Int.zero;
+        } else {
+            Debug.Log("Something broke.");
         }
 
     }
 
-    private void playFloorSoundEffect(int x, int y)
+    private void floorBehaviourAndSound(int x, int y)
     {
         int currentFloor = tileMapGenerator.getExactTileValueAtCoordinates(x, -y);
         if (currentFloor == 0) // Regular stone dungeon floor
@@ -146,6 +158,7 @@ public class PlayerController : MonoBehaviour
             SFX.PlayOneShot(soundEffects[0]); // normal walk
         } else if (currentFloor == 2) // Water
         {
+            movementInWater();
             SFX.PlayOneShot(soundEffects[1]); // water walk
         } else if (currentFloor == 3) // Grass
         {
@@ -153,6 +166,20 @@ public class PlayerController : MonoBehaviour
         } else if (currentFloor == 4) // Sand
         {
             SFX.PlayOneShot(soundEffects[3], 0.2f); // sand walk
+        }
+    }
+
+    private void movementInWater()
+    {
+        Vector2Int[] directions = {Vector2Int.right, Vector2Int.up, Vector2Int.left, Vector2Int.down};
+        Vector2Int destination = targetPos +  directions[Random.Range(0, directions.Length)];
+        int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+        if (destinationTile == 0)
+        {
+            nextDirection = destination;
+        } else 
+        {
+            movementInWater();
         }
     }
 
