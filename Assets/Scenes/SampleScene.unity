@@ -1389,7 +1389,7 @@ MonoBehaviour:
   spellRangeElement: {fileID: 7773660220898585820, guid: 03610d1a361fba8478e33e89f57c5df0, type: 3}
   tileMapGenerator: {fileID: 914706026}
   moveRate: 0
-  speed: 10
+  speed: 7
   spellRange: 3
   uiInventory: {fileID: 63714863}
   soundEffects:
