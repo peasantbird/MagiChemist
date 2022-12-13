@@ -46,6 +46,11 @@ public class PlayerController : MonoBehaviour
         if (moving)
         {
             MoveTowardsTargetPos();
+            if (rangeSpawned)
+            {
+                RemoveRange();
+                SpawnRange();
+            }
         }
         else
         {
@@ -131,9 +136,12 @@ public class PlayerController : MonoBehaviour
                 {
                     //  int tileAtCoordinates = currentMap[-i, j];
                     //  debug += tileAtCoordinates + " ";
-                    if (j >= currentPosition.x - num && j <= currentPosition.x + num) {
-                        GameObject temp = Instantiate(spellRangeElement, new Vector3(j, i, 0), Quaternion.identity);
-                        temp.transform.SetParent(spellRangeObject.transform,true);
+                    if (tileMapGenerator.checkTileAtCoordinates(j, -i) == 0)
+                    {
+                        if (j >= currentPosition.x - num && j <= currentPosition.x + num) {
+                            GameObject temp = Instantiate(spellRangeElement, new Vector3(j, i, 0), Quaternion.identity);
+                            temp.transform.SetParent(spellRangeObject.transform,true);
+                        }
                     }
                 }
                 else {
