@@ -266,7 +266,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -22454029
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -915998232, guid: 8a0e9ea1528fc442485c6ec65a38ba58, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1064,7 +1064,7 @@ MonoBehaviour:
   spellRangeElement: {fileID: 7773660220898585820, guid: 03610d1a361fba8478e33e89f57c5df0, type: 3}
   tileMapGenerator: {fileID: 914706026}
   moveRate: 0
-  speed: 10
+  speed: 7
   spellRange: 3
   uiInventory: {fileID: 63714863}
 --- !u!114 &914706030
