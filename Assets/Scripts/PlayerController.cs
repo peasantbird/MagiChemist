@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,6 +20,12 @@ public class PlayerController : MonoBehaviour
     private bool rangeSpawned;
     private GameObject spellRangeObject;
 
+    // For HealthBar
+    private Image healthBar;
+    public int currentHealth;
+    public int maxHealth;
+    //
+
 
     private void Awake()
     {
@@ -28,6 +35,10 @@ public class PlayerController : MonoBehaviour
         inventory = new Inventory();
         uiInventory.SetInventory(inventory);
         nextMove = Time.time;
+
+        healthBar = GameObject.Find("HealthBar").GetComponent<Image>();
+        maxHealth = 5;
+        currentHealth = maxHealth;
     }
     // Start is called before the first frame update
     void Start()
@@ -170,4 +181,11 @@ public class PlayerController : MonoBehaviour
         Destroy(spellRangeObject);
         spellRangeObject = null;
     }
+
+
+    public void RefreshHealthBar()
+    {
+        healthBar.fillAmount = (float)currentHealth/(float)maxHealth;
+    }
+
 }

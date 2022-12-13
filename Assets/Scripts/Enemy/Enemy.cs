@@ -33,6 +33,7 @@ public class Enemy : MonoBehaviour
     private Transform pathFindingVertices;
     private Animator anim;
     private Vector2Int moveVector;
+
     private int[] distance;
     private Vertex[] previous;
     private List<Vertex> verticesList;
@@ -45,11 +46,14 @@ public class Enemy : MonoBehaviour
     private Vertex[] adjVertexList;
     private int verticesCount;
 
+    protected PlayerController playerController;
+    private bool collidedWithPlayer = false;
 
     public void InitEnemy()
     {
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
+        playerController = player.GetComponent<PlayerController>();
         targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         transform.position = (Vector2)targetPos;
         currentMap = tileMapGenerator.currentMap;
@@ -97,6 +101,28 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if  (collidedWithPlayer == false)
+        {
+            // If hits player
+            if (other.gameObject.tag == "Player") 
+            {
+                collidedWithPlayer = true;
+                --playerController.currentHealth;
+                playerController.RefreshHealthBar();
+            }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player") 
+            {
+                collidedWithPlayer = false;
+            }
+    }
+
 
     private void React()
     {
@@ -149,8 +175,6 @@ public class Enemy : MonoBehaviour
         bool collider = Physics2D.OverlapBox(transform.position + new Vector3(0.5f, 0.5f, -0.1f), new Vector3(0.5f, 0.5f, 0), 0, layer);
         return collider;
     }
-
-
 
     public void MoveEnemy()
     {
