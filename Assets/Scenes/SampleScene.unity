@@ -934,7 +934,7 @@ MonoBehaviour:
   - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
   mapSizeX: 50
   mapSizeY: 50
-  spawnNumber: 3
+  spawnNumber: 1
 --- !u!82 &914706027
 AudioSource:
   m_ObjectHideFlags: 0

@@ -15,13 +15,17 @@ public class TilemapGenerator : MonoBehaviour
     public int mapSizeY;
     public int spawnNumber;
     private int newNoise;
+    private GameObject enemyContainer;
+    private GameObject terrainElementContainer;
+
     // Start is called before the first frame update
     private void Awake()
     {
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         currentMap = roomGenerator(21, 10, 50, 50);
         Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
-
+        enemyContainer = new GameObject("Enemies");
+        terrainElementContainer = new GameObject("TerrainElements");
         foreach (Enemy e in enemies) {//enermy walk test
             for (int i = 0; i <= spawnNumber; i++) // Ten of each enemy type
             {
@@ -30,6 +34,7 @@ public class TilemapGenerator : MonoBehaviour
                 Enemy temp = Instantiate(e, new Vector3(0,0,0),Quaternion.identity);
                 temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
                 temp.SetSpawnPosition(temp.transform.position);
+                temp.transform.parent = enemyContainer.transform;
             }
         }
         transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
@@ -197,7 +202,9 @@ public class TilemapGenerator : MonoBehaviour
                         tileArray[index] = floorPalette[0]; // Floor
                     } else if (tileType == 2)
                     {
-                        Instantiate(landscapeFeature[0], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
+                        GameObject temp = Instantiate(landscapeFeature[0], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Water
+                        temp.transform.parent = terrainElementContainer.transform;
+                    
                     } else if (tileType == 3)
                     {
                         int grassTileType = Random.Range(16, 20);
@@ -206,8 +213,9 @@ public class TilemapGenerator : MonoBehaviour
                         if (plantSpawnChance > 8)
                         {
                             int randomPlantType = Random.Range(1, 5);
-                            Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Random Plant
-                        }
+                            GameObject temp =Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0),Quaternion.identity); // Random Plant
+                        temp.transform.parent = terrainElementContainer.transform;
+                    }
                     } else if (tileType == 4)
                     {
                         int sandTileType = Random.Range(20, 24);
