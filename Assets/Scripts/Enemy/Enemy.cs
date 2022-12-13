@@ -1,5 +1,7 @@
+
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -19,6 +21,7 @@ public class Enemy : MonoBehaviour
     public float speed;
     public float moveRate;
     public int enemySight;
+    public GameObject vertex;
     public float movableDistance;
     public LayerMask spellRangeLayer;
     protected TilemapGenerator tileMapGenerator;
@@ -27,9 +30,20 @@ public class Enemy : MonoBehaviour
     protected GameObject player;
     private Vector3 spawnPosition;
     private float nextMove;
+    private Transform pathFindingVertices;
     private Animator anim;
     private Vector2Int moveVector;
-
+    private int[] distance;
+    private Vertex[] previous;
+    private List<Vertex> verticesList;
+    private List<Vertex> excludeList;
+    private Vertex startingVertex;
+    private Vertex leftVertex;
+    private Vertex rightVertex;
+    private Vertex topVertex;
+    private Vertex bottomVertex;
+    private Vertex[] adjVertexList;
+    private int verticesCount;
 
 
     public void InitEnemy()
@@ -41,6 +55,14 @@ public class Enemy : MonoBehaviour
         currentMap = tileMapGenerator.currentMap;
         nextMove = Time.time;
         anim = GetComponent<Animator>();
+        adjVertexList = new Vertex[4];
+        excludeList = new List<Vertex>();
+        verticesList = new List<Vertex>();
+        pathFindingVertices = null;
+        //GenerateVertices();
+       // pathFindingVertices = transform.Find("PathVertices");
+       // verticesCount = pathFindingVertices.childCount;
+        //pathFindingVertices = new GameObject("PathVertices");
     }
 
     public void UpdateEnemy()
@@ -52,7 +74,9 @@ public class Enemy : MonoBehaviour
         }
         transform.position = new Vector3(transform.position.x, transform.position.y, 0.1f);//to let it be a little bit on top of the surface
 
-
+        //if (Input.GetKeyDown(KeyCode.Backspace)) {
+        //    ChasePlayer();
+        //}
         //if (transform.position == new Vector3(targetPos.x,targetPos.y,0.1f) && anim.GetBool("IsWalking")) {
         //    anim.SetBool("IsWalking", false);
         //    anim.SetBool("Up", false);
@@ -158,6 +182,217 @@ public class Enemy : MonoBehaviour
     {
         //Debug.Log("Enemy has spotted player and is giving chase.");
         //If time use a refined algorithm
+        //pathFindingVertices = transform.Find("PathVertices");
+        if (pathFindingVertices == null)
+        {
+            GenerateVertices();
+            //pathFindingVertices = transform.Find("PathVertices");
+            verticesCount = pathFindingVertices.childCount;
+
+        }
+
+        distance = new int[verticesCount];
+        previous = new Vertex[verticesCount];
+        verticesList.Clear();
+        excludeList.Clear();
+       // Vertex vertex = null;
+        for (int i = 0; i < verticesCount; i++)
+        {
+            distance[i] = System.Int32.MaxValue;
+            previous[i] = null;
+            verticesList.Add(pathFindingVertices.GetChild(i).GetComponent<Vertex>());
+        }
+        FindAdjVertices(transform.position);
+        distance[verticesList.IndexOf(startingVertex)] = 0;
+        while (verticesList.Count != excludeList.Count) {
+            Vertex closestVertex = verticesList[0];
+            int closeIndex = 0;
+
+            for (int i = 0; i < verticesList.Count; i++)
+            {
+
+                if (distance[i] < distance[closeIndex] && !excludeList.Contains(verticesList[i]))
+                {
+                    closeIndex = i;
+                    closestVertex = verticesList[i];
+                }
+            }
+            excludeList.Add(verticesList[closeIndex]);
+            FindAdjVertices(verticesList[closeIndex].transform.position);
+            //int topDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, topVertex.transform.position);
+            //int leftDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, leftVertex.transform.position);
+            //int rightDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, rightVertex.transform.position);
+            //int bottomDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, bottomVertex.transform.position);
+            for (int i = 0; i < adjVertexList.Length; i++) {
+                int tempDist;
+                int vIndex;
+                if (adjVertexList[i] != null)
+                {
+                    tempDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, adjVertexList[i].transform.position);
+                    vIndex = verticesList.IndexOf(adjVertexList[i]);
+                    if (tempDist < distance[vIndex])
+                    {
+                        distance[vIndex] = tempDist;
+                        previous[vIndex] = closestVertex;
+
+                    }
+                }
+            }
+         
+
+        }
+
+       
+        Vertex enemyVertex = null;
+        Vertex targetVertex = null;
+        for (int i = 0; i < verticesCount; i++) {
+            if (verticesList[i].transform.position == player.transform.position)
+            {
+
+                targetVertex = verticesList[i];
+            }
+            if (verticesList[i].transform.position.x == transform.position.x && verticesList[i].transform.position.y == transform.position.y)
+            {
+                enemyVertex = verticesList[i];
+            }
+        }
+        //foreach (Vertex v in verticesList) {
+        //   // v.ShowText(distance[verticesList.IndexOf(v)]+"");
+        //    if (v.transform.position == player.transform.position) {
+          
+        //        targetVertex = v;
+        //    }
+        //    if (v.transform.position.x == transform.position.x && v.transform.position.y == transform.position.y) {
+        //        enemyVertex = v;
+        //    }
+        //}
+        Vertex nextStep = targetVertex;
+        bool canReach = true;
+        if (targetVertex != null && enemyVertex != null)
+        {
+            
+            while (targetVertex != enemyVertex)
+            {
+                nextStep = targetVertex;
+                if (previous[verticesList.IndexOf(targetVertex)] != null)
+                {
+                    targetVertex = previous[verticesList.IndexOf(targetVertex)];
+                }
+                else {
+                    canReach = false;
+                    break;
+                }
+                //nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            //nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
+        }
+        if (canReach && nextStep!=null)
+        {
+            targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
+        }
+        //debug
+        //startingVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
+        //leftVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.blue;
+        //rightVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
+        //topVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.cyan;
+        //bottomVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.black;
+
+
+        //else {
+        //    GetCoord();
+        //}
+
+
+
+    }
+
+    private int DistanceBetween2Points(Vector3 pt1, Vector3 pt2)
+    {
+        int x = (int)Mathf.Abs(pt1.x - pt2.x);
+        int y = (int)Mathf.Abs(pt1.y - pt2.y);
+        return x + y;
+
+    }
+
+    //private void GetCoord() {
+    //    for (int i = 0; i < pathFindingVertices.transform.childCount; i++)
+    //    {
+    //        GameObject vertex = pathFindingVertices.transform.GetChild(i).gameObject;
+    //        vertex.transform.Find("Canvas").transform.Find("Text").GetComponent<TextMeshPro>().text = "(" + vertex.transform.position.x + "," + vertex.transform.position.y + ")";
+    //    }
+    //}
+
+    private void FindAdjVertices(Vector3 pos) {
+        //adjVertexList.Clear();
+        Vertex vertex = null;
+        startingVertex = null;
+        leftVertex = null;
+        rightVertex = null;
+        bottomVertex = null;
+        topVertex = null;
+        for (int i = 0; i < verticesCount; i++)
+        {
+            vertex = pathFindingVertices.GetChild(i).GetComponent<Vertex>();
+            int vertexX = (int)vertex.transform.position.x;
+            int vertexY = (int)vertex.transform.position.y;
+            if (tileMapGenerator.CheckMapLimit(vertexX, vertexY))
+            {
+                if (vertexX == pos.x && vertexY == pos.y)
+                {
+                    startingVertex = vertex;
+                }
+                else if (vertexX == pos.x - 1 && vertexY == pos.y)
+                { //left vertex
+                    if (tileMapGenerator.checkTileAtCoordinates(vertexX, -vertexY) == 0)
+                    {
+                        leftVertex = vertex;
+                    }
+                }
+                else if (vertexX == pos.x + 1 && vertexY == pos.y)
+                {//right vertex
+                    if (tileMapGenerator.checkTileAtCoordinates(vertexX, -vertexY) == 0)
+                    {
+                        rightVertex = vertex;
+                    }
+                }
+                else if (vertexX == pos.x && vertexY == pos.y - 1)
+                { //bottom vertex
+                    if (tileMapGenerator.checkTileAtCoordinates(vertexX, -vertexY) == 0)
+                    {
+                        bottomVertex = vertex;
+                    }
+                }
+                else if (vertexX == pos.x && vertexY == pos.y + 1)
+                { //top vertex
+                    if (tileMapGenerator.checkTileAtCoordinates(vertexX, -vertexY) == 0)
+                    {
+                        topVertex = vertex;
+                    }
+                }
+            }
+        }
+        adjVertexList[0] = leftVertex; //0
+        adjVertexList[1] = rightVertex; //1
+        adjVertexList[2] = topVertex; //2
+        adjVertexList[3] =bottomVertex; //3
+    }
+    private void GenerateVertices() {
+        pathFindingVertices = new GameObject("PathVertices").transform;
+
+      //  Vector3 playerPos = player.transform.position;
+        Vector3 enemyPos = transform.position;
+        for (int y = (int)enemyPos.y - enemySight; y <= (int)enemyPos.y + enemySight; y++)
+        {
+            for (int x = (int)enemyPos.x - enemySight; x <= (int)enemyPos.x + enemySight; x++)
+            {
+                GameObject temp = Instantiate(vertex, new Vector3(x, y), Quaternion.identity);
+                //Transform txt1 = temp.transform.GetChild(0);
+                //Transform txt = temp.transform.GetChild(1);
+                temp.transform.SetParent(pathFindingVertices);
+                
+            }
+        }
+        pathFindingVertices.SetParent(transform);
     }
 
     private void SimpleChasePlayer()
