@@ -15,7 +15,7 @@ public class Droid : Enemy
     void Update()
     {
         base.UpdateEnemy();
-        base.MoveEnemyThroughWalls();
+        //base.MoveEnemyThroughWalls();
     }
 
     public override void PlayVoice()
@@ -23,6 +23,11 @@ public class Droid : Enemy
         //play droid voice
     }
 
-    
+    public override void EnemyStartAction()
+    {
+        base.TakeAction();
+    }
+
+
 
 }
