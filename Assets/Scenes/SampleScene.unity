@@ -1185,24 +1185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BGM: {fileID: 914706027}
   musicArray:
-  - {fileID: 8300000, guid: d791c808596ca49a9b1e7c686cedcf1d, type: 3}
-  - {fileID: 8300000, guid: ca41bbfd9c88d4846835938cbb0b6a69, type: 3}
-  - {fileID: 8300000, guid: 1ffcc3fc387ba4a48a1f1cc5956e5e5d, type: 3}
-  - {fileID: 8300000, guid: e2bff6e30224141bcbca77d5d3b6c546, type: 3}
-  - {fileID: 8300000, guid: 78ac127fed185473da9f007c8e52c20d, type: 3}
-  - {fileID: 8300000, guid: e0552ffe3f9a6466db71bc06b7e610aa, type: 3}
-  - {fileID: 8300000, guid: a04f1dc9c39f342a9be642f3a526d701, type: 3}
-  - {fileID: 8300000, guid: 301d57fa6ec354243b453448e1f0b56c, type: 3}
-  - {fileID: 8300000, guid: 8c8b15479624c41aba7046ffe3b8737e, type: 3}
-  - {fileID: 8300000, guid: a0ea7fa19a73a4f2f80e30f179601a41, type: 3}
-  - {fileID: 8300000, guid: f2adbe4df45d742bf99f1a550b134796, type: 3}
-  - {fileID: 8300000, guid: a3e77df4ce134499f8478d5e4ded59aa, type: 3}
-  - {fileID: 8300000, guid: 32c260a4dbaa14af3be7218ed06fcab1, type: 3}
-  - {fileID: 8300000, guid: 548cfac938af64b0d8f30555cf8c1dc1, type: 3}
-  - {fileID: 8300000, guid: cd8b70847783b431fb064bba2b5c0757, type: 3}
-  - {fileID: 8300000, guid: dca28b026a22d447284a220c40fec745, type: 3}
-  - {fileID: 8300000, guid: 33f41a7fc1d8f4c8b903931d93e58fd8, type: 3}
-  - {fileID: 8300000, guid: 6f2c8077f45244c32bcc32d5b250243a, type: 3}
+  - {fileID: 8300000, guid: 7037accc7ec9c4c3dae5b8a56ab7f48e, type: 3}
 --- !u!114 &914706026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1257,6 +1240,7 @@ MonoBehaviour:
   - {fileID: 2026396326818034373, guid: ff8cf370281d67f48854a56e15a226fb, type: 3}
   - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
   - {fileID: -5136876968334692965, guid: 078beac8d48094242ac8ebc617a767f4, type: 3}
+  - {fileID: -1185167024372884649, guid: c0820f4b03d514d6185f250d35583136, type: 3}
   mapSizeX: 50
   mapSizeY: 50
   spawnNumber: 1
