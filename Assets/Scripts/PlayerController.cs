@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class PlayerController : MonoBehaviour
 {
     public GameObject player;
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour
     //
 
     public Vector2Int nextDirection;
+    private UnityEngine.Rendering.Universal.Light2D light;
 
     private void Awake()
     {
@@ -61,6 +63,8 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         initialSpeed = speed;
         nextDirection = Vector2Int.zero;
+
+        light = GameObject.Find("Light 2D").GetComponent<UnityEngine.Rendering.Universal.Light2D>();
     }
     // Start is called before the first frame update
     void Start()
@@ -458,5 +462,23 @@ public class PlayerController : MonoBehaviour
     //        Gizmos.DrawCube(transform.position, new Vector3(playerSight, playerSight, playerSight));
     //    }
     //}
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Toxins")
+        {
+            --currentHealth;
+            RefreshHealthBar();
+            light.color = new Color(193/256, 225/256, 193/256);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Toxins")
+        {
+            light.color = Color.white;
+        }
+    }
 
 }

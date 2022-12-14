@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     {
         Earth,
         Living,
-        Nonliving
+        Nonliving,
     };
     public int enemyIndex;
     public int hp;
@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
     public float movableDistance;
     public bool moving;
     public bool isFloating;
+    public bool isToxic;
     public LayerMask spellRangeLayer;
     public LayerMask playerLayer;
 
@@ -83,7 +84,7 @@ public class Enemy : MonoBehaviour
 
     public void UpdateEnemy()
     {
-        if (hp == 0)
+        if (hp <= 0)
         {
             tileMapGenerator.GetSpawnedEnemies().Remove(this);
             Destroy(this.gameObject);
@@ -96,8 +97,17 @@ public class Enemy : MonoBehaviour
         {
             MoveToPos();
         }
+    }
 
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isToxic)
+        {
+            if (other.gameObject.tag == "Toxins")
+            {
+                --hp;
+            }
+        }
     }
 
     public virtual void EnemyStartAction()
