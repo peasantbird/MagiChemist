@@ -70,77 +70,41 @@ public class TilemapGenerator : MonoBehaviour
             // Add point on room border to array
             roomCorridorPoints.Add(new Vector2Int(roomX, roomY));
         }
+
         for (int i = 1; i < roomCorridorPoints.Count; ++i) // Connect each room to a tunnel
         {
             Vector2Int firstRoom = roomCorridorPoints[i-1];
             Vector2Int secondRoom = roomCorridorPoints[i];
-            int checkY = secondRoom.y - firstRoom.y;
-            int checkX = secondRoom.x - firstRoom.x;
-            int lesserHeight = 0, lesserWidth = 0, greaterHeight = 0, greaterWidth = 0;
-            if (checkY < 0) 
-            { 
-                greaterHeight = firstRoom.y;
-                lesserHeight = secondRoom.y;
-            } else if (checkY > 0)
-            {   greaterHeight = secondRoom.y;
-                lesserHeight = firstRoom.y;
-            } else if (checkY == 0)
-            { 
-                greaterHeight = -1; // invalid
-            }
-            if (checkX < 0) 
-            { 
-                greaterWidth = firstRoom.x;
-                lesserWidth = secondRoom.x;
-            } else if (checkX > 0)
-            { 
-                greaterWidth = secondRoom.x;
-                lesserWidth = firstRoom.x;
-            } else if (checkX == 0)
-            {
-                greaterWidth = -1; // invalid
-            }
-            if (greaterHeight == -1)
-            {   if (greaterWidth != -1)
-                {
-                    int y = firstRoom.y;
-                    for (int x = lesserWidth; x < greaterWidth; ++x) // Testing
-                    {
-                        if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1)
-                        {
-                        numberedMap[y, x] = 0; // Carve a floor
-                        }
-                    }
-                }
-            } else if (greaterWidth == -1)
-            {
-                int x = firstRoom.x;
-                for (int y = lesserHeight; y < greaterHeight; ++y)
-                    {
-                        if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1)
-                        {
-                        numberedMap[y, x] = 0; // Carve a floor
-                        }
-                    }
-            } else {
-                int x = lesserWidth; 
-                for (int y = lesserHeight; y < greaterHeight; ++y)
-                {
-                    if (y < yDimension - 2 && y > 1 && x < xDimension - 2 && x > 1)
-                        {
-                        numberedMap[y, x] = 0; // Carve a floor
-                        }
-                }
-                int j = lesserHeight;
-                for (int k = lesserWidth; k < greaterWidth; ++k)
-                {
-                    if (j < yDimension - 2 && j > 1 && k < xDimension - 2 && k > 1)
-                        {
-                        numberedMap[j, k] = 0; // Carve a floor
-                        }
-                }
-            }
+            generatePathBetweenTwoPoints(firstRoom, secondRoom, numberedMap);
         }
+
+        getFloorTilesFromNoise(xDimension, yDimension, numberedMap);
+
+        return numberedMap;
+    }
+    public void generatePathBetweenTwoPoints(Vector2 startPos, Vector2 endPos, int[,]numberedMap) 
+    {
+        bool moveInX = (Random.value > 0.5f);
+        Vector2 pos = startPos;
+        while(true) 
+        {
+            if (numberedMap[(int)pos.y, (int)pos.x] == 1) numberedMap[(int)pos.y, (int)pos.x] = 0;
+            if (pos == endPos) return;
+            if (moveInX) 
+            {
+                if (pos.x < endPos.x) pos.x++;
+                else if (pos.x > endPos.x) pos.x--;
+            } else 
+            {
+                if (pos.y < endPos.y) pos.y++;
+                else if (pos.y > endPos.y) pos.y--;
+            }
+            if (Random.value < 0.1f) moveInX = !moveInX; // Small chance to change direction
+        }
+    }
+
+    public void getFloorTilesFromNoise(int xDimension, int yDimension, int[,] numberedMap)
+    {
         // Set Water if floor below certain height
         for (int y = 0; y < yDimension - 1; ++y) // This for loop could be streamlined by removing it and shifting interior code to earlier
         {
@@ -163,7 +127,6 @@ public class TilemapGenerator : MonoBehaviour
                 }
             }
         }
-        return numberedMap;
     }
 
     private int[,] createBlankArray(int num, int xDimension, int yDimension) 
