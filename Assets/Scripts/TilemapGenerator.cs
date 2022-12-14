@@ -18,21 +18,30 @@ public class TilemapGenerator : MonoBehaviour
     private GameObject enemyContainer;
     private GameObject terrainElementContainer;
     private List<Enemy> spawnedEnemies;
+    private List<Vector2Int> usedPos; //prevent spawn overlap
 
     // Start is called before the first frame update
     private void Awake()
     {
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         spawnedEnemies = new List<Enemy>();
+        usedPos = new List<Vector2Int>();
         currentMap = roomGenerator(21, 10, 50, 50);
-        Vector2Int playerPos = getRandomFloorPos(); // Get random floor position on map
+        Vector2Int playerPos = getRandomFloorPos(new Vector2Int(100000,100000)); // Get random floor position on map
+        usedPos.Add(playerPos);
         enemyContainer = new GameObject("Enemies");
         terrainElementContainer = new GameObject("TerrainElements");
         foreach (Enemy e in enemies)
         {//enermy walk test
             for (int i = 0; i <= spawnNumber; i++) // Ten of each enemy type
             {
-                Vector2Int enemyPos = getRandomFloorPos();
+                Vector2Int enemyPos = getRandomFloorPos(playerPos); //prevent from spawn around the player
+                while (usedPos.Contains(enemyPos)) {
+                    enemyPos = getRandomFloorPos(playerPos);
+                }
+
+                usedPos.Add(enemyPos);
+
                 Enemy temp = Instantiate(e, new Vector3(0, 0, 0), Quaternion.identity);
                 temp.name = temp.name + i;
                 temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
@@ -327,12 +336,12 @@ public class TilemapGenerator : MonoBehaviour
         worldTerrain.SetTiles(positions, tileArray);
     }
 
-    Vector2Int getRandomFloorPos()
+    Vector2Int getRandomFloorPos(Vector2Int awayFrom)
     {
         Vector2Int floorPos = Vector2Int.zero;
         int xPos = 0;
         int yPos = 0;
-        while (currentMap[yPos, xPos] != 0)
+        while (currentMap[yPos, xPos] != 0 || (awayFrom-new Vector2Int(xPos,yPos)).magnitude<=5)
         {
             xPos = Random.Range(1, mapSizeX - 2);
             yPos = Random.Range(1, mapSizeY - 2);

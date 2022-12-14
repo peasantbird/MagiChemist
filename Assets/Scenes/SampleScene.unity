@@ -1397,6 +1397,7 @@ MonoBehaviour:
     m_Bits: 128
   randomMoveInWaterPerc: 25
   playerCanPassThroughEnemy: 1
+  playerSight: 9
   uiInventory: {fileID: 63714863}
   soundEffects:
   - {fileID: 8300000, guid: d18d80ac4757c476aa0972348fc7cdad, type: 3}

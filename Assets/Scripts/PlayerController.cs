@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask enemyLayer;
     public int randomMoveInWaterPerc;
     public bool playerCanPassThroughEnemy;
+    public int playerSight;
     [SerializeField] private UI_Inventory uiInventory;
 
     protected int[,] currentMap;
@@ -25,7 +26,11 @@ public class PlayerController : MonoBehaviour
     private GameObject spellRangeObject;
     private Vector2Int playerMoveDir;
     private float initialSpeed;
-   
+    private bool noEnemyIsStillMoving;
+    private bool noEnemyIsChasing;
+    private bool noEnemyIsAround;
+
+
     public AudioClip[] soundEffects;
     public AudioSource SFX;
 
@@ -64,45 +69,65 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-      
-        if (isMoving && (Vector2)transform.position == targetPos && NoEnemyIsStillMoving())//at the moment a player reach the destination, start enemies' turn
-        {
-            StartEnemyAction();
-        }
-        //if (!(tileMapGenerator.getExactTileValueAtCoordinates((int)transform.position.x, (int)-transform.position.y) == 2))
-        //{ //not on water
-        isMoving = (Vector2)transform.position != targetPos;
-        //}
-        //else {
-        //    isMoving = (Vector2)transform.position != targetPos && nextDirection != Vector2Int.zero;
-        //}
-        //onWater = nextDirection != Vector2Int.zero;
-        //isMoving = (Vector2)transform.position != targetPos;
+        CheckEnemyState();
 
-        if ((Vector2)transform.position != targetPos)
+        if (noEnemyIsAround)//move continuously
         {
-            MoveTowardsTargetPos();
-            if (rangeSpawned)
-            {
-                RemoveRange();
-                SpawnRange();
-            }
-        }
-        else if(NoEnemyIsStillMoving())
-        {
-            speed = initialSpeed;
-            NewTargetPos();
-        }
+            isMoving = (Vector2)transform.position != targetPos;
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (!rangeSpawned)
+            if (isMoving)
             {
-                SpawnRange();
+                MoveTowardsTargetPos();
+                StartEnemyAction();
+                if (rangeSpawned)
+                {
+                    RemoveRange();
+                    SpawnRange();
+                }
             }
             else
             {
-                RemoveRange();
+                speed = initialSpeed;
+                NewTargetPosContinuous();
+               
+            }
+
+        }
+        else //move grid based
+        {
+
+            if (isMoving && (Vector2)transform.position == targetPos && noEnemyIsStillMoving)//at the moment a player reach the destination, start enemies' turn
+            {
+                StartEnemyAction();
+            }
+
+            isMoving = (Vector2)transform.position != targetPos;
+
+            if ((Vector2)transform.position != targetPos)
+            {
+                MoveTowardsTargetPos();
+                if (rangeSpawned)
+                {
+                    RemoveRange();
+                    SpawnRange();
+                }
+            }
+            else if (noEnemyIsStillMoving)
+            {
+                speed = initialSpeed;
+                NewTargetPos();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (!rangeSpawned)
+                {
+                    SpawnRange();
+                }
+                else
+                {
+                    RemoveRange();
+                }
             }
         }
 
@@ -111,17 +136,37 @@ public class PlayerController : MonoBehaviour
         {
             StartEnemyAction();
         }
+
+        if (Input.GetKeyDown(KeyCode.E) && !isMoving)//press e to harvest an item
+        {
+            //todoÅF harvest item
+            StartEnemyAction();
+        }
     }
 
-    private bool NoEnemyIsStillMoving() {
-        bool noEnemyIsStillMoving = true;
+    private void CheckEnemyState() {
+        noEnemyIsStillMoving = true;
+        noEnemyIsChasing = true;
         List<Enemy> enemies = tileMapGenerator.GetSpawnedEnemies();
         foreach (Enemy e in enemies) {
             if (e.moving) {
                 noEnemyIsStillMoving = false;
+
+            }
+            if (e.isChasing) {
+                noEnemyIsChasing = false;
             }
         }
-        return noEnemyIsStillMoving;
+
+        Collider[] hitColliders = Physics.OverlapBox(transform.position+new Vector3(0.5f,0.5f,0), new Vector3(playerSight/2,playerSight/2,0.1f), Quaternion.identity, enemyLayer);
+        if (hitColliders.Length == 0)
+        {
+            noEnemyIsAround = true;
+        }
+        else {
+            noEnemyIsAround = false;
+        }
+
     }
     private void MoveTowardsTargetPos()
     {
@@ -129,6 +174,71 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void NewTargetPosContinuous() {
+        if (nextDirection == Vector2Int.zero) // If player is not prevented from moving
+        {
+            if (Input.GetKey(KeyCode.W) )
+            {
+                
+                Vector2Int destination = targetPos + Vector2Int.up;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0 && TileHaveNoEnemy(destination.x, destination.y))
+                {
+                    playerMoveDir = Vector2Int.up;
+                    targetPos += playerMoveDir;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
+            }
+            else if (Input.GetKey(KeyCode.A) )
+            {
+                
+                Vector2Int destination = targetPos + Vector2Int.left;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0 && TileHaveNoEnemy(destination.x, destination.y))
+                {
+                    playerMoveDir = Vector2Int.left;
+                    targetPos += playerMoveDir;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
+            }
+            else if (Input.GetKey(KeyCode.S) )
+            {
+               
+                Vector2Int destination = targetPos + Vector2Int.down;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0 && TileHaveNoEnemy(destination.x, destination.y))
+                {
+                    playerMoveDir = Vector2Int.down;
+                    targetPos += playerMoveDir;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
+            }
+            else if (Input.GetKey(KeyCode.D) )
+            {
+                
+                Vector2Int destination = targetPos + Vector2Int.right;
+                int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+                if (destinationTile == 0 && TileHaveNoEnemy(destination.x, destination.y))
+                {
+                    playerMoveDir = Vector2Int.right;
+                    targetPos += playerMoveDir;
+                    floorBehaviourAndSound(destination.x, destination.y);
+                }
+            }
+        }
+        else if (nextDirection != Vector2Int.zero)
+        { // When player is in water, water moves them again
+
+    
+            targetPos = nextDirection;
+            floorBehaviourAndSound(nextDirection.x, nextDirection.y);
+            nextDirection = Vector2Int.zero;
+        }
+        else
+        {
+            Debug.Log("Something broke.");
+        }
+    }
     private void NewTargetPos()
     {   if (nextDirection == Vector2Int.zero) // If player is not prevented from moving
         {
@@ -332,7 +442,7 @@ public class PlayerController : MonoBehaviour
     //{
     //    if (hitCollidersLength != 0)
     //    {
-    //        Gizmos.DrawCube(loc,size);
+    //        Gizmos.DrawCube(transform.position, new Vector3(playerSight, playerSight, playerSight));
     //    }
     //}
 
