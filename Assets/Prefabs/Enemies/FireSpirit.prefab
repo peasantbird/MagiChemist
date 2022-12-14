@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyIndex: 3
   hp: 1
-  hostility: 0
+  hostility: 1
   drops: 
   enemyType: 2
   speed: 7
@@ -159,6 +159,11 @@ MonoBehaviour:
   enemySight: 4
   vertex: {fileID: 2198923799180241434, guid: 6fc348ec96c44544394a64f0a72c3ed8, type: 3}
   movableDistance: 999
+  moving: 0
+  isFloating: 0
   spellRangeLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256

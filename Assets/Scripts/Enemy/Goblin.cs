@@ -14,11 +14,16 @@ public class Goblin :Enemy
     void Update()
     {
         base.UpdateEnemy();
-        base.MoveEnemy();
+       // base.MoveEnemy();
     }
 
     public override void PlayVoice()
     {
         //play goblin voice
+    }
+
+    public override void EnemyStartAction()
+    {
+        base.TakeAction();
     }
 }

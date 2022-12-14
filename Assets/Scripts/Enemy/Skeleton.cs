@@ -15,11 +15,16 @@ public class Skeleton : Enemy
     void Update()
     {
         base.UpdateEnemy();
-        base.MoveEnemy();
+      //  base.MoveEnemy();
     }
 
     public override void PlayVoice()
     {
         //play skele voice
+    }
+
+    public override void EnemyStartAction()
+    {
+        base.TakeAction();
     }
 }
