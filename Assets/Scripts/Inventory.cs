@@ -3,23 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory
+public class Inventory : MonoBehaviour
 {
-   private List<Item> itemList;
+    private List<Item> itemList;
+    public List<Item> initialItems;
+    
+    public UI_Inventory uiInventory;
 
-   public Inventory()
-   {
-     itemList = new List<Item>();
-     AddItem(new Item {itemType = Item.ItemType.Silicon, amount = 1});
-     AddItem(new Item {itemType = Item.ItemType.Silver, amount = 1});
-     AddItem(new Item {itemType = Item.ItemType.Oxygen, amount = 1});
-   }
+    void Start()
+    {
+       // initialItems = new List<Item>();
+        itemList = new List<Item>();
+        foreach (Item item in initialItems) {
+            item.amount = 1;
+            AddItem(item);
+        }
+    }
 
-   public void AddItem(Item item) {
-     itemList.Add(item);
-   }
+    void Update()
+    {
+        
+    }
 
-   public List<Item> GetItemList() {
-     return itemList;
-   }
+    public void AddItem(Item item)
+    {
+        itemList.Add(item);
+        uiInventory.AddToInventoryUI(item);
+    }
+
+    public List<Item> GetItemList()
+    {
+        return itemList;
+    }
 }

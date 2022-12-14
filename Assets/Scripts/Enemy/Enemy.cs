@@ -111,7 +111,7 @@ public class Enemy : MonoBehaviour
         if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
 
-            React();
+            React(playerController.selectedItem);
         }
 
     }
@@ -138,10 +138,11 @@ public class Enemy : MonoBehaviour
     //}
 
 
-    private void React()
+    private void React(Item playerSelectedItem)
     {
-        Debug.Log("Enemy took 1 dmg");
-        hp--;
+        Debug.Log("Player used " + playerSelectedItem +" against " + name);
+        playerController.selectedItem.ReduceAmount(1);
+        //hp--;
 
     }
 
@@ -840,7 +841,7 @@ public class Enemy : MonoBehaviour
     }
     private bool DetectCollision(LayerMask layer, Vector3 pos)
     {
-        bool collider = Physics2D.OverlapBox(pos + new Vector3(0.5f, 0.5f, 0), new Vector3(0.5f, 0.5f, 0), 0, layer);
+        bool collider = Physics2D.OverlapBox(pos + new Vector3(0.5f, 0.5f, 0), new Vector3(0.1f, 0.1f, 0), 0, layer);
         return collider;
     }
 
