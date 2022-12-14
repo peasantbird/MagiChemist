@@ -24,11 +24,16 @@ public class Enemy : MonoBehaviour
     public int enemySight;
     public GameObject vertex;
     public float movableDistance;
+    public bool moving;
+    public bool isFloating;
     public LayerMask spellRangeLayer;
+    public LayerMask playerLayer;
+
     protected TilemapGenerator tileMapGenerator;
     protected Vector2Int targetPos;
     protected int[,] currentMap;
     protected GameObject player;
+
     private Vector3 spawnPosition;
     private float nextMove;
     private Transform pathFindingVertices;
@@ -47,6 +52,7 @@ public class Enemy : MonoBehaviour
     private Vertex[] adjVertexList;
     private int verticesCount;
     private bool pathFindingComplete;
+    private bool isChasing;
 
     protected PlayerController playerController;
     private bool collidedWithPlayer = false;
@@ -56,7 +62,7 @@ public class Enemy : MonoBehaviour
 
     public void InitEnemy()
     {
-        enemyMovableTiles = new int[] {0, 2, 3, 4}; // By default, enemy is able to walk on any type of floor. We override this if unable.
+        enemyMovableTiles = new int[] { 0, 2, 3, 4 }; // By default, enemy is able to walk on any type of floor. We override this if unable.
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
         playerController = player.GetComponent<PlayerController>();
@@ -68,45 +74,41 @@ public class Enemy : MonoBehaviour
         adjVertexList = new Vertex[4];
         excludeList = new List<Vertex>();
         verticesList = new List<Vertex>();
-
-        //pathFindingVertices = null;
-
-        pathFindingVertices = new GameObject("PathVertices").transform;
+        // pathFindingVertices = new GameObject("PathVertices").transform;
         GenerateVertices();
         verticesCount = pathFindingVertices.childCount;
 
-        //GenerateVertices();
-        // pathFindingVertices = transform.Find("PathVertices");
-        // verticesCount = pathFindingVertices.childCount;
-        //pathFindingVertices = new GameObject("PathVertices");
+
     }
 
     public void UpdateEnemy()
     {
         if (hp == 0)
         {
+            tileMapGenerator.GetSpawnedEnemies().Remove(this);
             Destroy(this.gameObject);
             Debug.Log(name + " is dead");
         }
+
         transform.position = new Vector3(transform.position.x, transform.position.y, 0.1f);//to let it be a little bit on top of the surface
+        moving = (Vector2)transform.position != targetPos;
+        if (moving)
+        {
+            MoveToPos();
+        }
 
-        //if (Input.GetKeyDown(KeyCode.Backspace)) {
-        //    ChasePlayer();
-        //}
-        //if (transform.position == new Vector3(targetPos.x,targetPos.y,0.1f) && anim.GetBool("IsWalking")) {
-        //    anim.SetBool("IsWalking", false);
-        //    anim.SetBool("Up", false);
-        //    anim.SetBool("Down", false);
-        //    anim.SetBool("Right", false);
-        //    anim.SetBool("Left", false);
-        //}
 
+    }
+
+    public virtual void EnemyStartAction()
+    {
+        //virtual method
     }
 
     private void OnMouseDown()
     {
 
-        if (DetectCollision(spellRangeLayer))
+        if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
 
             React();
@@ -114,26 +116,26 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if  (collidedWithPlayer == false)
-        {
-            // If hits player
-            if (other.gameObject.tag == "Player") 
-            {
-                collidedWithPlayer = true;
-                --playerController.currentHealth;
-                playerController.RefreshHealthBar();
-            }
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "Player") 
-            {
-                collidedWithPlayer = false;
-            }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (collidedWithPlayer == false)
+    //    {
+    //        // If hits player
+    //        if (other.gameObject.tag == "Player")
+    //        {
+    //            collidedWithPlayer = true;
+    //            --playerController.currentHealth;
+    //            playerController.RefreshHealthBar();
+    //        }
+    //    }
+    //}
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.gameObject.tag == "Player")
+    //    {
+    //        collidedWithPlayer = false;
+    //    }
+    //}
 
 
     private void React()
@@ -143,84 +145,88 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void SetAnimationDir()
-    {
 
-        if (moveVector == Vector2Int.up)
-        { //move up
-            anim.SetBool("Up", true);
-            anim.SetBool("Down", false);
-            anim.SetBool("Right", false);
-            anim.SetBool("Left", false);
-        }
-        else if (moveVector == Vector2Int.down)
-        { //move down
-
-            anim.SetBool("Up", false);
-            anim.SetBool("Down", true);
-            anim.SetBool("Right", false);
-            anim.SetBool("Left", false);
-        }
-        else if (moveVector == Vector2Int.left)
-        { //move left
-            anim.SetBool("Up", false);
-            anim.SetBool("Down", false);
-            anim.SetBool("Right", false);
-            anim.SetBool("Left", true);
-        }
-        else if (moveVector == Vector2Int.right)
-        { //move right 
-            anim.SetBool("Up", false);
-            anim.SetBool("Down", false);
-            anim.SetBool("Right", true);
-            anim.SetBool("Left", false);
-
-        }
-    }
-    private void MoveTowardsTargetPos()
+    private void MoveToPos()
     {
         SetAnimationDir();
+        if (isChasing)
+        {
+            Debug.Log(name + " is chasing player");
+        }
+        //    //Debug.Log("Player's Pos is " + player.transform.position);
+        //    //Debug.Log("Target Pos is " + targetPos);
+        //    if (player.transform.position.x == targetPos.x && player.transform.position.y == targetPos.y)
+        //    {
+        //        targetPos = new Vector2Int((int)transform.position.x,(int)transform.position.y);//if player is at the target pos, interact with player
+        //        Debug.Log(name + " Interacted with player");
+
+        //    }
+        //    else
+        //    {
+
+        //        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //    }
+        //}
+        //else
+        //{
         transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //}
+
     }
 
-    private bool DetectCollision(LayerMask layer)
+
+
+    public void TakeAction()
     {
-        bool collider = Physics2D.OverlapBox(transform.position + new Vector3(0.5f, 0.5f, -0.1f), new Vector3(0.5f, 0.5f, 0), 0, layer);
-        return collider;
+
+        if (PlayerIsNearby())
+        {
+
+            
+            if (hostility != 0) {
+                Debug.Log(name + " hits player");
+                --playerController.currentHealth;
+                  playerController.RefreshHealthBar();
+            }
+        }
+        else
+        {
+            if (isFloating)
+            {
+                MoveEnemyThroughWalls();
+            }
+            else
+            {
+                MoveEnemy();
+            }
+        }
+
+
     }
 
     public void MoveEnemy()
     {
-        bool moving = (Vector2)transform.position != targetPos;
-        bool keyPressed = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D);
-
-        if (moving)
+        if (PlayerIsAround())
         {
-            MoveTowardsTargetPos();
+            // SimpleChasePlayer();
+
+            StartCoroutine(ChasePlayer());
+            //  SetAnimationDir();
         }
-        else if (keyPressed)
+        else if (Time.time >= nextMove)
         {
-            if (PlayerIsAround())
-            {
-                // SimpleChasePlayer();
-                StartCoroutine(ChasePlayer());
-                //  SetAnimationDir();
-            }
-            else if (Time.time >= nextMove)
-            {
-                nextMove = Time.time + moveRate;
-                RandomMovePos();
-                // SetAnimationDir();
-            }
-
+            nextMove = Time.time + moveRate;
+            RandomMovePos();
+            // SetAnimationDir();
         }
     }
 
     IEnumerator ChasePlayer()
     {
+
         float startTime;
         float endTime;
-        float elapsedTime =0;
+        float elapsedTime = 0;
         float desiredTime = 0.015f;
         distance = new int[verticesCount];
         previous = new Vertex[verticesCount];
@@ -240,13 +246,15 @@ public class Enemy : MonoBehaviour
             endTime = Time.realtimeSinceStartup;
             elapsedTime += endTime - startTime;
 
-            if (elapsedTime >= desiredTime) {
+            if (elapsedTime >= desiredTime)
+            {
                 elapsedTime = 0;
                 yield return null;
             }
         }
 
         FindAdjVertices(transform.position);
+
         distance[verticesList.IndexOf(startingVertex)] = 0; //set the distance to the starting vertex to 0
 
         while (verticesList.Count != excludeList.Count) //loop through when there is unvisited vertex in the list
@@ -285,7 +293,7 @@ public class Enemy : MonoBehaviour
 
                 int tempDist;
                 int vIndex;
-                if (adjVertexList[i] != null) 
+                if (adjVertexList[i] != null)
                 {
                     //get the distance to that vertex
                     tempDist = distance[closeIndex] + DistanceBetween2Points(startingVertex.transform.position, adjVertexList[i].transform.position);
@@ -293,7 +301,7 @@ public class Enemy : MonoBehaviour
                     if (tempDist < distance[vIndex]) //if the dist is shorter than the stored dist, change it to that
                     {
                         distance[vIndex] = tempDist;
-                        previous[vIndex] = closestVertex; 
+                        previous[vIndex] = closestVertex;
 
                     }
                 }
@@ -308,7 +316,7 @@ public class Enemy : MonoBehaviour
                     yield return null;
                 }
             }
-            
+
 
         }
 
@@ -319,7 +327,9 @@ public class Enemy : MonoBehaviour
         for (int i = 0; i < verticesCount; i++)
         {
             //debug
-            //verticesList[i].ShowText(distance[i] + "");
+          //  verticesList[i].ShowText(distance[i] + "");
+           // verticesList[i].transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.5f);
+
             //optimization
             startTime = Time.realtimeSinceStartup;
 
@@ -362,17 +372,18 @@ public class Enemy : MonoBehaviour
                     canReach = false;
                     break;
                 }
-                //nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
+              //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
             }
-            //nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
+          //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
         }
 
 
-     
 
-     
+
+
         if (canReach && nextStep != null)
         {
+            isChasing = true;
             //Debug.Log("Corountine Finished");
             targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
         }
@@ -467,81 +478,6 @@ public class Enemy : MonoBehaviour
         pathFindingVertices.SetParent(transform);
     }
 
-    private void SimpleChasePlayer()
-    {
-        Vector3 playerPos = player.transform.position;
-        float currentX = transform.position.x;
-        float currentY = transform.position.y;
-
-        int xMovement = 0;
-        int yMovement = 0;
-        int loseInterestChance = (int)Random.Range(1, 11);
-
-        if (loseInterestChance < 9)
-        {
-            if (playerPos.x < currentX)
-            { //player is at the left
-                if (Movable(targetPos.x - 1, targetPos.y, enemyMovableTiles))
-                {
-                    xMovement = -1;
-                }
-            }
-            else if (playerPos.x > currentX)
-            { //player is at the right
-                if (Movable(targetPos.x + 1, targetPos.y, enemyMovableTiles))
-                {
-                    xMovement = 1;
-                }
-            }
-
-
-            if (playerPos.y < currentY)
-            { //player is at the bottom
-                if (Movable(targetPos.x, targetPos.y - 1, enemyMovableTiles))
-                {
-                    yMovement = -1;
-                }
-            }
-            else if (playerPos.y > currentY)
-            { //player is at the top
-
-                if (Movable(targetPos.x, targetPos.y + 1, enemyMovableTiles))
-                {
-                    yMovement = 1;
-                }
-            }
-
-
-            if (xMovement != 0 && yMovement != 0)
-            { //prevent diagonal movement
-                int randomNum = Random.Range(0, 1);
-                if (randomNum == 0)
-                {
-                    xMovement = 0;
-                }
-                else
-                {
-                    yMovement = 0;
-                }
-            }
-
-            moveVector = new Vector2Int(xMovement, yMovement);
-            Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += moveVector;
-            }
-            else
-            {
-                RandomMovePos();
-            }
-        }
-        else
-        {
-            RandomMovePos();
-        }
-    }
-
 
     private void RandomMovePos()
     {
@@ -557,10 +493,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.up;
 
             }
-            else
-            {
-                RandomMovePos();
-            }
+           
 
         }
         else if (random == 1)
@@ -572,10 +505,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.left;
 
             }
-            else
-            {
-                RandomMovePos();
-            }
+         
 
         }
         else if (random == 2)
@@ -587,10 +517,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.down;
 
             }
-            else
-            {
-                RandomMovePos();
-            }
+          
 
         }
         else if (random == 3)
@@ -602,11 +529,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.right;
 
             }
-            else
-            {
-
-                RandomMovePos();
-            }
+          
 
         }
 
@@ -617,6 +540,152 @@ public class Enemy : MonoBehaviour
     public virtual void PlayVoice()
     {
         //virtual method
+    }
+
+
+    public void MoveEnemyThroughWalls()
+    {
+       
+        if (PlayerIsAround())
+        {
+            ChaseThroughWalls();
+            
+        }
+        else if (Time.time >= nextMove)
+        {
+            nextMove = Time.time + moveRate;
+
+            RandomMoveThroughWallsPos();
+          
+        }
+
+       
+    }
+
+    private void RandomMoveThroughWallsPos()
+    {
+
+        int random = Random.Range(0, 4);
+
+        if (random == 0)
+        {
+            moveVector = Vector2Int.up;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.up;
+
+            }
+            else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 1)
+        {
+            moveVector = Vector2Int.left;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.left;
+
+            }
+            else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 2)
+        {
+            moveVector = Vector2Int.down;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.down;
+
+            }
+            else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else if (random == 3)
+        {
+            moveVector = Vector2Int.right;
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += Vector2Int.right;
+
+            }
+            else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+
+
+    }
+
+    private void ChaseThroughWalls()
+    {
+        Vector3 playerPos = player.transform.position;
+        float currentX = transform.position.x;
+        float currentY = transform.position.y;
+
+        int xMovement = 0;
+        int yMovement = 0;
+        int loseInterestChance = (int)Random.Range(1, 11);
+
+        if (loseInterestChance < 8)
+        {
+            if (playerPos.x < currentX)
+            { //player is at the left
+                xMovement = -1;
+            }
+            else if (playerPos.x > currentX)
+            { //player is at the right
+                xMovement = 1;
+            }
+
+
+            if (playerPos.y < currentY)
+            { //player is at the bottom
+                yMovement = -1;
+            }
+            else if (playerPos.y > currentY)
+            { //player is at the top
+                yMovement = 1;
+            }
+
+
+            if (xMovement != 0 && yMovement != 0)
+            { //prevent diagonal movement
+                int randomNum = Random.Range(0, 1);
+                if (randomNum == 0)
+                {
+                    xMovement = 0;
+                }
+                else
+                {
+                    yMovement = 0;
+                }
+            }
+            moveVector = new Vector2Int(xMovement, yMovement);
+            Vector2Int destination = targetPos + moveVector;
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += moveVector;
+            }
+            else
+            {
+                RandomMoveThroughWallsPos();
+            }
+        }
+        else
+        {
+            RandomMoveThroughWallsPos();
+        }
     }
 
     public bool PlayerIsAround()
@@ -630,6 +699,7 @@ public class Enemy : MonoBehaviour
         {
             if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
             {
+                isChasing = true;
                 return true;
             }
             else
@@ -716,159 +786,6 @@ public class Enemy : MonoBehaviour
         return true;
     }
 
-    private void ChaseThroughWalls()
-    {
-        Vector3 playerPos = player.transform.position;
-        float currentX = transform.position.x;
-        float currentY = transform.position.y;
-
-        int xMovement = 0;
-        int yMovement = 0;
-        int loseInterestChance = (int)Random.Range(1, 11);
-
-        if (loseInterestChance < 8)
-        {
-            if (playerPos.x < currentX)
-            { //player is at the left
-                xMovement = -1;
-            }
-            else if (playerPos.x > currentX)
-            { //player is at the right
-                xMovement = 1;
-            }
-
-
-            if (playerPos.y < currentY)
-            { //player is at the bottom
-                yMovement = -1;
-            }
-            else if (playerPos.y > currentY)
-            { //player is at the top
-                yMovement = 1;
-            }
-
-
-            if (xMovement != 0 && yMovement != 0)
-            { //prevent diagonal movement
-                int randomNum = Random.Range(0, 1);
-                if (randomNum == 0)
-                {
-                    xMovement = 0;
-                }
-                else
-                {
-                    yMovement = 0;
-                }
-            }
-            moveVector = new Vector2Int(xMovement, yMovement);
-            Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += moveVector;
-            }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
-        }
-        else
-        {
-            RandomMoveThroughWallsPos();
-        }
-    }
-
-    public void MoveEnemyThroughWalls()
-    {
-        bool moving = (Vector2)transform.position != targetPos;
-        bool keyPressed = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D);
-
-        if (moving)
-        {
-            MoveTowardsTargetPos();
-        }
-        else if (keyPressed)
-        {
-            if (PlayerIsAround())
-            {
-                ChaseThroughWalls();
-                // SetAnimationDir();
-            }
-            else if (Time.time >= nextMove)
-            {
-                nextMove = Time.time + moveRate;
-
-                RandomMoveThroughWallsPos();
-                //  SetAnimationDir();
-            }
-
-        }
-    }
-
-    private void RandomMoveThroughWallsPos()
-    {
-
-        int random = Random.Range(0, 4);
-
-        if (random == 0)
-        {
-            moveVector = Vector2Int.up;
-            Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.up;
-
-            }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
-        }
-        else if (random == 1)
-        {
-            moveVector = Vector2Int.left;
-            Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.left;
-
-            }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
-        }
-        else if (random == 2)
-        {
-            moveVector = Vector2Int.down;
-            Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.down;
-
-            }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
-        }
-        else if (random == 3)
-        {
-            moveVector = Vector2Int.right;
-            Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
-            {
-                targetPos += Vector2Int.right;
-
-            }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
-        }
-
-
-    }
-
     public void SetSpawnPosition(Vector3 spawnPosition)
     {
         this.spawnPosition = spawnPosition;
@@ -895,5 +812,129 @@ public class Enemy : MonoBehaviour
         return withinDistance;
     }
 
+    private bool PlayerIsNearby()
+    {
+        return (player.transform.position - new Vector3(transform.position.x,transform.position.y,0)).magnitude <= 1.1f;
+    }
+    private bool DetectCollision(LayerMask layer, Vector3 pos)
+    {
+        bool collider = Physics2D.OverlapBox(pos + new Vector3(0.5f, 0.5f, 0), new Vector3(0.5f, 0.5f, 0), 0, layer);
+        return collider;
+    }
 
+    private void SetAnimationDir()
+    {
+
+        if (targetPos.x == transform.position.x && targetPos.y > transform.position.y)
+        { //move up
+            anim.SetBool("Up", true);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (targetPos.x == transform.position.x && targetPos.y < transform.position.y)
+        { //move down
+
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", true);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (targetPos.x < transform.position.x && targetPos.y == transform.position.y)
+        { //move left
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", true);
+        }
+        else if (targetPos.x > transform.position.x && targetPos.y == transform.position.y)
+        { //move right 
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", true);
+            anim.SetBool("Left", false);
+
+        }
+        else
+        {
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", true);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+    }
+    private void SimpleChasePlayer()
+    {
+        Vector3 playerPos = player.transform.position;
+        float currentX = transform.position.x;
+        float currentY = transform.position.y;
+
+        int xMovement = 0;
+        int yMovement = 0;
+        int loseInterestChance = (int)Random.Range(1, 11);
+
+        if (loseInterestChance < 9)
+        {
+            if (playerPos.x < currentX)
+            { //player is at the left
+                if (Movable(targetPos.x - 1, targetPos.y, enemyMovableTiles))
+                {
+                    xMovement = -1;
+                }
+            }
+            else if (playerPos.x > currentX)
+            { //player is at the right
+                if (Movable(targetPos.x + 1, targetPos.y, enemyMovableTiles))
+                {
+                    xMovement = 1;
+                }
+            }
+
+
+            if (playerPos.y < currentY)
+            { //player is at the bottom
+                if (Movable(targetPos.x, targetPos.y - 1, enemyMovableTiles))
+                {
+                    yMovement = -1;
+                }
+            }
+            else if (playerPos.y > currentY)
+            { //player is at the top
+
+                if (Movable(targetPos.x, targetPos.y + 1, enemyMovableTiles))
+                {
+                    yMovement = 1;
+                }
+            }
+
+
+            if (xMovement != 0 && yMovement != 0)
+            { //prevent diagonal movement
+                int randomNum = Random.Range(0, 1);
+                if (randomNum == 0)
+                {
+                    xMovement = 0;
+                }
+                else
+                {
+                    yMovement = 0;
+                }
+            }
+
+            moveVector = new Vector2Int(xMovement, yMovement);
+            Vector2Int destination = targetPos + moveVector;
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
+            {
+                targetPos += moveVector;
+            }
+            else
+            {
+                RandomMovePos();
+            }
+        }
+        else
+        {
+            RandomMovePos();
+        }
+    }
 }

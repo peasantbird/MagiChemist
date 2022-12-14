@@ -16,11 +16,16 @@ public class Slime : Enemy
     void Update()
     {
         base.UpdateEnemy();
-        base.MoveEnemy();
+       // base.MoveEnemy();
     }
 
     public override void PlayVoice()
     {
         //play slime voice
     }
+    public override void EnemyStartAction()
+    {
+        base.TakeAction();
+    }
+
 }

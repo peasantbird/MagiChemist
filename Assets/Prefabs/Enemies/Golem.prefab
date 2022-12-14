@@ -133,6 +133,9 @@ MonoBehaviour:
   spellRangeLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!65 &-2685795356802775213
 BoxCollider:
   m_ObjectHideFlags: 0
