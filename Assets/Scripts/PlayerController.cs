@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     public int randomMoveInWaterPerc;
     public bool playerCanPassThroughEnemy;
     public int playerSight;
+    public Item selectedItem;
+    public Item defaultItem;
+    public Item testItem;
     [SerializeField] private UI_Inventory uiInventory;
 
     protected int[,] currentMap;
@@ -29,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool noEnemyIsStillMoving;
     private bool noEnemyIsChasing;
     private bool noEnemyIsAround;
+    
 
 
     public AudioClip[] soundEffects;
@@ -70,7 +74,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckEnemyState();
-
+        if (selectedItem == null) {
+            RemoveRange();
+            selectedItem = defaultItem;
+            spellRange = selectedItem.itemRange;
+            SpawnRange();
+        }
+        spellRange = selectedItem.itemRange;
         if (noEnemyIsAround)//move continuously
         {
             isMoving = (Vector2)transform.position != targetPos;
@@ -134,6 +144,9 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X) && !isMoving)//press x to skip a turn
         {
+            // Debug.Log(selectedItem.gameObject.name);
+            testItem.amount = 1;
+            transform.GetComponent<Inventory>().AddItem(testItem);
             StartEnemyAction();
         }
 
@@ -363,7 +376,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void SpawnRange()
+    public void SpawnRange()
     {
         rangeSpawned = true;
         Vector2Int currentPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
@@ -426,7 +439,7 @@ public class PlayerController : MonoBehaviour
         }
        
     }
-    private void RemoveRange()
+    public void RemoveRange()
     {
         rangeSpawned = false;
         Destroy(spellRangeObject);
