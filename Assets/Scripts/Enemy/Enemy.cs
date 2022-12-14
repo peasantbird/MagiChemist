@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
     private Vertex[] adjVertexList;
     private int verticesCount;
     private bool pathFindingComplete;
-    private bool isChasing;
+    public bool isChasing;
 
     protected PlayerController playerController;
     private bool collidedWithPlayer = false;
@@ -121,7 +121,7 @@ public class Enemy : MonoBehaviour
         if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
 
-            React();
+            React(playerController.selectedItem);
         }
 
     }
@@ -148,10 +148,11 @@ public class Enemy : MonoBehaviour
     //}
 
 
-    private void React()
+    private void React(Item playerSelectedItem)
     {
-        Debug.Log("Enemy took 1 dmg");
-        hp--;
+        Debug.Log("Player used " + playerSelectedItem +" against " + name);
+        playerController.selectedItem.ReduceAmount(1);
+        //hp--;
 
     }
 
@@ -179,7 +180,11 @@ public class Enemy : MonoBehaviour
         //}
         //else
         //{
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+       // if (WithinRestrictedDistance(targetPos.x, targetPos.y))
+       // {
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //}
+        
         //}
 
     }
@@ -216,14 +221,14 @@ public class Enemy : MonoBehaviour
 
     public void MoveEnemy()
     {
-        if (PlayerIsAround())
+        if (PlayerIsAround() && !moving)
         {
             // SimpleChasePlayer();
 
             StartCoroutine(ChasePlayer());
             //  SetAnimationDir();
         }
-        else if (Time.time >= nextMove)
+        else if (Time.time >= nextMove && !moving)
         {
             nextMove = Time.time + moveRate;
             RandomMovePos();
@@ -393,9 +398,21 @@ public class Enemy : MonoBehaviour
 
         if (canReach && nextStep != null)
         {
-            isChasing = true;
-            //Debug.Log("Corountine Finished");
-            targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
+            if (WithinRestrictedDistance(nextStep.x, nextStep.y))
+            {
+                isChasing = true;
+                //Debug.Log("Corountine Finished");
+                targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
+            }
+            else {
+                isChasing = false;
+                RandomMovePos();
+            }
+         
+        }
+        else {
+            RandomMovePos();
+            isChasing = false;
         }
         //debug
         //startingVertex.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
@@ -556,12 +573,12 @@ public class Enemy : MonoBehaviour
     public void MoveEnemyThroughWalls()
     {
        
-        if (PlayerIsAround())
+        if (PlayerIsAround() && !moving)
         {
             ChaseThroughWalls();
             
         }
-        else if (Time.time >= nextMove)
+        else if (Time.time >= nextMove && !moving)
         {
             nextMove = Time.time + moveRate;
 
@@ -686,15 +703,18 @@ public class Enemy : MonoBehaviour
             if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
             {
                 targetPos += moveVector;
+                isChasing = true;
             }
             else
             {
                 RandomMoveThroughWallsPos();
+                isChasing = false;
             }
         }
         else
         {
             RandomMoveThroughWallsPos();
+            isChasing = false;
         }
     }
 
@@ -710,15 +730,18 @@ public class Enemy : MonoBehaviour
             if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
             {
                 isChasing = true;
+               
                 return true;
             }
             else
             {
+                isChasing = false;
                 return false;
             }
         }
         else
         {
+            isChasing = false;
             return false;
         }
     }
@@ -828,7 +851,7 @@ public class Enemy : MonoBehaviour
     }
     private bool DetectCollision(LayerMask layer, Vector3 pos)
     {
-        bool collider = Physics2D.OverlapBox(pos + new Vector3(0.5f, 0.5f, 0), new Vector3(0.5f, 0.5f, 0), 0, layer);
+        bool collider = Physics2D.OverlapBox(pos + new Vector3(0.5f, 0.5f, 0), new Vector3(0.1f, 0.1f, 0), 0, layer);
         return collider;
     }
 
