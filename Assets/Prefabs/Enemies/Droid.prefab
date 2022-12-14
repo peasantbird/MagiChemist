@@ -129,7 +129,7 @@ MonoBehaviour:
   moveRate: 4
   enemySight: 8
   vertex: {fileID: 2198923799180241434, guid: 6fc348ec96c44544394a64f0a72c3ed8, type: 3}
-  movableDistance: 999
+  movableDistance: 10
   moving: 0
   isFloating: 1
   spellRangeLayer:
@@ -138,6 +138,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  isChasing: 0
 --- !u!65 &1525586012480352173
 BoxCollider:
   m_ObjectHideFlags: 0
