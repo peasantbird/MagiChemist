@@ -13,6 +13,8 @@ public class TilemapGenerator : MonoBehaviour
     public int[,] currentMap;
     public int mapSizeX;
     public int mapSizeY;
+    public int numberOfRooms;
+    public int maxRoomSize;
     public int spawnNumber;
     private int newNoise;
     private GameObject enemyContainer;
@@ -26,7 +28,7 @@ public class TilemapGenerator : MonoBehaviour
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
         spawnedEnemies = new List<Enemy>();
         usedPos = new List<Vector2Int>();
-        currentMap = roomGenerator(21, 10, 50, 50);
+        currentMap = roomGenerator(numberOfRooms, maxRoomSize, mapSizeX, mapSizeY);
         Vector2Int playerPos = getRandomFloorPos(new Vector2Int(100000,100000)); // Get random floor position on map
         usedPos.Add(playerPos);
         enemyContainer = new GameObject("Enemies");
