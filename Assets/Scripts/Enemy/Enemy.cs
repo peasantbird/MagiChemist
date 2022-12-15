@@ -62,6 +62,7 @@ public class Enemy : MonoBehaviour
 
     protected int[] enemyMovableTiles;
 
+
     public void InitEnemy()
     {
         enemyMovableTiles = new int[] { 0, 2, 3, 4 }; // By default, enemy is able to walk on any type of floor. We override this if unable.
@@ -216,6 +217,7 @@ public class Enemy : MonoBehaviour
             
             if (hostility != 0) {
                 Debug.Log(name + " hits player");
+                playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
                 --playerController.currentHealth;
                   playerController.RefreshHealthBar();
             }
@@ -918,7 +920,7 @@ public class Enemy : MonoBehaviour
         Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f + pos.x, 0.5f + pos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
         if (otherEnemyColliders.Length > 0)
         {
-            Debug.Log(name + "Åes side have " + otherEnemyColliders.Length + " other enemy");
+            Debug.Log(name + "ÔøΩes side have " + otherEnemyColliders.Length + " other enemy");
         }
         foreach (Enemy enemy in tileMapGenerator.GetSpawnedEnemies()) {
             if (enemy.targetPos == (Vector2)pos) {

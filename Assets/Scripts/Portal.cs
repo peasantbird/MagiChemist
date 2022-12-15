@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
-
     private TilemapGenerator tileMapGenerator;
     private PlayerController playerController;
+    private AudioSource SFX;
     private void Start()
     {
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
@@ -16,6 +16,7 @@ public class Portal : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            playerController.SFX.PlayOneShot(playerController.soundEffects[5]);
             DestroyCurrentMapObjects();
             GenerateNextLevel();
         }

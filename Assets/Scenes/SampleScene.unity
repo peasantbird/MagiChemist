@@ -3026,6 +3026,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d5bb02a70d1ab4148907bbe1ad630967, type: 3}
   - {fileID: 8300000, guid: 3e3328d57486c417f9b51710d9d6b26c, type: 3}
   - {fileID: 8300000, guid: e8e470e704a7e40c582b95d6beb14081, type: 3}
+  - {fileID: 8300000, guid: d1a6d1793b4534304bf4f8d3857165ff, type: 3}
+  - {fileID: 8300000, guid: 2eee4ba97f6c94b798cbb1280e548f3a, type: 3}
   SFX: {fileID: 519420033}
   currentHealth: 0
   maxHealth: 100

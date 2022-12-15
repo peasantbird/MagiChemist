@@ -99,6 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00fee1d92c1f74ea28cf997750bc43d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portalSound: {fileID: 8300000, guid: 2eee4ba97f6c94b798cbb1280e548f3a, type: 3}
+  SFX: {fileID: 0}
 --- !u!65 &833645625750215052
 BoxCollider:
   m_ObjectHideFlags: 0

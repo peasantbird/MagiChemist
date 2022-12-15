@@ -11,13 +11,13 @@ public class MusicPlayer : MonoBehaviour
     }
     private void Start()
     {
-        BGM.PlayOneShot(RandomTrack());
+        BGM.PlayOneShot(RandomTrack(), 0.5f);
     }
     private void Update()
     {
         if (BGM.isPlaying == false) 
         {
-            BGM.PlayOneShot(RandomTrack());
+            BGM.PlayOneShot(RandomTrack(), 0.5f);
         }
     }
 }
