@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public int spellRange;
     public LayerMask enemyLayer;
+    public LayerMask resourceLayer;
     public int randomMoveInWaterPerc;
     public bool playerCanPassThroughEnemy;
     public int playerSight;
@@ -152,15 +153,25 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X) && !isMoving)//press x to skip a turn
         {
             // Debug.Log(selectedItem.gameObject.name);
-            testItem.amount = 1;
-            transform.GetComponent<Inventory>().AddItem(testItem);
+            //testItem.amount = 1;
+            //transform.GetComponent<Inventory>().AddItem(testItem);
             StartEnemyAction();
         }
 
         if (Input.GetKeyDown(KeyCode.E) && !isMoving)//press e to harvest an item
         {
             //todo�F harvest item
-            StartEnemyAction();
+            Collider2D collider = Physics2D.OverlapBox(transform.position, new Vector2(0.1f, 0.1f), 0f,resourceLayer);
+            if (collider != null)
+            {
+                Resources res = collider.transform.GetComponent<Resources>();
+                List<Item> obtainedItems = res.Harvest();
+                res.DestroyResource();
+                foreach (Item item in obtainedItems) {
+                    this.transform.GetComponent<Inventory>().AddItem(item);
+                }
+                StartEnemyAction();
+            }
         }
     }
 
