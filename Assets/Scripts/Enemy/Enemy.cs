@@ -398,7 +398,7 @@ public class Enemy : MonoBehaviour
 
         if (canReach && nextStep != null)
         {
-            if (WithinRestrictedDistance(nextStep.x, nextStep.y))
+            if (WithinRestrictedDistance((int)nextStep.transform.position.x, (int)nextStep.transform.position.y))
             {
                 isChasing = true;
                 //Debug.Log("Corountine Finished");

@@ -7,8 +7,8 @@ public class Vertex : MonoBehaviour
 {
     private TextMeshProUGUI tmPro;
     public bool debug;
-    public int x;
-    public int y;
+    //public int x;
+    //public int y;
     // Start is called before the first frame update
     void Start()
     {
