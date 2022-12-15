@@ -162,10 +162,14 @@ MonoBehaviour:
   moving: 0
   isFloating: 0
   isToxic: 1
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
   spellRangeLayer:
     serializedVersion: 2
     m_Bits: 64
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  isChasing: 0
   toxins: {fileID: 7539092407454211714, guid: dcb8404600a324695860675e3c79a856, type: 3}

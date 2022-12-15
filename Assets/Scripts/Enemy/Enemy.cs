@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     public bool moving;
     public bool isFloating;
     public bool isToxic;
+    public LayerMask enemyLayer;
     public LayerMask spellRangeLayer;
     public LayerMask playerLayer;
 
@@ -121,8 +122,10 @@ public class Enemy : MonoBehaviour
 
         if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
-
-            React(playerController.selectedItem);
+            if (playerController.selectedItem != null)
+            {
+                React(playerController.selectedItem);
+            }
         }
 
     }
@@ -153,7 +156,10 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("Player used " + playerSelectedItem +" against " + name);
         playerController.selectedItem.ReduceAmount(1);
-        //hp--;
+        if (playerSelectedItem.itemType == Item.ItemType.NormalAttack) {
+            hp--;
+        }
+     
 
     }
 
@@ -163,8 +169,9 @@ public class Enemy : MonoBehaviour
         SetAnimationDir();
         if (isChasing)
         {
-            Debug.Log(name + " is chasing player");
+            //Debug.Log(name + " is chasing player");
         }
+        
         //    //Debug.Log("Player's Pos is " + player.transform.position);
         //    //Debug.Log("Target Pos is " + targetPos);
         //    if (player.transform.position.x == targetPos.x && player.transform.position.y == targetPos.y)
@@ -180,12 +187,20 @@ public class Enemy : MonoBehaviour
         //    }
         //}
         //else
+        ////{
+        //Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f+targetPos.x, 0.5f+targetPos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
+        //if (moving)
         //{
-       // if (WithinRestrictedDistance(targetPos.x, targetPos.y))
-       // {
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //    if (otherEnemyColliders.Length == 0)
+        //    {
+                transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        //    }
+        //    else
+        //    {
+        //        targetPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
+        //        moving = false;
+        //    }
         //}
-        
         //}
 
     }
@@ -399,7 +414,7 @@ public class Enemy : MonoBehaviour
 
         if (canReach && nextStep != null)
         {
-            if (WithinRestrictedDistance((int)nextStep.transform.position.x, (int)nextStep.transform.position.y))
+            if (WithinRestrictedDistance((int)nextStep.transform.position.x, (int)nextStep.transform.position.y) && !TargetPosHaveOtherEnemy(nextStep.transform.position))
             {
                 isChasing = true;
                 //Debug.Log("Corountine Finished");
@@ -516,7 +531,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.up;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x,destination.y,0)))
             {
                 targetPos += Vector2Int.up;
 
@@ -528,7 +543,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.left;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.left;
 
@@ -540,7 +555,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.down;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.down;
 
@@ -552,7 +567,7 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.right;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.right;
 
@@ -599,57 +614,57 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.up;
             Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.up;
 
             }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
+            //else
+            //{
+            //    RandomMoveThroughWallsPos();
+            //}
         }
         else if (random == 1)
         {
             moveVector = Vector2Int.left;
             Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.left;
 
             }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
+            //else
+            //{
+            //    RandomMoveThroughWallsPos();
+            //}
         }
         else if (random == 2)
         {
             moveVector = Vector2Int.down;
             Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.down;
 
             }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
+            //else
+            //{
+            //    RandomMoveThroughWallsPos();
+            //}
         }
         else if (random == 3)
         {
             moveVector = Vector2Int.right;
             Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.right;
 
             }
-            else
-            {
-                RandomMoveThroughWallsPos();
-            }
+            //else
+            //{
+            //    RandomMoveThroughWallsPos();
+            //}
         }
 
 
@@ -701,7 +716,7 @@ public class Enemy : MonoBehaviour
             }
             moveVector = new Vector2Int(xMovement, yMovement);
             Vector2Int destination = targetPos + moveVector;
-            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y))
+            if (tileMapGenerator.CheckMapLimit(destination.x, destination.y) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += moveVector;
                 isChasing = true;
@@ -896,6 +911,22 @@ public class Enemy : MonoBehaviour
             anim.SetBool("Right", false);
             anim.SetBool("Left", false);
         }
+    }
+
+    private bool TargetPosHaveOtherEnemy(Vector3 pos) {
+        bool anotherEnemyHasSameTargetPos = false;
+        Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f + pos.x, 0.5f + pos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
+        if (otherEnemyColliders.Length > 0)
+        {
+            Debug.Log(name + "es side have " + otherEnemyColliders.Length + " other enemy");
+        }
+        foreach (Enemy enemy in tileMapGenerator.GetSpawnedEnemies()) {
+            if (enemy.targetPos == (Vector2)pos) {
+                Debug.Log(name + " and " + enemy.name + " is going to the same block ");
+                anotherEnemyHasSameTargetPos = true;
+            }
+        }
+        return otherEnemyColliders.Length >0 || anotherEnemyHasSameTargetPos;
     }
     private void SimpleChasePlayer()
     {

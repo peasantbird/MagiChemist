@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         nextMove = Time.time;
         playerMoveDir = new Vector2Int();
         healthBar = GameObject.Find("HealthBar").GetComponent<Image>();
-        maxHealth = 5;
+       // maxHealth = 5;
         currentHealth = maxHealth;
         initialSpeed = speed;
         nextDirection = Vector2Int.zero;
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
             {
                 StartEnemyAction();
             }
-
+          
             isMoving = (Vector2)transform.position != targetPos;
 
             if ((Vector2)transform.position != targetPos)
@@ -187,7 +187,14 @@ public class PlayerController : MonoBehaviour
     }
     private void MoveTowardsTargetPos()
     {
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        if (TileHaveNoEnemy(targetPos.x, targetPos.y))
+        {
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        }
+        else {
+            targetPos = new Vector2Int((int)transform.position.x,(int)transform.position.y);
+        }
+      
 
     }
 
@@ -348,35 +355,41 @@ public class PlayerController : MonoBehaviour
 
     private void MovementInWater()
     {
-        
-        List<Vector2Int> directions = new List<Vector2Int>();
-        if (playerMoveDir != Vector2Int.down)
+        try
         {
-            directions.Add(Vector2Int.up);
-        }
-        if (playerMoveDir != Vector2Int.up)
-        {
-            directions.Add(Vector2Int.down);
-        }
-        if (playerMoveDir != Vector2Int.right)
-        {
-            directions.Add(Vector2Int.left);
-        }
-        if (playerMoveDir != Vector2Int.left)
-        {
-            directions.Add(Vector2Int.right);
-        }
-       
-       
+            List<Vector2Int> directions = new List<Vector2Int>();
+            if (playerMoveDir != Vector2Int.down)
+            {
+                directions.Add(Vector2Int.up);
+            }
+            if (playerMoveDir != Vector2Int.up)
+            {
+                directions.Add(Vector2Int.down);
+            }
+            if (playerMoveDir != Vector2Int.right)
+            {
+                directions.Add(Vector2Int.left);
+            }
+            if (playerMoveDir != Vector2Int.left)
+            {
+                directions.Add(Vector2Int.right);
+            }
 
-        Vector2Int destination = targetPos +  directions[Random.Range(0, directions.Count)];
-        int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
-        if (destinationTile == 0)
-        {
-            nextDirection = destination;
-        } else 
-        {
-            MovementInWater();
+
+
+            Vector2Int destination = targetPos + directions[Random.Range(0, directions.Count)];
+            int destinationTile = tileMapGenerator.checkTileAtCoordinates(destination.x, -destination.y);
+            if (destinationTile == 0 && TileHaveNoEnemy(destination.x, destination.y))
+            {
+                nextDirection = destination;
+            }
+            else
+            {
+                MovementInWater();
+            }
+        }
+        catch (System.Exception ex) {
+            Debug.Log("Water walking error" + ex.Message);
         }
     }
 
