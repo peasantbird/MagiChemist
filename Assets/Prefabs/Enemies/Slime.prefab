@@ -161,6 +161,10 @@ MonoBehaviour:
   movableDistance: 5
   moving: 0
   isFloating: 0
+  isToxic: 0
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
   spellRangeLayer:
     serializedVersion: 2
     m_Bits: 64
