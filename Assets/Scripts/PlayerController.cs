@@ -32,9 +32,8 @@ public class PlayerController : MonoBehaviour
     private bool noEnemyIsStillMoving;
     private bool noEnemyIsChasing;
     private bool noEnemyIsAround;
+
     private Animator anim;
-
-
     public AudioClip[] soundEffects;
     public AudioSource SFX;
 
@@ -485,6 +484,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Toxins")
         {
+            SFX.PlayOneShot(soundEffects[4]);
             --currentHealth;
             RefreshHealthBar();
             light.color = new Color(193f/256f, 225f/256f, 193f/256f);

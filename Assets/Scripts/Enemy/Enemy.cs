@@ -233,8 +233,6 @@ public class Enemy : MonoBehaviour
 
         if (PlayerIsNearby())
         {
-
-
             if (hostility != 0)
             {
                 attacking = true;
@@ -290,6 +288,7 @@ public class Enemy : MonoBehaviour
     {
         yield return new WaitForSeconds(time/2);
         Debug.Log(name + " hits player");
+        playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
         --playerController.currentHealth;
         playerController.RefreshHealthBar();
         yield return new WaitForSeconds(time / 2);
@@ -1020,7 +1019,7 @@ public class Enemy : MonoBehaviour
         Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f + pos.x, 0.5f + pos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
         if (otherEnemyColliders.Length > 0)
         {
-            Debug.Log(name + "Åes side have " + otherEnemyColliders.Length + " other enemy");
+            Debug.Log(name + "ÔøΩes side have " + otherEnemyColliders.Length + " other enemy");
         }
         foreach (Enemy enemy in tileMapGenerator.GetSpawnedEnemies())
         {
