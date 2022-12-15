@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2792792644667175733}
   m_Layer: 7
   m_Name: Skeleton
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   hostility: 1
   drops: 
   enemyType: 2
-  speed: 7
+  speed: 10
   moveRate: 4
   enemySight: 4
   vertex: {fileID: 2198923799180241434, guid: 6fc348ec96c44544394a64f0a72c3ed8, type: 3}

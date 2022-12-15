@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     protected int[,] currentMap;
     private float nextMove;
     private bool isMoving;
-    private Vector2Int targetPos;
+    public Vector2Int targetPos;
     private Inventory inventory;
     private bool rangeSpawned;
     private GameObject spellRangeObject;
@@ -492,6 +492,12 @@ public class PlayerController : MonoBehaviour
         {
             light.color = Color.white;
         }
+    }
+
+    public void RefreshPlayerPosition()
+    {
+        targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, 100 * Time.deltaTime);
     }
 
 }

@@ -15,7 +15,7 @@ public class TilemapGenerator : MonoBehaviour
     public int mapSizeY;
     public int numberOfRooms;
     public int maxRoomSize;
-    public int spawnNumber;
+    public int depth;
     private int newNoise;
     private GameObject enemyContainer;
     private GameObject terrainElementContainer;
@@ -25,17 +25,42 @@ public class TilemapGenerator : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
+        depth = 2;
+        GenerateLevel();
+    }
+
+    private void Start()
+    {
+        RenderTerrain(mapSizeX, mapSizeY, 0, 0, 0, 0); // Mapsize 50x50, offset Y axis 0
+        //DebugConsoleMap(); // Prints the map in the console
+    }
+
+    public void GenerateLevel()
+    {
         //currentMap = createBlankArray(0, 50, 50); // For coordinate testing
+        List<Enemy> enemiesToSpawn = new List<Enemy>();
+        int enemyDepth = depth;
+            if (enemyDepth >= 7)
+            {
+                enemyDepth = 7;
+            }
+        for (int k = 0; k < enemyDepth - 1; ++k)
+        {
+            //int index = (int)Random.Range(0, enemyDepth); // Choose types of enemies to spawn on level randomly
+            enemiesToSpawn.Add(enemies[k]);
+        }
         spawnedEnemies = new List<Enemy>();
         usedPos = new List<Vector2Int>();
         currentMap = roomGenerator(numberOfRooms, maxRoomSize, mapSizeX, mapSizeY);
-        Vector2Int playerPos = getRandomFloorPos(new Vector2Int(100000,100000)); // Get random floor position on map
+        Vector2Int playerPos = getRandomFloorPos(new Vector2Int(100000,100000)); // To spawn player, get random floor position on map 
         usedPos.Add(playerPos);
-        enemyContainer = new GameObject("Enemies");
-        terrainElementContainer = new GameObject("TerrainElements");
-        foreach (Enemy e in enemies)
+        enemyContainer = GameObject.Find("Enemies");
+        terrainElementContainer = GameObject.Find("TerrainElements");
+        int incrementNumber = 0;
+        foreach (Enemy e in enemiesToSpawn)
         {//enermy walk test
-            for (int i = 0; i <= spawnNumber; i++) // Ten of each enemy type
+            int spawnNumber = Random.Range(2, 4 + incrementNumber); // Either spawn 2 - 3 enemies
+            for (int i = 0; i < spawnNumber; i++) // Ten of each enemy type
             {
                 Vector2Int enemyPos = getRandomFloorPos(playerPos); //prevent from spawn around the player
                 while (usedPos.Contains(enemyPos)) {
@@ -51,14 +76,21 @@ public class TilemapGenerator : MonoBehaviour
                 temp.transform.parent = enemyContainer.transform;
                 spawnedEnemies.Add(temp);
             }
+            //int incrementChance = Random.Range(1, 3);
+            //if (incrementChance > 1)
+            //{
+                ++incrementNumber;
+            //}
+        }   
+        
+        // Spawn a single portal on a random floor in the level, prevent from spawn around player
+        if (depth < 8) // 8 will be the boss floor
+        {
+            Vector2Int portalPos = getRandomFloorPos(playerPos);
+            GameObject portal = Instantiate(landscapeFeature[8], new Vector3(portalPos.x, -portalPos.y, 0), Quaternion.identity);
+            portal.transform.parent = terrainElementContainer.transform;
+            transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
         }
-        transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
-    }
-
-    private void Start()
-    {
-        RenderTerrain(50, 50, 0, 0, 0, 0); // Mapsize 50x50, offset Y axis 0
-        //DebugConsoleMap(); // Prints the map in the console
     }
 
     private int[,] roomGenerator(int rooms, int maxSize, int xDimension, int yDimension)
@@ -131,17 +163,31 @@ public class TilemapGenerator : MonoBehaviour
                 {
                     float scale = 0.0525f;
                     float tileHeight = Mathf.PerlinNoise((x + newNoise) * scale, (y + newNoise) * scale);
-                    if (tileHeight < 0.32567)
+                    if (tileHeight < 0.32567) // Tiles now dependant on depth
                     {
-                        numberedMap[y, x] = 2;
+                        if (depth < 4 && depth > 2)
+                        {
+                            numberedMap[y, x] = 3; // Grass
+                        } else if (depth > 3)
+                        {
+                            numberedMap[y, x] = 2; // Water
+                        }
                     }
                     else if (tileHeight > 0.67025)
                     {
-                        numberedMap[y, x] = 4;
+                        if (depth < 4 && depth > 2)
+                        {
+                            numberedMap[y, x] = 3; // Grass
+                        } else if (depth > 4)
+                        {
+                            numberedMap[y, x] = 4; // Sand
+                        }
                     }
                     else if (tileHeight < 0.6 && tileHeight > 0.5)
-                    {
-                        numberedMap[y, x] = 3;
+                    {   if (depth > 2)
+                        {
+                            numberedMap[y, x] = 3; // Grass
+                        }
                     }
                 }
             }
@@ -161,7 +207,7 @@ public class TilemapGenerator : MonoBehaviour
         return numberedMap;
     }
 
-    private void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY)
+    public void RenderTerrain(int screenX, int screenY, int playerX, int playerY, int offsetX, int offsetY)
     // offsetY should be -screenY
     // Location of player starts at x, y: 0, 0 by default unless changed
     {
@@ -297,7 +343,7 @@ public class TilemapGenerator : MonoBehaviour
         Vector2Int floorPos = Vector2Int.zero;
         int xPos = 0;
         int yPos = 0;
-        while (currentMap[yPos, xPos] != 0 || (awayFrom-new Vector2Int(xPos,yPos)).magnitude<=5)
+        while (currentMap[yPos, xPos] != 0 || (awayFrom-new Vector2Int(xPos,yPos)).magnitude<4)
         {
             xPos = Random.Range(1, mapSizeX - 2);
             yPos = Random.Range(1, mapSizeY - 2);
