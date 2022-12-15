@@ -73,8 +73,11 @@ public class Enemy : MonoBehaviour
     private AnimationClip walkLeft;
     private AnimationClip walkRight;
 
+    protected AudioSource SFX;
+
     public void InitEnemy()
     {
+        SFX = gameObject.GetComponent<AudioSource>();
         enemyMovableTiles = new int[] { 0, 2, 3, 4 }; // By default, enemy is able to walk on any type of floor. We override this if unable.
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
@@ -99,6 +102,7 @@ public class Enemy : MonoBehaviour
     {
         if (hp <= 0)
         {
+            PlayHitSound();
             tileMapGenerator.GetSpawnedEnemies().Remove(this);
             Destroy(this.gameObject);
             Debug.Log(name + " is dead");
@@ -109,6 +113,7 @@ public class Enemy : MonoBehaviour
         if (moving)
         {
             MoveToPos();
+            PlayVoice();
         }
     }
 
@@ -119,6 +124,7 @@ public class Enemy : MonoBehaviour
             if (other.gameObject.tag == "Toxins")
             {
                 --hp;
+                PlayHitSound();
                 Debug.Log(name + " was damaged by toxins");
             }
         }
@@ -178,6 +184,7 @@ public class Enemy : MonoBehaviour
         //}
         if (playerSelectedItem.itemType == Item.ItemType.NormalAttack)
         {
+            PlayHitSound();
             hp--;
         }
 
@@ -646,6 +653,11 @@ public class Enemy : MonoBehaviour
 
 
     public virtual void PlayVoice()
+    {
+        //virtual method
+    }
+
+    public virtual void PlayHitSound()
     {
         //virtual method
     }
