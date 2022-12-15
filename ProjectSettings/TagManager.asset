@@ -17,7 +17,7 @@ TagManager:
   - Enemy
   - Player
   - Resource
-  - 
+  - MiniMap
   - 
   - 
   - 
@@ -57,4 +57,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 4272513267
+    locked: 0
+  - name: MiniMap
+    uniqueID: 508345555
     locked: 0
