@@ -70,7 +70,7 @@ public class TilemapGenerator : MonoBehaviour
                 usedPos.Add(enemyPos);
 
                 Enemy temp = Instantiate(e, new Vector3(0, 0, 0), Quaternion.identity);
-                temp.name = temp.name + i;
+                temp.name = temp.enemyName + i;
                 temp.transform.position = new Vector3Int(enemyPos.x, -enemyPos.y, 0);
                 temp.SetSpawnPosition(temp.transform.position);
                 temp.transform.parent = enemyContainer.transform;

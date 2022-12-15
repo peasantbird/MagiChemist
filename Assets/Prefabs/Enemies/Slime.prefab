@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 5
-  hp: 1
+  hp: 5
   hostility: 1
   drops: 
   enemyType: 0
