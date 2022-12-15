@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -1185167024372884649}
   m_Layer: 7
   m_Name: Toxic Sludge
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -154,7 +154,7 @@ MonoBehaviour:
   hostility: 1
   drops: 
   enemyType: 0
-  speed: 7
+  speed: 10
   moveRate: 4
   enemyName: ToxicSludge
   enemySight: 3

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -5544518242150567742}
   m_Layer: 7
   m_Name: Golem
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   hostility: 1
   drops: 00000000
   enemyType: 0
-  speed: 7
+  speed: 10
   moveRate: 4
   enemyName: Golem
   enemySight: 4

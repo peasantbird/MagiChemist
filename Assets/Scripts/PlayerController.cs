@@ -539,6 +539,12 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Right", false);
             anim.SetBool("Left", false);
         }
+}
+    public void RefreshPlayerPosition()
+    {
+        targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, 100 * Time.deltaTime);
+
     }
 
 }

@@ -199,6 +199,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18019606}
   m_CullTransparentMesh: 1
+--- !u!1 &41531349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 41531350}
+  m_Layer: 0
+  m_Name: TerrainElements
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &41531350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41531349}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.535465, y: -13.369806, z: -2.8753157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &63714861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2833,19 +2864,20 @@ MonoBehaviour:
   - {fileID: 5157610528392744378, guid: b9676776a67cb47608c043f228de15f2, type: 3}
   - {fileID: 2344682513118096709, guid: 64662570c22834ffaa87b14f9c073bbe, type: 3}
   - {fileID: 7559743943475329336, guid: ab48983762a634e76a2104794188e3cf, type: 3}
+  - {fileID: 2612397169280901158, guid: 3db18f43dbcf4453fb1c22d0a1e7f06b, type: 3}
   enemies:
-  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
-  - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}
-  - {fileID: 1603553490, guid: 1cbb39df82ff97c4883010d017619990, type: 3}
-  - {fileID: 2026396326818034373, guid: ff8cf370281d67f48854a56e15a226fb, type: 3}
-  - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
   - {fileID: -5136876968334692965, guid: 078beac8d48094242ac8ebc617a767f4, type: 3}
+  - {fileID: 3974233063900855752, guid: 3cdc27aa61d2445138132d9a4681de44, type: 3}
+  - {fileID: 2026396326818034373, guid: ff8cf370281d67f48854a56e15a226fb, type: 3}
   - {fileID: -1185167024372884649, guid: c0820f4b03d514d6185f250d35583136, type: 3}
-  mapSizeX: 50
-  mapSizeY: 50
-  numberOfRooms: 40
-  maxRoomSize: 5
-  spawnNumber: 1
+  - {fileID: -4997137593880584207, guid: c0bbdfa45e9f37c458bde6557b3641c0, type: 3}
+  - {fileID: 1603553490, guid: 1cbb39df82ff97c4883010d017619990, type: 3}
+  - {fileID: 8191900425840880850, guid: d006821752c5dcf4f896df1f751eba84, type: 3}
+  mapSizeX: 15
+  mapSizeY: 15
+  numberOfRooms: 15
+  maxRoomSize: 10
+  depth: 1
 --- !u!82 &914706027
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2981,12 +3013,13 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  randomMoveInWaterPerc: 40
+  randomMoveInWaterPerc: 50
   playerCanPassThroughEnemy: 0
   playerSight: 9
   selectedItem: {fileID: 0}
   testItem: {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
   uiInventory: {fileID: 63714863}
+  targetPos: {x: 0, y: 0}
   soundEffects:
   - {fileID: 8300000, guid: d18d80ac4757c476aa0972348fc7cdad, type: 3}
   - {fileID: 8300000, guid: d5bb02a70d1ab4148907bbe1ad630967, type: 3}
@@ -5276,6 +5309,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044371978}
   m_CullTransparentMesh: 1
+--- !u!1 &2046950881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046950882}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2046950882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046950881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.535465, y: -13.369806, z: -2.8753157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2073294280
 GameObject:
   m_ObjectHideFlags: 0
