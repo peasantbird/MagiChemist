@@ -14,12 +14,18 @@ public class Golem : Enemy
     // Update is called once per frame
     void Update()
     {
-        base.MoveEnemy();
+        base.UpdateEnemy();
+       // base.MoveEnemy();
     }
 
     public override void PlayVoice()
     {
         //play golem voice
+    }
+
+    public override void EnemyStartAction()
+    {
+        base.TakeAction();
     }
 
 }
