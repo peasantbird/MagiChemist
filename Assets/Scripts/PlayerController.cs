@@ -156,7 +156,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && !isMoving)//press e to harvest an item
         {
-            //todoÅF harvest item
+            //todoÔøΩF harvest item
             StartEnemyAction();
         }
     }
@@ -469,7 +469,7 @@ public class PlayerController : MonoBehaviour
         {
             --currentHealth;
             RefreshHealthBar();
-            light.color = new Color(193/256, 225/256, 193/256);
+            light.color = new Color(193f/256f, 225f/256f, 193f/256f);
         }
     }
 
