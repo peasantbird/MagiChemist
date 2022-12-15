@@ -13,17 +13,17 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public int spellRange;
     public LayerMask enemyLayer;
+    public LayerMask resourceLayer;
     public int randomMoveInWaterPerc;
     public bool playerCanPassThroughEnemy;
     public int playerSight;
     public Item selectedItem;
-    public Item defaultItem;
+    public bool isMoving;
     public Item testItem;
     [SerializeField] private UI_Inventory uiInventory;
 
     protected int[,] currentMap;
     private float nextMove;
-    private bool isMoving;
     private Vector2Int targetPos;
     private Inventory inventory;
     private bool rangeSpawned;
@@ -33,9 +33,8 @@ public class PlayerController : MonoBehaviour
     private bool noEnemyIsStillMoving;
     private bool noEnemyIsChasing;
     private bool noEnemyIsAround;
-    
 
-
+    private Animator anim;
     public AudioClip[] soundEffects;
     public AudioSource SFX;
 
@@ -59,7 +58,8 @@ public class PlayerController : MonoBehaviour
         nextMove = Time.time;
         playerMoveDir = new Vector2Int();
         healthBar = GameObject.Find("HealthBar").GetComponent<Image>();
-       // maxHealth = 5;
+        anim = transform.GetComponentInChildren<Animator>();
+        selectedItem = null;
         currentHealth = maxHealth;
         initialSpeed = speed;
         nextDirection = Vector2Int.zero;
@@ -78,13 +78,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckEnemyState();
-        if (selectedItem == null) {
+        if (selectedItem == null)
+        {
             RemoveRange();
-            selectedItem = defaultItem;
-            spellRange = selectedItem.itemRange;
-            SpawnRange();
+            //selectedItem = defaultItem;
+            //spellRange = selectedItem.itemRange;
+            //SpawnRange();
         }
-        spellRange = selectedItem.itemRange;
+        else {
+            spellRange = selectedItem.itemRange;
+        }
+        //spellRange = selectedItem.itemRange;
         if (noEnemyIsAround)//move continuously
         {
             isMoving = (Vector2)transform.position != targetPos;
@@ -132,32 +136,42 @@ public class PlayerController : MonoBehaviour
                 NewTargetPos();
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (!rangeSpawned)
-                {
-                    SpawnRange();
-                }
-                else
-                {
-                    RemoveRange();
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.Space))
+            //{
+            //    if (!rangeSpawned)
+            //    {
+            //        SpawnRange();
+            //    }
+            //    else
+            //    {
+            //        RemoveRange();
+            //    }
+            //}
         }
 
 
         if (Input.GetKeyDown(KeyCode.X) && !isMoving)//press x to skip a turn
         {
             // Debug.Log(selectedItem.gameObject.name);
-            testItem.amount = 1;
-            transform.GetComponent<Inventory>().AddItem(testItem);
+            //testItem.amount = 1;
+            //transform.GetComponent<Inventory>().AddItem(testItem);
             StartEnemyAction();
         }
 
         if (Input.GetKeyDown(KeyCode.E) && !isMoving)//press e to harvest an item
         {
             //todo�F harvest item
-            StartEnemyAction();
+            Collider2D collider = Physics2D.OverlapBox(transform.position, new Vector2(0.1f, 0.1f), 0f,resourceLayer);
+            if (collider != null)
+            {
+                Resources res = collider.transform.GetComponent<Resources>();
+                List<Item> obtainedItems = res.Harvest();
+                res.DestroyResource();
+                foreach (Item item in obtainedItems) {
+                    this.transform.GetComponent<Inventory>().AddItem(item);
+                }
+                StartEnemyAction();
+            }
         }
     }
 
@@ -166,7 +180,7 @@ public class PlayerController : MonoBehaviour
         noEnemyIsChasing = true;
         List<Enemy> enemies = tileMapGenerator.GetSpawnedEnemies();
         foreach (Enemy e in enemies) {
-            if (e.moving) {
+            if (e.moving || e.attacking) {
                 noEnemyIsStillMoving = false;
 
             }
@@ -189,6 +203,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TileHaveNoEnemy(targetPos.x, targetPos.y))
         {
+            SetAnimationDir();
             transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
         }
         else {
@@ -480,6 +495,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Toxins")
         {
+            SFX.PlayOneShot(soundEffects[4]);
             --currentHealth;
             RefreshHealthBar();
             light.color = new Color(193f/256f, 225f/256f, 193f/256f);
@@ -492,6 +508,62 @@ public class PlayerController : MonoBehaviour
         {
             light.color = Color.white;
         }
+    }
+
+    private void SetAnimationDir()
+    {
+
+        if (targetPos.x == transform.position.x && targetPos.y > transform.position.y)
+        { //move up
+            anim.SetBool("Up", true);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (targetPos.x == transform.position.x && targetPos.y < transform.position.y)
+        { //move down
+
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", true);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+        else if (targetPos.x < transform.position.x && targetPos.y == transform.position.y)
+        { //move left
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", true);
+        }
+        else if (targetPos.x > transform.position.x && targetPos.y == transform.position.y)
+        { //move right 
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", false);
+            anim.SetBool("Right", true);
+            anim.SetBool("Left", false);
+
+        }
+        else
+        {
+            anim.SetBool("Up", false);
+            anim.SetBool("Down", true);
+            anim.SetBool("Right", false);
+            anim.SetBool("Left", false);
+        }
+}
+    public void RefreshPlayerPosition()
+    {
+        targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, 100 * Time.deltaTime);
+
+    }
+
+    public List<bool> GetEnemyStatus() {
+        List<bool> enemyStatus = new List<bool>();
+        enemyStatus.Add(noEnemyIsAround);
+        enemyStatus.Add(noEnemyIsChasing);
+        enemyStatus.Add(noEnemyIsStillMoving);
+        return enemyStatus;
     }
 
 }

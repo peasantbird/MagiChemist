@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class ToxicSludge : Enemy
 {
+    public AudioClip ambientVoice;
+    public AudioClip hitSound;
     //private Tilemap worldTerrain;
     public GameObject toxins;
     private IDictionary<Vector2Int, GameObject> toxinTiles;
@@ -39,6 +41,13 @@ public class ToxicSludge : Enemy
     public override void PlayVoice()
     {
         //play sludge voice
+        base.SFX.PlayOneShot(ambientVoice);
+    }
+
+    public override void PlayHitSound()
+    {
+        //play slime voice
+        AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
     }
 
     private void spawnToxins()
