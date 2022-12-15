@@ -44,7 +44,7 @@ public class TilemapGenerator : MonoBehaviour
             {
                 enemyDepth = 7;
             }
-        for (int k = 0; k < enemyDepth - 1; ++k)
+        for (int k = 0; k < enemyDepth; ++k)
         {
             //int index = (int)Random.Range(0, enemyDepth); // Choose types of enemies to spawn on level randomly
             enemiesToSpawn.Add(enemies[k]);

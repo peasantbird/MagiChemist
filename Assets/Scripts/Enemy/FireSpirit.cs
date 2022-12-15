@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FireSpirit : Enemy
 {
+    public AudioClip ambientVoice;
+    public AudioClip hitSound;
     void Start()
     {
         base.InitEnemy();
@@ -20,7 +22,15 @@ public class FireSpirit : Enemy
     public override void PlayVoice()
     {
         //play fire voice
+        base.SFX.PlayOneShot(ambientVoice);
     }
+
+    public override void PlayHitSound()
+    {
+        //play slime voice
+        AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
+    }
+
     public override void EnemyStartAction()
     {
         base.TakeAction();
