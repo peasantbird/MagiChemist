@@ -6,11 +6,13 @@ public class Portal : MonoBehaviour
 {
     private TilemapGenerator tileMapGenerator;
     private PlayerController playerController;
+    private MiniMap miniMap;
     private AudioSource SFX;
     private void Start()
     {
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        miniMap = GameObject.Find("MiniMap").GetComponent<MiniMap>();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -45,5 +47,7 @@ public class Portal : MonoBehaviour
         playerController.RefreshPlayerPosition();
         tileMapGenerator.RenderTerrain(tileMapGenerator.mapSizeX, tileMapGenerator.mapSizeY, 0, 0, 0, 0);
         Debug.Log("New Level Generated");
+        miniMap.ClearAll();
+        //miniMap.ShrinkForDepth();
     }
 }

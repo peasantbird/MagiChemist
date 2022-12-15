@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
 
     protected int[,] currentMap;
     private float nextMove;
-    private Vector2Int targetPos;
+    public Vector2Int targetPos;
     private Inventory inventory;
     private bool rangeSpawned;
     private GameObject spellRangeObject;
