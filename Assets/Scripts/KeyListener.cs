@@ -43,22 +43,14 @@ public class KeyListener : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
         
             if (tmPro.text.Trim() == "1" && HasItem()) {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
           
             if (tmPro.text.Trim() == "2" && HasItem()) {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -66,11 +58,7 @@ public class KeyListener : MonoBehaviour
           
             if (tmPro.text.Trim() == "3" && HasItem())
             {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -78,11 +66,7 @@ public class KeyListener : MonoBehaviour
        
             if (tmPro.text.Trim() == "4" && HasItem())
             {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
@@ -90,11 +74,7 @@ public class KeyListener : MonoBehaviour
      
             if (tmPro.text.Trim() == "5" && HasItem())
             {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
@@ -102,11 +82,7 @@ public class KeyListener : MonoBehaviour
           
             if (tmPro.text.Trim() == "6" && HasItem())
             {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
         if (Input.GetKeyDown(KeyCode.Q))
@@ -114,18 +90,26 @@ public class KeyListener : MonoBehaviour
         
             if (tmPro.text.Trim() == "Q")
             {
-                playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
-                UpdateFillerColor();
-                playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
-                playerController.RemoveRange();
-                playerController.SpawnRange();
+                UpdatePlayerSelection();
             }
         }
 
     }
 
-    private void UpdateFillerColor() {
-       // transform.parent.parent.Find("Filler").GetComponent<Image>().color = new Color32(184, 219, 255,255);
+    private void UpdatePlayerSelection() {
+        if (playerController.selectedItem == transform.parent.GetComponentInChildren<Item>())
+        {
+            playerController.selectedItem = null;
+            playerController.RemoveRange();
+        }
+        else
+        {
+            playerController.selectedItem = transform.parent.GetComponentInChildren<Item>();
+
+            playerController.spellRange = transform.parent.GetComponentInChildren<Item>().itemRange;
+            playerController.RemoveRange();
+            playerController.SpawnRange();
+        }
     }
 
     private bool HasItem() {

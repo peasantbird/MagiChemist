@@ -156,10 +156,12 @@ MonoBehaviour:
   enemyType: 1
   speed: 10
   moveRate: 3
+  enemyName: Goblin
   enemySight: 4
   vertex: {fileID: 2198923799180241434, guid: 6fc348ec96c44544394a64f0a72c3ed8, type: 3}
   movableDistance: 10
   moving: 0
+  attacking: 0
   isFloating: 0
   isToxic: 1
   enemyLayer:

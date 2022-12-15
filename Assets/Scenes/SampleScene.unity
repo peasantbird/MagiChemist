@@ -3016,8 +3016,7 @@ MonoBehaviour:
   randomMoveInWaterPerc: 50
   playerCanPassThroughEnemy: 0
   playerSight: 9
-  selectedItem: {fileID: 1119787425}
-  defaultItem: {fileID: 1119787425}
+  selectedItem: {fileID: 0}
   testItem: {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
   uiInventory: {fileID: 63714863}
   targetPos: {x: 0, y: 0}
@@ -3103,6 +3102,12 @@ MonoBehaviour:
   - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
   - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
   - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
+  - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
+  - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
+  - {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
+  - {fileID: 7413053289535874270, guid: 10ddd3dda0c95644493476a3e4e3c449, type: 3}
+  - {fileID: 7413053289535874270, guid: 10ddd3dda0c95644493476a3e4e3c449, type: 3}
+  - {fileID: 6189489881960248601, guid: 3071bd1a85bc42e4ca869b0c2629c166, type: 3}
   uiInventory: {fileID: 63714863}
 --- !u!1 &940356652
 GameObject:
@@ -3681,14 +3686,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.754717, g: 0.244927, b: 0.6486541, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0fe5f5c243438c249b1a91d5b897a635, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

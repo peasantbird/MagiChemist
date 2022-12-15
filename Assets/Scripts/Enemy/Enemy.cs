@@ -21,10 +21,12 @@ public class Enemy : MonoBehaviour
     public Type enemyType = new Type();
     public float speed;
     public float moveRate;
+    public string enemyName;
     public int enemySight;
     public GameObject vertex;
     public float movableDistance;
     public bool moving;
+    public bool attacking;
     public bool isFloating;
     public bool isToxic;
     public LayerMask enemyLayer;
@@ -62,6 +64,14 @@ public class Enemy : MonoBehaviour
 
     protected int[] enemyMovableTiles;
 
+    private AnimationClip atkUp;
+    private AnimationClip atkDown;
+    private AnimationClip atkLeft;
+    private AnimationClip atkRight;
+    private AnimationClip walkUp;
+    private AnimationClip walkDown;
+    private AnimationClip walkLeft;
+    private AnimationClip walkRight;
 
     public void InitEnemy()
     {
@@ -79,6 +89,7 @@ public class Enemy : MonoBehaviour
         verticesList = new List<Vertex>();
         // pathFindingVertices = new GameObject("PathVertices").transform;
         GenerateVertices();
+        GetAnimClipInfo();
         verticesCount = pathFindingVertices.childCount;
 
 
@@ -123,8 +134,13 @@ public class Enemy : MonoBehaviour
 
         if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
-            if (playerController.selectedItem != null)
+            if (playerController.selectedItem != null && !playerController.isMoving && !moving)
             {
+                playerController.selectedItem.ReduceAmount(1);
+                foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies())
+                {
+                    e.EnemyStartAction();
+                }
                 React(playerController.selectedItem);
             }
         }
@@ -155,12 +171,16 @@ public class Enemy : MonoBehaviour
 
     private void React(Item playerSelectedItem)
     {
-        Debug.Log("Player used " + playerSelectedItem +" against " + name);
-        playerController.selectedItem.ReduceAmount(1);
-        if (playerSelectedItem.itemType == Item.ItemType.NormalAttack) {
+        Debug.Log("Player used " + playerSelectedItem + " against " + name);
+        //playerController.selectedItem.ReduceAmount(1);
+        //foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies()) {
+        //    e.EnemyStartAction();
+        //}
+        if (playerSelectedItem.itemType == Item.ItemType.NormalAttack)
+        {
             hp--;
         }
-     
+
 
     }
 
@@ -172,7 +192,7 @@ public class Enemy : MonoBehaviour
         {
             //Debug.Log(name + " is chasing player");
         }
-        
+
         //    //Debug.Log("Player's Pos is " + player.transform.position);
         //    //Debug.Log("Target Pos is " + targetPos);
         //    if (player.transform.position.x == targetPos.x && player.transform.position.y == targetPos.y)
@@ -194,7 +214,7 @@ public class Enemy : MonoBehaviour
         //{
         //    if (otherEnemyColliders.Length == 0)
         //    {
-                transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
         //    }
         //    else
         //    {
@@ -213,13 +233,40 @@ public class Enemy : MonoBehaviour
 
         if (PlayerIsNearby())
         {
+            if (hostility != 0)
+            {
+                attacking = true;
+                Debug.Log(name + " attacks");
+                float time = 0f;
+                
+                AnimationClip resumeClip = new AnimationClip();
+                if ((Vector2)player.transform.position - (Vector2)transform.position == Vector2.down)
+                { //player at below
+                  //  anim.clip = atkDown;
+                    anim.Play(atkDown.name);
+                    resumeClip = walkDown;
+                    time = atkDown.length;
+                }
+                else if ((Vector2)player.transform.position - (Vector2)transform.position == Vector2.up) 
+                {//player at top
+                    anim.Play(atkUp.name);
+                    resumeClip = walkUp;
+                    time = atkUp.length;
+                }
+                else if ((Vector2)player.transform.position - (Vector2)transform.position == Vector2.left)
+                {//player at left
+                    anim.Play(atkLeft.name);
+                    resumeClip = walkLeft;
+                    time = atkLeft.length ;
+                }
+                else if ((Vector2)player.transform.position - (Vector2)transform.position == Vector2.right)
+                {//player at right
+                    anim.Play(atkRight.name);
+                    resumeClip = walkRight;
+                    time = atkRight.length;
+                }
 
-            
-            if (hostility != 0) {
-                Debug.Log(name + " hits player");
-                playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
-                --playerController.currentHealth;
-                  playerController.RefreshHealthBar();
+                StartCoroutine(AttackPlayer(time,resumeClip));
             }
         }
         else
@@ -234,6 +281,20 @@ public class Enemy : MonoBehaviour
             }
         }
 
+
+    }
+
+    IEnumerator AttackPlayer(float time,AnimationClip resumeClip)
+    {
+        yield return new WaitForSeconds(time/2);
+        Debug.Log(name + " hits player");
+        playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
+        --playerController.currentHealth;
+        playerController.RefreshHealthBar();
+        yield return new WaitForSeconds(time / 2);
+        attacking = false;//attack finished
+       anim.Play(resumeClip.name);
+        Debug.Log(name + " attack finished");
 
     }
 
@@ -360,8 +421,8 @@ public class Enemy : MonoBehaviour
         for (int i = 0; i < verticesCount; i++)
         {
             //debug
-          //  verticesList[i].ShowText(distance[i] + "");
-           // verticesList[i].transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.5f);
+            //  verticesList[i].ShowText(distance[i] + "");
+            // verticesList[i].transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.5f);
 
             //optimization
             startTime = Time.realtimeSinceStartup;
@@ -405,9 +466,9 @@ public class Enemy : MonoBehaviour
                     canReach = false;
                     break;
                 }
-              //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
+                //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.red;
             }
-          //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
+            //  nextStep.transform.Find("DebugObject").transform.GetComponent<SpriteRenderer>().color = Color.green;
         }
 
 
@@ -422,13 +483,15 @@ public class Enemy : MonoBehaviour
                 //Debug.Log("Corountine Finished");
                 targetPos = new Vector2Int(Mathf.RoundToInt(nextStep.transform.position.x), Mathf.RoundToInt(nextStep.transform.position.y));
             }
-            else {
+            else
+            {
                 isChasing = false;
                 RandomMovePos();
             }
-         
+
         }
-        else {
+        else
+        {
             RandomMovePos();
             isChasing = false;
         }
@@ -533,12 +596,12 @@ public class Enemy : MonoBehaviour
         {
             moveVector = Vector2Int.up;
             Vector2Int destination = targetPos + moveVector;
-            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x,destination.y,0)))
+            if (Movable(destination.x, destination.y, enemyMovableTiles) && WithinRestrictedDistance(destination.x, destination.y) && !TargetPosHaveOtherEnemy(new Vector3(destination.x, destination.y, 0)))
             {
                 targetPos += Vector2Int.up;
 
             }
-           
+
 
         }
         else if (random == 1)
@@ -550,7 +613,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.left;
 
             }
-         
+
 
         }
         else if (random == 2)
@@ -562,7 +625,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.down;
 
             }
-          
+
 
         }
         else if (random == 3)
@@ -574,7 +637,7 @@ public class Enemy : MonoBehaviour
                 targetPos += Vector2Int.right;
 
             }
-          
+
 
         }
 
@@ -590,21 +653,21 @@ public class Enemy : MonoBehaviour
 
     public void MoveEnemyThroughWalls()
     {
-       
+
         if (PlayerIsAround() && !moving)
         {
             ChaseThroughWalls();
-            
+
         }
         else if (Time.time >= nextMove && !moving)
         {
             nextMove = Time.time + moveRate;
 
             RandomMoveThroughWallsPos();
-          
+
         }
 
-       
+
     }
 
     private void RandomMoveThroughWallsPos()
@@ -748,7 +811,7 @@ public class Enemy : MonoBehaviour
             if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
             {
                 isChasing = true;
-               
+
                 return true;
             }
             else
@@ -865,7 +928,7 @@ public class Enemy : MonoBehaviour
 
     private bool PlayerIsNearby()
     {
-        return (player.transform.position - new Vector3(transform.position.x,transform.position.y,0)).magnitude <= 1.1f;
+        return (player.transform.position - new Vector3(transform.position.x, transform.position.y, 0)).magnitude <= 1.1f;
     }
     private bool DetectCollision(LayerMask layer, Vector3 pos)
     {
@@ -915,20 +978,58 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private bool TargetPosHaveOtherEnemy(Vector3 pos) {
+
+    private void GetAnimClipInfo()
+    {
+        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name.Equals(enemyName + "_atk_up")) {
+                atkUp = clip;
+            }
+            if (clip.name.Equals(enemyName + "_atk_down")) {
+                atkDown = clip;
+            }
+            if (clip.name.Equals(enemyName + "_atk_left")) {
+                atkLeft = clip;
+            }
+            if (clip.name.Equals(enemyName + "_atk_right")) {
+                atkRight = clip;
+            }
+            if (clip.name.Equals(enemyName + "_up")) {
+                walkUp = clip;
+            }
+            if (clip.name.Equals(enemyName + "_down")) {
+                walkDown = clip;
+            }
+            if (clip.name.Equals(enemyName + "_left")) {
+                walkLeft = clip;
+            }
+            if (clip.name.Equals(enemyName + "_right")) {
+                walkRight = clip;
+            }
+               
+            
+        }
+    }
+
+    private bool TargetPosHaveOtherEnemy(Vector3 pos)
+    {
         bool anotherEnemyHasSameTargetPos = false;
         Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f + pos.x, 0.5f + pos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
         if (otherEnemyColliders.Length > 0)
         {
             Debug.Log(name + "�es side have " + otherEnemyColliders.Length + " other enemy");
         }
-        foreach (Enemy enemy in tileMapGenerator.GetSpawnedEnemies()) {
-            if (enemy.targetPos == (Vector2)pos) {
+        foreach (Enemy enemy in tileMapGenerator.GetSpawnedEnemies())
+        {
+            if (enemy.targetPos == (Vector2)pos)
+            {
                 Debug.Log(name + " and " + enemy.name + " is going to the same block ");
                 anotherEnemyHasSameTargetPos = true;
             }
         }
-        return otherEnemyColliders.Length >0 || anotherEnemyHasSameTargetPos;
+        return otherEnemyColliders.Length > 0 || anotherEnemyHasSameTargetPos;
     }
     private void SimpleChasePlayer()
     {
