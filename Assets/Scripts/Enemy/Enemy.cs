@@ -106,6 +106,7 @@ public class Enemy : MonoBehaviour
             if (other.gameObject.tag == "Toxins")
             {
                 --hp;
+                Debug.Log(name + " was damaged by toxins");
             }
         }
     }
