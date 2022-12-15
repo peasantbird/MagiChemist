@@ -78,13 +78,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckEnemyState();
-        if (selectedItem == null) {
+        if (selectedItem == null)
+        {
             RemoveRange();
-            selectedItem = defaultItem;
-            spellRange = selectedItem.itemRange;
-            SpawnRange();
+            //selectedItem = defaultItem;
+            //spellRange = selectedItem.itemRange;
+            //SpawnRange();
         }
-        spellRange = selectedItem.itemRange;
+        else {
+            spellRange = selectedItem.itemRange;
+        }
+        //spellRange = selectedItem.itemRange;
         if (noEnemyIsAround)//move continuously
         {
             isMoving = (Vector2)transform.position != targetPos;
@@ -132,17 +136,17 @@ public class PlayerController : MonoBehaviour
                 NewTargetPos();
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (!rangeSpawned)
-                {
-                    SpawnRange();
-                }
-                else
-                {
-                    RemoveRange();
-                }
-            }
+            //if (Input.GetKeyDown(KeyCode.Space))
+            //{
+            //    if (!rangeSpawned)
+            //    {
+            //        SpawnRange();
+            //    }
+            //    else
+            //    {
+            //        RemoveRange();
+            //    }
+            //}
         }
 
 
