@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1040986641263570556}
   - component: {fileID: 4609694708280622300}
   - component: {fileID: 7413053289535874270}
+  - component: {fileID: 5272223909796076055}
   m_Layer: 5
   m_Name: Silver
   m_TagString: Untagged
@@ -92,3 +93,19 @@ MonoBehaviour:
   itemType: 1
   amount: 1
   itemRange: 3
+--- !u!114 &5272223909796076055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5781849393619315006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b001d0475125d85419cfad3c24d95777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: A soft, white, lustrous metal that is highly reflective and conducts
+    heat and electricity well.
+  title: Silver
+  timeToWait: 0.5
