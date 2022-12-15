@@ -134,7 +134,7 @@ public class Enemy : MonoBehaviour
 
         if (DetectCollision(spellRangeLayer, new Vector3(transform.position.x, transform.position.y, 0)))
         {
-            if (playerController.selectedItem != null && !playerController.isMoving && !moving)
+            if (playerController.selectedItem != null && !playerController.isMoving && !moving && playerController.GetEnemyStatus()[2])
             {
                 playerController.selectedItem.ReduceAmount(1);
                 foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies())
@@ -294,7 +294,7 @@ public class Enemy : MonoBehaviour
         playerController.RefreshHealthBar();
         yield return new WaitForSeconds(time / 2);
         attacking = false;//attack finished
-       anim.Play(resumeClip.name);
+        anim.Play(resumeClip.name);
         Debug.Log(name + " attack finished");
 
     }

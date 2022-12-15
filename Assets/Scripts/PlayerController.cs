@@ -547,4 +547,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public List<bool> GetEnemyStatus() {
+        List<bool> enemyStatus = new List<bool>();
+        enemyStatus.Add(noEnemyIsAround);
+        enemyStatus.Add(noEnemyIsChasing);
+        enemyStatus.Add(noEnemyIsStillMoving);
+        return enemyStatus;
+    }
+
 }
