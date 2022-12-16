@@ -39,7 +39,7 @@ public class MiniMap : MonoBehaviour
 
     void UpdateMiniMap(int y, int x)
     {
-        int ArraySize = 100*100;
+        int ArraySize = tileMapGenerator.mapSizeX*tileMapGenerator.mapSizeY;
         Vector3Int[] positions = new Vector3Int[ArraySize];
         TileBase[] tileArray = new TileBase[ArraySize];
         int index = 0;
