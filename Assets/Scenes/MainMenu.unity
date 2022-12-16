@@ -540,7 +540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -77}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 1000, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &406128927
@@ -563,14 +563,21 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Nicholas Foo (Programmer)
+  m_text: 'Game Designers:
+
+    Nicholas Foo (Programmer)
 
     Nicole Lim (Artist)
 
-    Tianchu Li (Programmer)
+    Tianchu
+    Li (Programmer)
 
-    Bertrand
-    (Noob Programmer)'
+    Bertrand Wong (Programmer)
+
+    Music:
+
+    Maegan Neo ("Linking
+    Memories")'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aea79861a474a42fcbf90c677e141c66, type: 2}
   m_sharedMaterial: {fileID: -608750249599041676, guid: aea79861a474a42fcbf90c677e141c66, type: 2}
@@ -1138,7 +1145,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 122}
+  m_AnchoredPosition: {x: 0, y: 240}
   m_SizeDelta: {x: 1000, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &956355168
