@@ -4,35 +4,35 @@ using UnityEngine;
 
 public class SpellRange : MonoBehaviour
 {
-    private bool rangeSpawned;
+   // private bool rangeSpawned;
     
     // Start is called before the first frame update
     void Start()
     {
-        rangeSpawned = false;
+        //rangeSpawned = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            if (!rangeSpawned)
-            {
-                SpawnRange();
-            }
-            else {
-                RemoveRange();
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.Space)) {
+        //    if (!rangeSpawned)
+        //    {
+        //        SpawnRange();
+        //    }
+        //    else {
+        //        RemoveRange();
+        //    }
+        //}
     }
 
-    void SpawnRange() {
-        Debug.Log("Range shown");
-        rangeSpawned = true;
+    //void SpawnRange() {
+    //    Debug.Log("Range shown");
+    //    rangeSpawned = true;
         
-    }
+    //}
 
-    void RemoveRange() {
-        Debug.Log("Range off");
-    }
+    //void RemoveRange() {
+    //    Debug.Log("Range off");
+    //}
 }

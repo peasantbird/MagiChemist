@@ -34,5 +34,10 @@ public class Golem : Enemy
     {
         base.TakeAction();
     }
+    //public override void ReactToElement(Item playerSelectedItem)
+    //{
+    //    Debug.Log(enemyName + " reacted to " + playerSelectedItem.itemType.ToString());
+    //}
+
 
 }

@@ -26,18 +26,20 @@ public class MiniMap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
-        {
-            UpdateMiniMap((int)playerController.targetPos.y, (int)playerController.targetPos.x);
-        }
+        //if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+        //{
+        //    UpdateMiniMap((int)playerController.targetPos.y, (int)playerController.targetPos.x);
+        //}
     }
+
+
 
     void GenerateMiniMap(int x, int y)
     {
         miniMapArray = tileMapGenerator.createBlankArray(99, x, y);
     }
 
-    void UpdateMiniMap(int y, int x)
+    public void UpdateMiniMap(int y, int x)
     {
         int ArraySize = tileMapGenerator.mapSizeX*tileMapGenerator.mapSizeY;
         Vector3Int[] positions = new Vector3Int[ArraySize];
@@ -51,13 +53,14 @@ public class MiniMap : MonoBehaviour
                 if (j < tileMapGenerator.mapSizeX && j >= 0 && i < tileMapGenerator.mapSizeY && i >= 0)
                 {
                     int thisTile = tileMapGenerator.getExactTileValueAtCoordinates(j, i);
-                    int numberOfFloors = tileMapGenerator.checkAdjacentTilesForFloors(i, j);
+                    int numberOfFloors = tileMapGenerator.checkAdjacentTilesForWalkable(i, j);
                     if (numberOfFloors > 0)
                     {
                         tileArray[index] = tileBase[thisTile];
                         positions[index] = new Vector3Int(j, -i, 0);
                     }
                 }
+                
                 ++index;
             }
         }

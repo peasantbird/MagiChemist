@@ -84,4 +84,17 @@ public class ToxicSludge : Enemy
         base.TakeAction();
     }
 
+    //public override void ReactToElement(Item playerSelectedItem)
+    //{
+    //    Item.ItemType itemType = playerSelectedItem.itemType;
+    //    string msg = "";
+    //    if (itemType == Item.ItemType.Mercury)
+    //    {
+    //        msg = "Oops!, " + itemType.ToString() + " strengthened " + enemyName + ", be careful!";
+    //        hostility++;
+    //    }
+    //    playerController.message.PushMessage(msg, 2);
+
+    //    Debug.Log(enemyName + " reacted to " + playerSelectedItem.itemType.ToString());
+    //}
 }

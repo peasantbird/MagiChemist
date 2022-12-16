@@ -382,7 +382,26 @@ public class TilemapGenerator : MonoBehaviour
         //Debug.Log(numberOfFloors.ToString() + x.ToString() + ", " + y.ToString());
         return numberOfFloors; // If number of floors are zero, we do not instantiate that wall.
     }
-
+    public int checkAdjacentTilesForWalkable(int y, int x)
+    {
+        int numberOfFloors = 0;
+        int[,] directionsToCheck = new int[8, 2] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } };
+        for (int i = 0; i < directionsToCheck.GetLength(0); ++i)
+        {
+            int checkX = x + directionsToCheck[i, 1];
+            int checkY = y + directionsToCheck[i, 0];
+            // Check that tile to be checked is within the bounds
+            if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
+            {
+                if (currentMap[checkY, checkX] == 0 || currentMap[checkY, checkX] == 2 || currentMap[checkY, checkX] == 3 || currentMap[checkY, checkX] == 4)
+                {
+                    ++numberOfFloors;
+                }
+            }
+        }
+        //Debug.Log(numberOfFloors.ToString() + x.ToString() + ", " + y.ToString());
+        return numberOfFloors; // If number of floors are zero, we do not instantiate that wall.
+    }
     public int[] checkAdjacentFloorsPosition(int y, int x)
     {
         int[] mapVisualisation = new int[9] { 1, 1, 1, 1, 1, 1, 1, 1, 1 };

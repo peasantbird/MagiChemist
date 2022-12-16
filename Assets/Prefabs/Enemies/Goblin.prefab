@@ -151,10 +151,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 4
-  hp: 3
+  maxHp: 5
+  attackPower: 2
   hostility: 1
-  drops: 
-  enemyType: 1
+  drops:
+  - {fileID: 6189489881960248601, guid: 3071bd1a85bc42e4ca869b0c2629c166, type: 3}
+  - {fileID: 6189489881960248601, guid: 3071bd1a85bc42e4ca869b0c2629c166, type: 3}
+  enemyTypes: 01000000
   speed: 10
   moveRate: 3
   enemyName: Goblin

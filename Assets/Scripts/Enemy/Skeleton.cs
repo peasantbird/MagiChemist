@@ -30,6 +30,10 @@ public class Skeleton : Enemy
         //play slime voice
         AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
     }
+    //public override void ReactToElement(Item playerSelectedItem)
+    //{
+    //    Debug.Log(enemyName + " reacted to " + playerSelectedItem.itemType.ToString());
+    //}
 
     public override void EnemyStartAction()
     {
