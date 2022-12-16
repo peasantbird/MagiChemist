@@ -912,8 +912,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -225, y: 16}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: -299, y: 16}
+  m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &290699078
 MonoBehaviour:
@@ -3516,7 +3516,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   randomMoveInWaterPerc: 50
-  playerCanPassThroughEnemy: 1
+  playerCanPassThroughEnemy: 0
   playerSight: 9
   selectedItem: {fileID: 0}
   isMoving: 0
@@ -3604,11 +3604,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialItems:
   - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
-  - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
+  - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
   - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
-  - {fileID: 7413053289535874270, guid: 10ddd3dda0c95644493476a3e4e3c449, type: 3}
+  - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
   - {fileID: 6189489881960248601, guid: 3071bd1a85bc42e4ca869b0c2629c166, type: 3}
-  - {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
+  - {fileID: 6189489881960248601, guid: 3071bd1a85bc42e4ca869b0c2629c166, type: 3}
   uiInventory: {fileID: 63714863}
 --- !u!81 &914706035
 AudioListener:

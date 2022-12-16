@@ -115,17 +115,17 @@ public class Enemy : MonoBehaviour
         {
             PlayHitSound();
             tileMapGenerator.GetSpawnedEnemies().Remove(this);
-           // Destroy(this.gameObject);
-
-            int randomNum = Random.Range(0, drops.Count);
-          
-           
             playerController.message.PushMessage(enemyName + " is dead!", 0);
-
-            for (int i = 0; i < randomNum; i++)
+            // Destroy(this.gameObject);
+            if (drops.Count > 0)
             {
-                playerController.transform.GetComponent<Inventory>().AddItem(drops[i]);
+                int randomNum = Random.Range(1, drops.Count + 1);
+                for (int i = 0; i < randomNum; i++)
+                {
+                    playerController.transform.GetComponent<Inventory>().AddItem(drops[i]);
+                }
             }
+            
             Destroy(this.gameObject);
         }
 
