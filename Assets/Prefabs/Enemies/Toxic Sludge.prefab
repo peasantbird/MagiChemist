@@ -151,10 +151,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 6
-  hp: 2
+  maxHp: 0
+  attackPower: 0
   hostility: 1
-  drops: 
-  enemyType: 0
+  drops:
+  - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
+  - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
+  enemyTypes: 03000000
   speed: 10
   moveRate: 4
   enemyName: ToxicSludge

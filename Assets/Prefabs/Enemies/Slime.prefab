@@ -151,10 +151,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 5
-  hp: 5
+  maxHp: 3
+  attackPower: 1
   hostility: 1
-  drops: 
-  enemyType: 0
+  drops:
+  - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
+  enemyTypes: 03000000
   speed: 10
   moveRate: 1
   enemyName: Slime

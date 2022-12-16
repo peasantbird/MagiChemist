@@ -33,4 +33,8 @@ public class Item : MonoBehaviour
     public void ReduceAmount(int num) {
         amount -= num;
     }
+
+    //public void TakeEffect(Item item, Enemy enemy) { 
+    //if()
+    //}
 }

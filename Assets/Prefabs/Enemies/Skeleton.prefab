@@ -122,10 +122,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 2
-  hp: 3
+  maxHp: 5
+  attackPower: 2
   hostility: 1
-  drops: 
-  enemyType: 2
+  drops:
+  - {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
+  - {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
+  enemyTypes: 02000000
   speed: 10
   moveRate: 4
   enemyName: Skeleton

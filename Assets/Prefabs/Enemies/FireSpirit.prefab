@@ -152,10 +152,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 3
-  hp: 1
+  maxHp: 1
+  attackPower: 2
   hostility: 1
-  drops: 
-  enemyType: 2
+  drops:
+  - {fileID: -4177524582552702774, guid: f8f637e938beb8f41b32d5e8adbcaa89, type: 3}
+  enemyTypes: 04000000
   speed: 10
   moveRate: 2
   enemyName: Firespirit

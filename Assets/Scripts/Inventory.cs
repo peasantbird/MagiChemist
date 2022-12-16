@@ -27,6 +27,7 @@ public class Inventory: MonoBehaviour
 
     public void AddItem(Item item)
     {
+        this.transform.GetComponent<PlayerController>().message.PushMessage("You obtained " + item.amount + " " + item.itemType.ToString() + "!", 1);
         itemList.Add(item);
         uiInventory.AddToInventoryUI(item);
     }
