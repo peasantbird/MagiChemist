@@ -123,7 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyIndex: 2
   maxHp: 5
-  attackPower: 2
+  attackPower: 4
   hostility: 1
   drops:
   - {fileID: 8334956636025931739, guid: d41ac69b800e4784c9cfc7320763c10d, type: 3}
@@ -148,9 +148,15 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  hitEffects:
+  - {fileID: 5146983894224973470, guid: 7fabe43474de93740bd93dc019dde2e3, type: 3}
+  - {fileID: 6999524052750089326, guid: e50d5df6eb82006469b11cc7cfbb46bb, type: 3}
+  - {fileID: 1069091697991781812, guid: 2884397740c6b4140b46b59dce96a5a8, type: 3}
+  - {fileID: 1734974613665171222, guid: b62e6776873a0384cb074fce9f40b673, type: 3}
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 0258655b9545a441a83aec14ffd1573f, type: 3}
   hitSound: {fileID: 8300000, guid: 399e5b0f4261942d38c2d33c25229988, type: 3}
+  strengthen: {fileID: 8300000, guid: 3567a0f109188304dbadc8a814cd80b7, type: 3}
 --- !u!65 &-7449731427080631113
 BoxCollider:
   m_ObjectHideFlags: 0

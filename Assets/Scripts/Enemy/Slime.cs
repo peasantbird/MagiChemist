@@ -6,7 +6,8 @@ public class Slime : Enemy
 {
     public AudioClip ambientVoice;
     public AudioClip hitSound;
-   // Start is called before the first frame update
+    public AudioClip strengthen;
+    // Start is called before the first frame update
     void Start()
     {
         base.InitEnemy();
@@ -30,6 +31,11 @@ public class Slime : Enemy
     {
         //play slime voice
         AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
+    }
+
+    public override void PlayStrengthenSound()
+    {
+        AudioSource.PlayClipAtPoint(strengthen, new Vector3(transform.position.x, transform.position.y, 0));
     }
     public override void EnemyStartAction()
     {

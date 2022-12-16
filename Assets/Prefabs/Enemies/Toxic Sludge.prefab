@@ -151,8 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 6
-  maxHp: 0
-  attackPower: 0
+  maxHp: 4
+  attackPower: 2
   hostility: 1
   drops:
   - {fileID: 2594417592660515313, guid: 5245ea648946f1e4b85f3660d3c131c9, type: 3}
@@ -177,9 +177,15 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  hitEffects:
+  - {fileID: 5146983894224973470, guid: 7fabe43474de93740bd93dc019dde2e3, type: 3}
+  - {fileID: 6999524052750089326, guid: e50d5df6eb82006469b11cc7cfbb46bb, type: 3}
+  - {fileID: 1069091697991781812, guid: 2884397740c6b4140b46b59dce96a5a8, type: 3}
+  - {fileID: 1734974613665171222, guid: b62e6776873a0384cb074fce9f40b673, type: 3}
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 5d55b1bf4f41f487d9988d9c6be2163d, type: 3}
   hitSound: {fileID: 8300000, guid: b7ef8e08b9e154df69a4e7844c22cbd7, type: 3}
+  strengthen: {fileID: 8300000, guid: 3567a0f109188304dbadc8a814cd80b7, type: 3}
   toxins: {fileID: 7539092407454211714, guid: dcb8404600a324695860675e3c79a856, type: 3}
 --- !u!82 &7106770822565173197
 AudioSource:

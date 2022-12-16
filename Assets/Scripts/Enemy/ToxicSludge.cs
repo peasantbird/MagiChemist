@@ -8,6 +8,7 @@ public class ToxicSludge : Enemy
 {
     public AudioClip ambientVoice;
     public AudioClip hitSound;
+    public AudioClip strengthen;
     //private Tilemap worldTerrain;
     public GameObject toxins;
     private IDictionary<Vector2Int, GameObject> toxinTiles;
@@ -48,6 +49,11 @@ public class ToxicSludge : Enemy
     {
         //play slime voice
         AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
+    }
+
+    public override void PlayStrengthenSound()
+    {
+        AudioSource.PlayClipAtPoint(strengthen, new Vector3(transform.position.x, transform.position.y, 0));
     }
 
     private void spawnToxins()
