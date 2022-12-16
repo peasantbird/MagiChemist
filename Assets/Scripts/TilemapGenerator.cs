@@ -331,6 +331,23 @@ public class TilemapGenerator : MonoBehaviour
                     {
                         tileArray[index] = floorPalette[15]; // bottom floor, single wall
                     }
+                    // Four corners
+                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[8] != 1)
+                    {
+                        tileArray[index] = floorPalette[24]; // top left
+                    }
+                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[2] != 1)
+                    {
+                        tileArray[index] = floorPalette[25]; // bottom left
+                    }
+                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[0] != 1)
+                    {
+                        tileArray[index] = floorPalette[26]; // bottom right
+                    }
+                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[4] != 1)
+                    {
+                        tileArray[index] = floorPalette[27]; // top right
+                    }
                 }
                 ++index;
             }
@@ -423,7 +440,7 @@ public class TilemapGenerator : MonoBehaviour
             // Check that tile to be checked is within the bounds
             if ((checkY < mapSizeY && checkY >= 0 && checkX < mapSizeX && checkX >= 0))
             {
-                if (currentMap[checkY, checkX] != 1)
+                if (currentMap[checkY, checkX] != 1) // If not a wall
                 {
                     mapVisualisation[i] = 0;
                 }
