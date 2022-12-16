@@ -185,6 +185,7 @@ MonoBehaviour:
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 5d55b1bf4f41f487d9988d9c6be2163d, type: 3}
   hitSound: {fileID: 8300000, guid: b7ef8e08b9e154df69a4e7844c22cbd7, type: 3}
+  strengthen: {fileID: 8300000, guid: 3567a0f109188304dbadc8a814cd80b7, type: 3}
   toxins: {fileID: 7539092407454211714, guid: dcb8404600a324695860675e3c79a856, type: 3}
 --- !u!82 &7106770822565173197
 AudioSource:

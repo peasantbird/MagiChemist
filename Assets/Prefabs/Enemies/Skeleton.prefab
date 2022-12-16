@@ -156,6 +156,7 @@ MonoBehaviour:
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 0258655b9545a441a83aec14ffd1573f, type: 3}
   hitSound: {fileID: 8300000, guid: 399e5b0f4261942d38c2d33c25229988, type: 3}
+  strengthen: {fileID: 8300000, guid: 3567a0f109188304dbadc8a814cd80b7, type: 3}
 --- !u!65 &-7449731427080631113
 BoxCollider:
   m_ObjectHideFlags: 0

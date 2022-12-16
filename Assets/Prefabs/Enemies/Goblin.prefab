@@ -185,6 +185,7 @@ MonoBehaviour:
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 6f671426c906147f29eb6604835270a7, type: 3}
   hitSound: {fileID: 8300000, guid: dc0dfdeac049448769b300f1ec848ca0, type: 3}
+  strengthen: {fileID: 8300000, guid: 3567a0f109188304dbadc8a814cd80b7, type: 3}
 --- !u!82 &-3789697076134989005
 AudioSource:
   m_ObjectHideFlags: 0

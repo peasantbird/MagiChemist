@@ -172,6 +172,13 @@ public class PlayerController : MonoBehaviour
             Collider2D collider = Physics2D.OverlapBox(transform.position+new Vector3(0.5f,0.5f,0f), new Vector2(0.1f, 0.1f), 0f,resourceLayer);
             if (collider != null)
             {
+               // if (collider.transform.name.Contains("Ore"))
+                //{
+                    SFX.PlayOneShot(soundEffects[6]);
+               // }
+               // else {
+                  //  SFX.PlayOneShot(soundEffects[7]);
+               // }
                 Resources res = collider.transform.GetComponent<Resources>();
                 List<Item> obtainedItems = res.Harvest();
                 res.DestroyResource();
