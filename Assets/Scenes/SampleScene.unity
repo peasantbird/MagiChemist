@@ -3520,7 +3520,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   randomMoveInWaterPerc: 50
-  playerCanPassThroughEnemy: 1
+  playerCanPassThroughEnemy: 0
   playerSight: 9
   selectedItem: {fileID: 0}
   isMoving: 0
