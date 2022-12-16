@@ -3764,7 +3764,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ca78f6f9b84efb0438c787428baf2f37, type: 3}
   SFX: {fileID: 519420033}
   currentHealth: 0
-  maxHealth: 50
+  maxHealth: 70
   nextDirection: {x: 0, y: 0}
 --- !u!114 &914706030
 MonoBehaviour:

@@ -19,6 +19,7 @@ public class UI_Inventory : MonoBehaviour
     }
 
     public void AddToInventoryUI(Item item) {
+        bool isAdded = false;
         for (int i = 0; i < ItemSlot.childCount; i++) {
             Transform itemTemplate  = ItemSlot.GetChild(i);
             Transform itemContainer = itemTemplate.Find("Item");
@@ -27,22 +28,35 @@ public class UI_Inventory : MonoBehaviour
                 Item itemTemp = itemContainer.GetComponentInChildren<Item>();
                 if (itemTemp.itemType == item.itemType)
                 {
-
+                    isAdded = true;
                     itemTemp.amount += item.amount;
                     break;
                 }
             }
-            else {
-                //add the item to the empty container
-                Item itemTemp = Instantiate(item, item.transform.position, Quaternion.identity);
-                itemTemp.name = itemTemp.gameObject.name.Replace("(Clone)","");
-                itemTemp.transform.parent = itemContainer.transform;
-                itemTemp.transform.localPosition = Vector3.zero;
-                break;
-            }
+           
         
         }
-    
+
+        if (!isAdded)
+        {
+            for (int i = 0; i < ItemSlot.childCount; i++)
+            {
+                Transform itemTemplate = ItemSlot.GetChild(i);
+                Transform itemContainer = itemTemplate.Find("Item");
+                if (itemContainer.GetComponentInChildren<Item>() == null)
+                {
+                    //add the item to the empty container
+                    Item itemTemp = Instantiate(item, item.transform.position, Quaternion.identity);
+                    itemTemp.name = itemTemp.gameObject.name.Replace("(Clone)", "");
+                    itemTemp.transform.parent = itemContainer.transform;
+                    itemTemp.transform.localPosition = Vector3.zero;
+                    break;
+                }
+               
+
+            }
+        }
+
     }
 
     //private void RefreshInventoryItems() {
