@@ -194,7 +194,7 @@ public class TilemapGenerator : MonoBehaviour
         }
     }
 
-    private int[,] createBlankArray(int num, int xDimension, int yDimension)
+    public int[,] createBlankArray(int num, int xDimension, int yDimension)
     {
         int[,] numberedMap = new int[xDimension, yDimension];
         for (int y = 0; y < yDimension; y++)
