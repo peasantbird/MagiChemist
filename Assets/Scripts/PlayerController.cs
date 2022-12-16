@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     public Item selectedItem;
     public bool isMoving;
     public Item testItem;
+    public MiniMap miniMap;
+    public Message message;
     [SerializeField] private UI_Inventory uiInventory;
 
     protected int[,] currentMap;
@@ -63,7 +65,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         initialSpeed = speed;
         nextDirection = Vector2Int.zero;
-
+        miniMap = transform.Find("MiniMapGrid").GetComponentInChildren<MiniMap>();
         light = GameObject.Find("Light 2D").GetComponent<UnityEngine.Rendering.Universal.Light2D>();
     }
     // Start is called before the first frame update
@@ -138,14 +140,7 @@ public class PlayerController : MonoBehaviour
 
             //if (Input.GetKeyDown(KeyCode.Space))
             //{
-            //    if (!rangeSpawned)
-            //    {
-            //        SpawnRange();
-            //    }
-            //    else
-            //    {
-            //        RemoveRange();
-            //    }
+            //    message.PushMessage("testing message");
             //}
         }
 
@@ -169,6 +164,7 @@ public class PlayerController : MonoBehaviour
                 res.DestroyResource();
                 foreach (Item item in obtainedItems) {
                     this.transform.GetComponent<Inventory>().AddItem(item);
+                   
                 }
                 StartEnemyAction();
             }
@@ -204,6 +200,7 @@ public class PlayerController : MonoBehaviour
         if (TileHaveNoEnemy(targetPos.x, targetPos.y))
         {
             SetAnimationDir();
+            
             transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
         }
         else {
@@ -226,6 +223,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.up;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKey(KeyCode.A) )
@@ -238,6 +236,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.left;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKey(KeyCode.S) )
@@ -250,6 +249,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.down;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKey(KeyCode.D) )
@@ -262,6 +262,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.right;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
         }
@@ -271,6 +272,7 @@ public class PlayerController : MonoBehaviour
     
             targetPos = nextDirection;
             floorBehaviourAndSound(nextDirection.x, nextDirection.y);
+            miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
             nextDirection = Vector2Int.zero;
         }
         else
@@ -291,6 +293,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.up;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKeyDown(KeyCode.A) && Time.time >= nextMove)
@@ -303,6 +306,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.left;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKeyDown(KeyCode.S) && Time.time >= nextMove)
@@ -315,6 +319,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.down;
                    targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
             else if (Input.GetKeyDown(KeyCode.D) && Time.time >= nextMove)
@@ -327,6 +332,7 @@ public class PlayerController : MonoBehaviour
                     playerMoveDir = Vector2Int.right;
                     targetPos += playerMoveDir;
                     floorBehaviourAndSound(destination.x, destination.y);
+                    miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
                 }
             }
         } else if (nextDirection != Vector2Int.zero) { // When player is in water, water moves them again
@@ -334,6 +340,7 @@ public class PlayerController : MonoBehaviour
             nextMove = Time.time + moveRate;
             targetPos = nextDirection;
             floorBehaviourAndSound(nextDirection.x, nextDirection.y);
+            miniMap.UpdateMiniMap(targetPos.y, targetPos.x);
             nextDirection = Vector2Int.zero;
         } else {
             Debug.Log("Something broke.");
@@ -354,6 +361,7 @@ public class PlayerController : MonoBehaviour
             speed *= 0.5f; //Player's movement speed halved in water
             if (randomNum >= 100-randomMoveInWaterPerc)
             {
+                message.PushMessage("You slipped!", 2);
                 MovementInWater();
             }
             SFX.PlayOneShot(soundEffects[1]); // water walk
@@ -496,6 +504,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Toxins")
         {
             SFX.PlayOneShot(soundEffects[4]);
+            message.PushMessage("You are poinsoned!", 2);
             --currentHealth;
             RefreshHealthBar();
             light.color = new Color(193f/256f, 225f/256f, 193f/256f);
@@ -565,5 +574,7 @@ public class PlayerController : MonoBehaviour
         enemyStatus.Add(noEnemyIsStillMoving);
         return enemyStatus;
     }
+
+    
 
 }

@@ -12,13 +12,17 @@ public class Enemy : MonoBehaviour
     {
         Earth,
         Living,
-        Nonliving,
+        Bones,
+        NonLiving,
+        Combustible,
+        Electrical,
     };
     public int enemyIndex;
-    public int hp;
+    public int maxHp;
+    public int attackPower;
     public int hostility;
-    public List<int> drops;
-    public Type enemyType = new Type();
+    public List<Item> drops;
+    public List<Type> enemyTypes;
     public float speed;
     public float moveRate;
     public string enemyName;
@@ -38,6 +42,7 @@ public class Enemy : MonoBehaviour
     protected int[,] currentMap;
     protected GameObject player;
 
+    private int hp;
     private Vector3 spawnPosition;
     private float nextMove;
     private Transform pathFindingVertices;
@@ -58,9 +63,12 @@ public class Enemy : MonoBehaviour
     private bool pathFindingComplete;
     public bool isChasing;
 
+
     protected PlayerController playerController;
     private bool collidedWithPlayer = false;
 
+    private List<Item.ItemType> afraidItemTypes;
+    private List<Item.ItemType> strengthenItemTypes;
 
     protected int[] enemyMovableTiles;
 
@@ -90,9 +98,12 @@ public class Enemy : MonoBehaviour
         adjVertexList = new Vertex[4];
         excludeList = new List<Vertex>();
         verticesList = new List<Vertex>();
-        // pathFindingVertices = new GameObject("PathVertices").transform;
+        strengthenItemTypes = new List<Item.ItemType>();
+        afraidItemTypes = new List<Item.ItemType>();
+        hp = maxHp;
         GenerateVertices();
         GetAnimClipInfo();
+        ItemReactionInit();
         verticesCount = pathFindingVertices.childCount;
 
 
@@ -104,8 +115,18 @@ public class Enemy : MonoBehaviour
         {
             PlayHitSound();
             tileMapGenerator.GetSpawnedEnemies().Remove(this);
+           // Destroy(this.gameObject);
+
+            int randomNum = Random.Range(0, drops.Count);
+          
+           
+            playerController.message.PushMessage(enemyName + " is dead!", 0);
+
+            for (int i = 0; i < randomNum; i++)
+            {
+                playerController.transform.GetComponent<Inventory>().AddItem(drops[i]);
+            }
             Destroy(this.gameObject);
-            Debug.Log(name + " is dead");
         }
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0.1f);//to let it be a little bit on top of the surface
@@ -147,6 +168,7 @@ public class Enemy : MonoBehaviour
                 {
                     e.EnemyStartAction();
                 }
+               
                 React(playerController.selectedItem);
             }
         }
@@ -184,53 +206,60 @@ public class Enemy : MonoBehaviour
         //}
         if (playerSelectedItem.itemType == Item.ItemType.NormalAttack)
         {
-            PlayHitSound();
-            hp--;
+            playerController.message.PushMessage("You punched " + enemyName +" and dealt a tiny damage.",0);
+            TakeDamage(1);
+        }
+        else {
+            playerController.message.PushMessage("You used " + playerController.selectedItem.itemType.ToString() + " on " + enemyName, 1);
+            ReactToElement(playerSelectedItem);
         }
 
 
+    }
+    public void TakeDamage(int amount) {
+        hp -= amount;
+        PlayHitSound();
+       
+    }
+
+    public void Heal(int amount)
+    {
+        hp += amount;
+        if (hp > maxHp) {
+            hp = maxHp;
+        }
+        
+
+    }
+    public void ReactToElement(Item item) {
+        //  item.TakeEffect(item, this.transform.GetComponent<Enemy>());
+        string msg = "";
+
+        if (afraidItemTypes.Contains(item.itemType))
+        {
+            TakeDamage(5);
+            msg = item.itemType.ToString() + " severely damages " + enemyName + "!" ;
+        }
+        else if (strengthenItemTypes.Contains(item.itemType))
+        {
+            attackPower += 2;
+            Heal(3);
+            msg = "Oops!, " + item.itemType.ToString() + " healed and strengthened " + enemyName + "'s power, be careful!";
+        }
+        else {
+            TakeDamage(2);
+            msg = "No significant effect...but your throw hits the target and a little damage is done!";
+
+        }
+        playerController.message.PushMessage(msg, 0);
+    
     }
 
 
     private void MoveToPos()
     {
         SetAnimationDir();
-        if (isChasing)
-        {
-            //Debug.Log(name + " is chasing player");
-        }
-
-        //    //Debug.Log("Player's Pos is " + player.transform.position);
-        //    //Debug.Log("Target Pos is " + targetPos);
-        //    if (player.transform.position.x == targetPos.x && player.transform.position.y == targetPos.y)
-        //    {
-        //        targetPos = new Vector2Int((int)transform.position.x,(int)transform.position.y);//if player is at the target pos, interact with player
-        //        Debug.Log(name + " Interacted with player");
-
-        //    }
-        //    else
-        //    {
-
-        //        transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-        //    }
-        //}
-        //else
-        ////{
-        //Collider[] otherEnemyColliders = Physics.OverlapBox(new Vector3(0.5f+targetPos.x, 0.5f+targetPos.y, 0.1f), new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, enemyLayer);
-        //if (moving)
-        //{
-        //    if (otherEnemyColliders.Length == 0)
-        //    {
         transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-        //    }
-        //    else
-        //    {
-        //        targetPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
-        //        moving = false;
-        //    }
-        //}
-        //}
-
     }
 
 
@@ -240,7 +269,7 @@ public class Enemy : MonoBehaviour
 
         if (PlayerIsNearby())
         {
-            if (hostility != 0)
+            if (hostility > 0)
             {
                 attacking = true;
                 Debug.Log(name + " attacks");
@@ -295,8 +324,9 @@ public class Enemy : MonoBehaviour
     {
         yield return new WaitForSeconds(time/2);
         Debug.Log(name + " hits player");
+        playerController.message.PushMessage("A " + enemyName + " hits you! " +"You took "+attackPower+" damage!",0);
         playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
-        --playerController.currentHealth;
+        playerController.currentHealth-=attackPower;
         playerController.RefreshHealthBar();
         yield return new WaitForSeconds(time / 2);
         attacking = false;//attack finished
@@ -307,7 +337,7 @@ public class Enemy : MonoBehaviour
 
     public void MoveEnemy()
     {
-        if (PlayerIsAround() && !moving)
+        if (PlayerIsAround() && !moving && hostility>0)
         {
             // SimpleChasePlayer();
 
@@ -460,11 +490,12 @@ public class Enemy : MonoBehaviour
         bool canReach = true;
         if (targetVertex != null && enemyVertex != null)
         {
-
+            int count = 0;
             while (targetVertex != enemyVertex)
             {
+                count++; //check for infinit loop
                 nextStep = targetVertex;
-                if (previous[verticesList.IndexOf(targetVertex)] != null)
+                if (previous[verticesList.IndexOf(targetVertex)] != null && count<10000)
                 {
                     targetVertex = previous[verticesList.IndexOf(targetVertex)];
                 }
@@ -666,7 +697,7 @@ public class Enemy : MonoBehaviour
     public void MoveEnemyThroughWalls()
     {
 
-        if (PlayerIsAround() && !moving)
+        if (PlayerIsAround() && !moving && hostility > 0)
         {
             ChaseThroughWalls();
 
@@ -820,16 +851,23 @@ public class Enemy : MonoBehaviour
         //get magnitude (distance) between playerPos and enemyPos
         if ((enemyPos - playerPos).magnitude < enemySight)
         {
-            if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
+            if (isFloating)
             {
-                isChasing = true;
-
                 return true;
             }
             else
             {
-                isChasing = false;
-                return false;
+                if (CanEnemySeePlayer() == true) //Is the monster's sight obstructed by a wall tile?
+                {
+                    isChasing = true;
+
+                    return true;
+                }
+                else
+                {
+                    isChasing = false;
+                    return false;
+                }
             }
         }
         else
@@ -915,6 +953,11 @@ public class Enemy : MonoBehaviour
     public void SetSpawnPosition(Vector3 spawnPosition)
     {
         this.spawnPosition = spawnPosition;
+    }
+
+    public void ReduceHostility() {
+        hostility--;
+
     }
 
     private bool Movable(int xDestination, int yDestination, int[] movableTiles)
@@ -1042,6 +1085,55 @@ public class Enemy : MonoBehaviour
             }
         }
         return otherEnemyColliders.Length > 0 || anotherEnemyHasSameTargetPos;
+    }
+
+    private void ItemReactionInit() {
+        if (this.enemyTypes.Contains(Type.NonLiving)) {
+            afraidItemTypes.Add(Item.ItemType.Silver);
+            afraidItemTypes.Add(Item.ItemType.Oxygen);
+            afraidItemTypes.Add(Item.ItemType.Calcium);
+
+            strengthenItemTypes.Add(Item.ItemType.Mercury);
+        }
+
+        if (this.enemyTypes.Contains(Type.Combustible))
+        {
+            afraidItemTypes.Add(Item.ItemType.Silicon);
+            afraidItemTypes.Add(Item.ItemType.Iron);
+            afraidItemTypes.Add(Item.ItemType.Calcium);
+
+            strengthenItemTypes.Add(Item.ItemType.Oxygen);    
+        }
+
+        if (this.enemyTypes.Contains(Type.Electrical)) {
+            afraidItemTypes.Add(Item.ItemType.Oxygen);
+
+            strengthenItemTypes.Add(Item.ItemType.Iron);
+            strengthenItemTypes.Add(Item.ItemType.Silicon);
+            strengthenItemTypes.Add(Item.ItemType.Silver);
+        }
+
+        if (this.enemyTypes.Contains(Type.Bones)) {
+            afraidItemTypes.Add(Item.ItemType.Oxygen);
+            afraidItemTypes.Add(Item.ItemType.Iron);
+
+            strengthenItemTypes.Add(Item.ItemType.Calcium);
+        }
+        if (this.enemyTypes.Contains(Type.Living)) {
+            afraidItemTypes.Add(Item.ItemType.Mercury);
+
+            strengthenItemTypes.Add(Item.ItemType.Calcium);
+            strengthenItemTypes.Add(Item.ItemType.Oxygen);
+            strengthenItemTypes.Add(Item.ItemType.Iron);
+        }
+        if (this.enemyTypes.Contains(Type.Earth))
+        {
+            afraidItemTypes.Add(Item.ItemType.Iron);
+            afraidItemTypes.Add(Item.ItemType.Mercury);
+
+            strengthenItemTypes.Add(Item.ItemType.Silicon);
+            strengthenItemTypes.Add(Item.ItemType.Oxygen);
+        }
     }
     private void SimpleChasePlayer()
     {

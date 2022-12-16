@@ -122,10 +122,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 0
-  hp: 2
+  maxHp: 8
+  attackPower: 3
   hostility: 1
-  drops: 00000000
-  enemyType: 0
+  drops:
+  - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
+  - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
+  - {fileID: 7474997708087584547, guid: 8df6a7bd9d5451646b4d8ccb8c1bd76d, type: 3}
+  enemyTypes: 00000000
   speed: 10
   moveRate: 4
   enemyName: Golem
