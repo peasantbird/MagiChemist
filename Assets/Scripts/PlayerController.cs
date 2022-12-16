@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
 
     public int currentHealth;
     public int maxHealth;
+    public EndMenu endMenu;
     //
 
     public Vector2Int nextDirection;
@@ -197,6 +198,11 @@ public class PlayerController : MonoBehaviour
                 }
                 StartEnemyAction();
             }
+        }
+
+        if (currentHealth <= 0)
+        {
+            endMenu.Setup(tileMapGenerator.depth - 1);
         }
     }
 
