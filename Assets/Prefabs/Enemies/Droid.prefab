@@ -123,7 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyIndex: 1
   maxHp: 3
-  attackPower: 1
+  attackPower: 3
   hostility: 1
   drops:
   - {fileID: 7413053289535874270, guid: 10ddd3dda0c95644493476a3e4e3c449, type: 3}
