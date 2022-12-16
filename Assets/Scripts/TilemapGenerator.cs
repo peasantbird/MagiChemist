@@ -363,7 +363,7 @@ public class TilemapGenerator : MonoBehaviour
                     {
                         tileArray[index] = floorPalette[26]; // bottom right
                     }
-                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[4] != 1)
+                    else if (adjacentFloors[1] != 0 && adjacentFloors[3] != 0 && adjacentFloors[5] != 0 && adjacentFloors[7] != 0 && adjacentFloors[6] != 1)
                     {
                         tileArray[index] = floorPalette[27]; // top right
                     }

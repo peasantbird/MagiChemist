@@ -87,6 +87,7 @@ public class Enemy : MonoBehaviour
     public void InitEnemy()
     {
         SFX = gameObject.GetComponent<AudioSource>();
+       // SFX.volume = 0.2f;
         enemyMovableTiles = new int[] { 0, 2, 3, 4 }; // By default, enemy is able to walk on any type of floor. We override this if unable.
         player = GameObject.Find("Player");
         tileMapGenerator = GameObject.Find("Player").GetComponent<TilemapGenerator>();
@@ -250,6 +251,7 @@ public class Enemy : MonoBehaviour
 
     public void Heal(int amount)
     {
+        PlayHitSound();
         hp += amount;
         if (hp > maxHp) {
             hp = maxHp;
@@ -723,6 +725,12 @@ public class Enemy : MonoBehaviour
     public virtual void PlayHitSound()
     {
         //virtual method
+    }
+
+    public virtual void PlayStrengthenSound()
+    {
+        //play sound
+       
     }
 
 

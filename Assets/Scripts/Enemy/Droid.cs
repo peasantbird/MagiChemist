@@ -6,11 +6,12 @@ public class Droid : Enemy
 {
     public AudioClip ambientVoice;
     public AudioClip hitSound;
+    public AudioClip strengthen;
     // Start is called before the first frame update
     void Start()
     {
         base.InitEnemy();
-        
+        //ambientVoice.
     }
 
     // Update is called once per frame
@@ -30,6 +31,11 @@ public class Droid : Enemy
     {
         //play slime voice
         AudioSource.PlayClipAtPoint(hitSound, new Vector3(transform.position.x, transform.position.y, 0));
+    }
+
+    public override void PlayStrengthenSound()
+    {
+        AudioSource.PlayClipAtPoint(strengthen, new Vector3(transform.position.x, transform.position.y, 0));
     }
 
     public override void EnemyStartAction()
