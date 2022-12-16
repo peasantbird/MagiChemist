@@ -36,6 +36,7 @@ public class Enemy : MonoBehaviour
     public LayerMask enemyLayer;
     public LayerMask spellRangeLayer;
     public LayerMask playerLayer;
+    public List<VFXAnimation> hitEffects;
 
     protected TilemapGenerator tileMapGenerator;
     protected Vector2Int targetPos;
@@ -115,17 +116,17 @@ public class Enemy : MonoBehaviour
         {
             PlayHitSound();
             tileMapGenerator.GetSpawnedEnemies().Remove(this);
-           // Destroy(this.gameObject);
-
-            int randomNum = Random.Range(0, drops.Count);
-          
-           
             playerController.message.PushMessage(enemyName + " is dead!", 0);
-
-            for (int i = 0; i < randomNum; i++)
+            // Destroy(this.gameObject);
+            if (drops.Count > 0)
             {
-                playerController.transform.GetComponent<Inventory>().AddItem(drops[i]);
+                int randomNum = Random.Range(1, drops.Count + 1);
+                for (int i = 0; i < randomNum; i++)
+                {
+                    playerController.transform.GetComponent<Inventory>().AddItem(drops[i]);
+                }
             }
+            
             Destroy(this.gameObject);
         }
 
@@ -164,12 +165,9 @@ public class Enemy : MonoBehaviour
             if (playerController.selectedItem != null && !playerController.isMoving && !moving && playerController.GetEnemyStatus()[2])
             {
                 playerController.selectedItem.ReduceAmount(1);
-                foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies())
-                {
-                    e.EnemyStartAction();
-                }
-               
-                React(playerController.selectedItem);
+                
+                playerController.PlayAtkAnimation((Vector2)transform.position);
+                StartCoroutine(React(playerController.selectedItem));
             }
         }
 
@@ -197,25 +195,53 @@ public class Enemy : MonoBehaviour
     //}
 
 
-    private void React(Item playerSelectedItem)
+    IEnumerator React(Item playerSelectedItem)
     {
         Debug.Log("Player used " + playerSelectedItem + " against " + name);
         //playerController.selectedItem.ReduceAmount(1);
         //foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies()) {
         //    e.EnemyStartAction();
         //}
+        float time = 0f;
         if (playerSelectedItem.itemType == Item.ItemType.NormalAttack)
         {
             playerController.message.PushMessage("You punched " + enemyName +" and dealt a tiny damage.",0);
             TakeDamage(1);
+            Instantiate(hitEffects[3], transform.position, Quaternion.identity);
+            time = hitEffects[3].clip.length;
         }
         else {
+            VFXAnimation temp = new VFXAnimation();
+            
             playerController.message.PushMessage("You used " + playerController.selectedItem.itemType.ToString() + " on " + enemyName, 1);
+            if (playerController.selectedItem.itemType == Item.ItemType.Calcium || playerController.selectedItem.itemType == Item.ItemType.Silicon || playerController.selectedItem.itemType == Item.ItemType.Silver || playerController.selectedItem.itemType == Item.ItemType.Iron)
+            {
+                
+               temp = Instantiate(hitEffects[0], transform.position, Quaternion.identity);
+               time = hitEffects[0].clip.length;
+            }
+            else if (playerController.selectedItem.itemType == Item.ItemType.Oxygen)
+            {
+                temp = Instantiate(hitEffects[1], transform.position, Quaternion.identity);
+                time = hitEffects[1].clip.length;
+            }
+            else if (playerController.selectedItem.itemType == Item.ItemType.Mercury) {
+
+               temp=  Instantiate(hitEffects[2], transform.position, Quaternion.identity);
+               time = hitEffects[2].clip.length;
+            }
+           // temp.transform.SetParent(this.transform);
             ReactToElement(playerSelectedItem);
+           
+        }
+        yield return new WaitForSeconds(time);
+        foreach (Enemy e in tileMapGenerator.GetSpawnedEnemies())
+        {
+            e.EnemyStartAction();
         }
 
-
     }
+
     public void TakeDamage(int amount) {
         hp -= amount;
         PlayHitSound();
@@ -323,12 +349,18 @@ public class Enemy : MonoBehaviour
     IEnumerator AttackPlayer(float time,AnimationClip resumeClip)
     {
         yield return new WaitForSeconds(time/2);
+
         Debug.Log(name + " hits player");
         playerController.message.PushMessage("A " + enemyName + " hits you! " +"You took "+attackPower+" damage!",0);
         playerController.SFX.PlayOneShot(playerController.soundEffects[4]);
         playerController.currentHealth-=attackPower;
         playerController.RefreshHealthBar();
+
+        VFXAnimation animation = Instantiate(hitEffects[3], player.transform.position, Quaternion.identity);
+        animation.transform.SetParent(player.transform);
+
         yield return new WaitForSeconds(time / 2);
+
         attacking = false;//attack finished
         anim.Play(resumeClip.name);
         Debug.Log(name + " attack finished");
@@ -1135,6 +1167,8 @@ public class Enemy : MonoBehaviour
             strengthenItemTypes.Add(Item.ItemType.Oxygen);
         }
     }
+
+
     private void SimpleChasePlayer()
     {
         Vector3 playerPos = player.transform.position;

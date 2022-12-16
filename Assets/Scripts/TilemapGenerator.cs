@@ -16,6 +16,7 @@ public class TilemapGenerator : MonoBehaviour
     public int numberOfRooms;
     public int maxRoomSize;
     public int depth;
+    public VFXAnimation glowingParticle;
     private int newNoise;
     private GameObject enemyContainer;
     private GameObject terrainElementContainer;
@@ -87,6 +88,7 @@ public class TilemapGenerator : MonoBehaviour
         if (depth < 8) // 8 will be the boss floor
         {
             Vector2Int portalPos = getRandomFloorPos(playerPos);
+            usedPos.Add(portalPos);
             GameObject portal = Instantiate(landscapeFeature[8], new Vector3(portalPos.x, -portalPos.y, 0), Quaternion.identity);
             portal.transform.parent = terrainElementContainer.transform;
             transform.position = new Vector3Int(playerPos.x, -playerPos.y, 0); // Move player to random floor on map
@@ -223,16 +225,30 @@ public class TilemapGenerator : MonoBehaviour
                 int tileX = x + playerX;
                 int tileY = y + playerY;
                 positions[index] = new Vector3Int(offsetX + tileX, -tileY, 0); // TESTING
+
+                bool posOccupied = false;
+                foreach (Vector2Int pos in usedPos)
+                {
+                    if (pos.x == tileX && pos.y == tileY)
+                    {
+                        posOccupied = true;
+                    }
+                }
+
                 int tileType = currentMap[tileY, tileX];
                 if (tileType == 0)
                 {
                     tileArray[index] = floorPalette[0]; // Floor
                     int oreSpawnChance = Random.Range(1, 30);
-                    if (oreSpawnChance > 28)
+                 
+                    if (oreSpawnChance > 28 && !posOccupied)
                     {
                         int randomOreType = Random.Range(5, 8);
+                        usedPos.Add(new Vector2Int(tileX, -tileY));
                         GameObject temp = Instantiate(landscapeFeature[randomOreType], new Vector3Int(tileX, -tileY, 0), Quaternion.identity); // Random Plant
                         temp.transform.parent = terrainElementContainer.transform;
+                        VFXAnimation vfx = Instantiate(glowingParticle, new Vector3Int(tileX, -tileY, 0), Quaternion.identity);
+                        vfx.transform.SetParent(temp.transform);
                     }
                 }
                 else if (tileType == 2)
@@ -246,11 +262,14 @@ public class TilemapGenerator : MonoBehaviour
                     int grassTileType = Random.Range(16, 20);
                     tileArray[index] = floorPalette[grassTileType]; // Grass
                     int plantSpawnChance = Random.Range(1, 10);
-                    if (plantSpawnChance > 8)
+                    if (plantSpawnChance > 8 && !posOccupied)
                     {
                         int randomPlantType = Random.Range(1, 5);
+                        usedPos.Add(new Vector2Int(tileX, -tileY));
                         GameObject temp = Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0), Quaternion.identity); // Random Plant
                         temp.transform.parent = terrainElementContainer.transform;
+                        VFXAnimation vfx = Instantiate(glowingParticle, new Vector3Int(tileX, -tileY, 0), Quaternion.identity);
+                        vfx.transform.SetParent(temp.transform);
                     }
                 }
                 else if (tileType == 4)
