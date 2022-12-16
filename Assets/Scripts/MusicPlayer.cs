@@ -11,7 +11,7 @@ public class MusicPlayer : MonoBehaviour
     }
     private void Start()
     {
-        BGM.PlayOneShot(RandomTrack(), 0.5f);
+        BGM.PlayOneShot(musicArray[0]);
     }
     private void Update()
     {

@@ -3538,6 +3538,7 @@ MonoBehaviour:
   BGM: {fileID: 914706027}
   musicArray:
   - {fileID: 8300000, guid: 7037accc7ec9c4c3dae5b8a56ab7f48e, type: 3}
+  - {fileID: 8300000, guid: 9693757e510d94a5a8d1c5609b4351c8, type: 3}
 --- !u!114 &914706026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4463,9 +4464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b001d0475125d85419cfad3c24d95777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: 'A fist is a hand gesture made by tightly clenching the fingers together.
-    The fist is a common gesture used in various contexts, such as in self-defense,
-    or in celebration or when a poor Magichemist ran out of chemicals. '
+  tipToShow: 'Punch when the poor Magichemist runs out of chemicals. '
   title: Fist
   timeToWait: 0.5
 --- !u!1 &1146917081
