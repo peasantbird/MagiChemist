@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyIndex: 5
-  maxHp: 3
+  maxHp: 5
   attackPower: 2
   hostility: 1
   drops:
