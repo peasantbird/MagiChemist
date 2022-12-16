@@ -16,6 +16,7 @@ public class TilemapGenerator : MonoBehaviour
     public int numberOfRooms;
     public int maxRoomSize;
     public int depth;
+    public VFXAnimation glowingParticle;
     private int newNoise;
     private GameObject enemyContainer;
     private GameObject terrainElementContainer;
@@ -246,6 +247,8 @@ public class TilemapGenerator : MonoBehaviour
                         usedPos.Add(new Vector2Int(tileX, -tileY));
                         GameObject temp = Instantiate(landscapeFeature[randomOreType], new Vector3Int(tileX, -tileY, 0), Quaternion.identity); // Random Plant
                         temp.transform.parent = terrainElementContainer.transform;
+                        VFXAnimation vfx = Instantiate(glowingParticle, new Vector3Int(tileX, -tileY, 0), Quaternion.identity);
+                        vfx.transform.SetParent(temp.transform);
                     }
                 }
                 else if (tileType == 2)
@@ -265,6 +268,8 @@ public class TilemapGenerator : MonoBehaviour
                         usedPos.Add(new Vector2Int(tileX, -tileY));
                         GameObject temp = Instantiate(landscapeFeature[randomPlantType], new Vector3Int(tileX, -tileY, 0), Quaternion.identity); // Random Plant
                         temp.transform.parent = terrainElementContainer.transform;
+                        VFXAnimation vfx = Instantiate(glowingParticle, new Vector3Int(tileX, -tileY, 0), Quaternion.identity);
+                        vfx.transform.SetParent(temp.transform);
                     }
                 }
                 else if (tileType == 4)

@@ -148,6 +148,11 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  hitEffects:
+  - {fileID: 5146983894224973470, guid: 7fabe43474de93740bd93dc019dde2e3, type: 3}
+  - {fileID: 6999524052750089326, guid: e50d5df6eb82006469b11cc7cfbb46bb, type: 3}
+  - {fileID: 1069091697991781812, guid: 2884397740c6b4140b46b59dce96a5a8, type: 3}
+  - {fileID: 1734974613665171222, guid: b62e6776873a0384cb074fce9f40b673, type: 3}
   isChasing: 0
   ambientVoice: {fileID: 8300000, guid: 8de9231e6cbc24c7cb07f5174ebb20f7, type: 3}
   hitSound: {fileID: 8300000, guid: 5bc3527aa284a4d2382c87ca4f72fc4e, type: 3}

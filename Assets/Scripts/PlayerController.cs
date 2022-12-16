@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public Item testItem;
     public MiniMap miniMap;
     public Message message;
+   // public AnimationClip hitEffect;
     [SerializeField] private UI_Inventory uiInventory;
 
     protected int[,] currentMap;
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private bool noEnemyIsStillMoving;
     private bool noEnemyIsChasing;
     private bool noEnemyIsAround;
+    private bool attacking;
 
     private Animator anim;
     public AudioClip[] soundEffects;
@@ -49,6 +51,16 @@ public class PlayerController : MonoBehaviour
 
     public Vector2Int nextDirection;
     private UnityEngine.Rendering.Universal.Light2D light;
+
+    private AnimationClip atkUp;
+    private AnimationClip atkDown;
+    private AnimationClip atkLeft;
+    private AnimationClip atkRight;
+    private AnimationClip walkUp;
+    private AnimationClip walkDown;
+    private AnimationClip walkLeft;
+    private AnimationClip walkRight;
+   
 
     private void Awake()
     {
@@ -67,6 +79,7 @@ public class PlayerController : MonoBehaviour
         nextDirection = Vector2Int.zero;
         miniMap = transform.Find("MiniMapGrid").GetComponentInChildren<MiniMap>();
         light = GameObject.Find("Light 2D").GetComponent<UnityEngine.Rendering.Universal.Light2D>();
+        GetAnimClipInfo();
     }
     // Start is called before the first frame update
     void Start()
@@ -105,7 +118,7 @@ public class PlayerController : MonoBehaviour
                     SpawnRange();
                 }
             }
-            else
+            else if(!attacking)
             {
                 speed = initialSpeed;
                 NewTargetPosContinuous();
@@ -132,7 +145,7 @@ public class PlayerController : MonoBehaviour
                     SpawnRange();
                 }
             }
-            else if (noEnemyIsStillMoving)
+            else if (noEnemyIsStillMoving && !attacking)
             {
                 speed = initialSpeed;
                 NewTargetPos();
@@ -156,7 +169,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !isMoving)//press e to harvest an item
         {
             //todo�F harvest item
-            Collider2D collider = Physics2D.OverlapBox(transform.position, new Vector2(0.1f, 0.1f), 0f,resourceLayer);
+            Collider2D collider = Physics2D.OverlapBox(transform.position+new Vector3(0.5f,0.5f,0f), new Vector2(0.1f, 0.1f), 0f,resourceLayer);
             if (collider != null)
             {
                 Resources res = collider.transform.GetComponent<Resources>();
@@ -560,6 +573,94 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Left", false);
         }
 }
+
+    public void PlayAtkAnimation(Vector2 targetPosition) {
+        Vector2 diff = targetPosition - (Vector2)transform.position;
+        Vector2 direction = diff / diff.magnitude;
+        float angle = Vector2.SignedAngle(new Vector2(1, 0), direction);
+        attacking = true;
+        float time = 0f;
+        AnimationClip resumeClip = new AnimationClip();
+        if (angle > -45 && angle <= 45)
+        {
+            //attack right
+            resumeClip = walkRight;
+            anim.Play(atkRight.name);
+            time = atkRight.length;
+        }
+        else if (angle > 45 && angle <= 135)
+        {
+            //attack top
+            resumeClip = walkUp;
+            anim.Play(atkUp.name);
+            time = atkUp.length;
+        }
+        else if (angle > 135 || angle <= -135)
+        {
+            //attack left
+            resumeClip = walkLeft;
+            anim.Play(atkLeft.name);
+            time = atkLeft.length;
+        }
+        else {
+            //attack bottom
+            resumeClip = walkDown;
+            anim.Play(atkDown.name);
+            time = atkDown.length;
+        }
+        StartCoroutine(AttackEnemy(time, resumeClip));
+
+    }
+
+    IEnumerator AttackEnemy(float time, AnimationClip resumeClip)
+    {
+        yield return new WaitForSeconds(time);
+        attacking = false;//attack finished
+        anim.Play(resumeClip.name);
+    }
+
+    private void GetAnimClipInfo()
+    {
+        AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name.Equals("atk_up"))
+            {
+                atkUp = clip;
+            }
+            if (clip.name.Equals("atk_down"))
+            {
+                atkDown = clip;
+            }
+            if (clip.name.Equals("atk_left"))
+            {
+                atkLeft = clip;
+            }
+            if (clip.name.Equals("atk_right"))
+            {
+                atkRight = clip;
+            }
+            if (clip.name.Equals("walk_up"))
+            {
+                walkUp = clip;
+            }
+            if (clip.name.Equals("walk_down"))
+            {
+                walkDown = clip;
+            }
+            if (clip.name.Equals("walk_left"))
+            {
+                walkLeft = clip;
+            }
+            if (clip.name.Equals("walk_right"))
+            {
+                walkRight = clip;
+            }
+
+
+        }
+    }
+
     public void RefreshPlayerPosition()
     {
         targetPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
